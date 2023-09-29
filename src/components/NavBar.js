@@ -36,11 +36,11 @@ function NavBar() {
 
 
                 <li className="nav-item">
-                    <button className="nav-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                    <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapseTwo"
                         aria-expanded="true" aria-controls="collapseTwo">
                         <i className="fas fa-fw fa-cog"></i>
                         <span>Components</span>
-                    </button>
+                    </a>
                     <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div className="bg-white py-2 collapse-inner rounded">
                             <h6 className="collapse-header">Custom Components:</h6>
@@ -52,11 +52,11 @@ function NavBar() {
 
 
                 <li className="nav-item">
-                    <button className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapseUtilities"
                         aria-expanded="true" aria-controls="collapseUtilities">
                         <i className="fas fa-fw fa-wrench"></i>
                         <span>Utilities</span>
-                    </button>
+                    </a>
                     <div id="collapseUtilities" className="collapse" aria-labelledby="headingUtilities"
                         data-parent="#accordionSidebar">
                         <div className="bg-white py-2 collapse-inner rounded">
@@ -79,11 +79,11 @@ function NavBar() {
 
 
                 <li className="nav-item">
-                    <button className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                    <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapsePages"
                         aria-expanded="true" aria-controls="collapsePages">
                         <i className="fas fa-fw fa-folder"></i>
                         <span>Pages</span>
-                    </button>
+                    </a>
                     <div id="collapsePages" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div className="bg-white py-2 collapse-inner rounded">
                             <h6 className="collapse-header">Login Screens:</h6>
@@ -163,10 +163,10 @@ function NavBar() {
 
 
                             <li className="nav-item dropdown no-arrow d-sm-none">
-                                <button className="nav-link dropdown-toggle" href="#" id="searchDropdown"
+                                <a className="nav-link dropdown-toggle" href="/#" id="searchDropdown"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i className="fas fa-search fa-fw"></i>
-                                </button>
+                                </a>
 
                                 <div className="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                     aria-labelledby="searchDropdown">
@@ -187,19 +187,19 @@ function NavBar() {
 
 
                             <li className="nav-item dropdown no-arrow mx-1">
-                                <button className="nav-link dropdown-toggle" href="#" id="alertsDropdown"
+                                <a className="nav-link dropdown-toggle" href="/#" id="alertsDropdown"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i className="fas fa-bell fa-fw"></i>
 
                                     <span className="badge badge-danger badge-counter">3+</span>
-                                </button>
+                                </a>
 
                                 <div className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="alertsDropdown">
                                     <h6 className="dropdown-header">
                                         Alerts Center
                                     </h6>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="mr-3">
                                             <div className="icon-circle bg-primary">
                                                 <i className="fas fa-file-alt text-white"></i>
@@ -209,8 +209,8 @@ function NavBar() {
                                             <div className="small text-gray-500">December 12, 2019</div>
                                             <span className="font-weight-bold">A new monthly report is ready to download!</span>
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    </a>
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="mr-3">
                                             <div className="icon-circle bg-success">
                                                 <i className="fas fa-donate text-white"></i>
@@ -220,8 +220,8 @@ function NavBar() {
                                             <div className="small text-gray-500">December 7, 2019</div>
                                             $290.29 has been deposited into your account!
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    </a>
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="mr-3">
                                             <div className="icon-circle bg-warning">
                                                 <i className="fas fa-exclamation-triangle text-white"></i>
@@ -231,26 +231,26 @@ function NavBar() {
                                             <div className="small text-gray-500">December 2, 2019</div>
                                             Spending Alert: We've noticed unusually high spending for your account.
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</button>
+                                    </a>
+                                    <a className="dropdown-item text-center small text-gray-500" href="/#">Show All Alerts</a>
                                 </div>
                             </li>
 
 
                             <li className="nav-item dropdown no-arrow mx-1">
-                                <button className="nav-link dropdown-toggle" href="#" id="messagesDropdown"
+                                <a className="nav-link dropdown-toggle" href="/#" id="messagesDropdown"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i className="fas fa-envelope fa-fw"></i>
 
                                     <span className="badge badge-danger badge-counter">7</span>
-                                </button>
+                                </a>
 
                                 <div className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="messagesDropdown">
                                     <h6 className="dropdown-header">
                                         Message Center
                                     </h6>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_1.svg"
                                                 alt="..."></img>
@@ -261,8 +261,8 @@ function NavBar() {
                                                 problem I've been having.</div>
                                             <div className="small text-gray-500">Emily Fowler · 58m</div>
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    </a>
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_2.svg"
                                                 alt="..."></img>
@@ -273,8 +273,8 @@ function NavBar() {
                                                 would you like them sent to you?</div>
                                             <div className="small text-gray-500">Jae Chun · 1d</div>
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    </a>
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="img/undraw_profile_3.svg"
                                                 alt="..."></img>
@@ -285,8 +285,8 @@ function NavBar() {
                                                 the progress so far, keep up the good work!</div>
                                             <div className="small text-gray-500">Morgan Alvarez · 2d</div>
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item d-flex align-items-center" href="#">
+                                    </a>
+                                    <a className="dropdown-item d-flex align-items-center" href="/#">
                                         <div className="dropdown-list-image mr-3">
                                             <img className="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
                                                 alt="..."></img>
@@ -297,8 +297,8 @@ function NavBar() {
                                                 told me that people say this to all dogs, even if they aren't good...</div>
                                             <div className="small text-gray-500">Chicken the Dog · 2w</div>
                                         </div>
-                                    </button>
-                                    <button className="dropdown-item text-center small text-gray-500" href="#">Read More Messages</button>
+                                    </a>
+                                    <a className="dropdown-item text-center small text-gray-500" href="/#">Read More Messages</a>
                                 </div>
                             </li>
 
@@ -306,32 +306,32 @@ function NavBar() {
 
 
                             <li className="nav-item dropdown no-arrow">
-                                <button className="nav-link dropdown-toggle" href="#" id="userDropdown"
+                                <a className="nav-link dropdown-toggle" href="/#" id="userDropdown"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span className="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
                                     <img className="img-profile rounded-circle"
                                         src="img/undraw_profile.svg" alt=''></img>
-                                </button>
+                                </a>
 
                                 <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
-                                    <button className="dropdown-item" href="#">
+                                    <a className="dropdown-item" href="/#">
                                         <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Profile
-                                    </button>
-                                    <button className="dropdown-item" href="#">
+                                    </a>
+                                    <a className="dropdown-item" href="/#">
                                         <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Settings
-                                    </button>
-                                    <button className="dropdown-item" href="#">
+                                    </a>
+                                    <a className="dropdown-item" href="/#">
                                         <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Activity Log
-                                    </button>
+                                    </a>
                                     <div className="dropdown-divider"></div>
-                                    <button className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <a className="dropdown-item" href="/#" data-toggle="modal" data-target="#logoutModal">
                                         <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Logout
-                                    </button>
+                                    </a>
                                 </div>
                             </li>
 
@@ -346,8 +346,8 @@ function NavBar() {
 
                         <div className="d-sm-flex align-items-center justify-content-between mb-4">
                             <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
-                            <button href="#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                className="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
+                            <a href="/#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                className="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                         </div>
 
 
@@ -449,17 +449,17 @@ function NavBar() {
                                         className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 className="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                                         <div className="dropdown no-arrow">
-                                            <button className="dropdown-toggle" href="#" id="dropdownMenuLink"
+                                            <a className="dropdown-toggle" href="/#" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                            </button>
+                                            </a>
                                             <div className="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                                 aria-labelledby="dropdownMenuLink">
                                                 <div className="dropdown-header">Dropdown Header:</div>
-                                                <button className="dropdown-item" href="#">Action</button>
-                                                <button className="dropdown-item" href="#">Another action</button>
+                                                <a className="dropdown-item" href="/#">Action</a>
+                                                <a className="dropdown-item" href="/#">Another action</a>
                                                 <div className="dropdown-divider"></div>
-                                                <button className="dropdown-item" href="#">Something else here</button>
+                                                <a className="dropdown-item" href="/#">Something else here</a>
                                             </div>
                                         </div>
                                     </div>
@@ -480,17 +480,17 @@ function NavBar() {
                                         className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 className="m-0 font-weight-bold text-primary">Revenue Sources</h6>
                                         <div className="dropdown no-arrow">
-                                            <button className="dropdown-toggle" href="#" id="dropdownMenuLink"
+                                            <a className="dropdown-toggle" href="/#" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                            </button>
+                                            </a>
                                             <div className="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                                 aria-labelledby="dropdownMenuLink">
                                                 <div className="dropdown-header">Dropdown Header:</div>
-                                                <button className="dropdown-item" href="#">Action</button>
-                                                <button className="dropdown-item" href="#">Another action</button>
+                                                <a className="dropdown-item" href="/#">Action</a>
+                                                <a className="dropdown-item" href="/#">Another action</a>
                                                 <div className="dropdown-divider"></div>
-                                                <button className="dropdown-item" href="#">Something else here</button>
+                                                <a className="dropdown-item" href="/#">Something else here</a>
                                             </div>
                                         </div>
                                     </div>
