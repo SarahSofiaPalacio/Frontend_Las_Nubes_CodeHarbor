@@ -1,6 +1,6 @@
 import React from "react";
 
-function Toggler({ toggleSidebar }) {
+function TopbarToggler({ toggleSidebar }) {
     return (
       <button className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" onClick={toggleSidebar}>
           <i className="fas fa-bars"></i>
@@ -8,4 +8,4 @@ function Toggler({ toggleSidebar }) {
     );
   }
   
-export default Toggler;
+export default TopbarToggler;

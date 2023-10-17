@@ -1,6 +1,6 @@
 import React from "react";
 
-function Heading({ text }) {
+function SidebarHeading({ text }) {
     return (
       <div className="sidebar-heading">
           {text}
@@ -8,4 +8,4 @@ function Heading({ text }) {
     );
   }
 
-export default Heading;
+export default SidebarHeading;

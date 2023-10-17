@@ -1,6 +1,6 @@
 import React from "react";
 
-function Brand() {
+function SidebarBrand() {
     return (
       <a className="sidebar-brand bg-white d-flex align-items-center justify-content-center" href="/#">
           <div className="sidebar-brand-icon">
@@ -13,4 +13,4 @@ function Brand() {
     );
   }
 
-export default Brand;
+export default SidebarBrand;

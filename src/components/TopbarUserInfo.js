@@ -1,6 +1,6 @@
 import React from 'react';
 
-function UserInfo({ userName, userImage }) {
+function TopbarUserInfo({ userName, userImage }) {
     return (
       <li className="nav-item dropdown no-arrow">
           <a className="nav-link dropdown-toggle" href="/#" id="userDropdown" role="button"
@@ -29,4 +29,4 @@ function UserInfo({ userName, userImage }) {
     );
   }
 
-export default UserInfo;
+export default TopbarUserInfo;

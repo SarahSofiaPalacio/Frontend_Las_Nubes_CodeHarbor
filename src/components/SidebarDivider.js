@@ -1,7 +1,7 @@
 import React from "react";
 
-function Divider() {
+function SidebarDivider() {
     return <hr className="sidebar-divider"></hr>;
   }
 
-export default Divider;
+export default SidebarDivider;

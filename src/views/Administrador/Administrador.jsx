@@ -9,6 +9,9 @@ import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import MainContent from '../../components/MainContent';
 import LogoutModal from '../../components/LogoutModal';
+import NavItem from '../../components/SidebarNavItem';
+import Divider from '../../components/SidebarDivider';
+import Heading from '../../components/SidebarHeading';
 
 function Administrador() {
     // Estado para controlar qué componente se muestra
@@ -47,7 +50,7 @@ function Administrador() {
 
     // Estado para controlar si el sidebar está abierto o cerrado
     const [sidebarToggled, setSidebarToggled] = useState(false);
-    
+
     // Función para cambiar el estado del sidebar
     const toggleSidebar = () => {
         setSidebarToggled(!sidebarToggled);
@@ -60,9 +63,16 @@ function Administrador() {
                     sidebarToggled={sidebarToggled}
                     cambiarVista={cambiarVista}
                     obtenerClaseActive={obtenerClaseActive}
-                />
+                >
+                    <div>
+                        <Divider />
+                        <Heading text="Gestión de usuarios" />
+                        <NavItem icon="fa-address-card" label="Colaboradores" isActive={obtenerClaseActive('colaboradores') === 'active'} onClick={() => cambiarVista('colaboradores')} />
+                        <NavItem icon="fa-address-card" label="Pacientes" isActive={obtenerClaseActive('pacientes') === 'active'} onClick={() => cambiarVista('pacientes')} />
+                    </div>
+                </Sidebar>
                 <div id="content-wrapper" className="d-flex flex-column">
-                    <Topbar toggleSidebar={toggleSidebar}/>
+                    <Topbar toggleSidebar={toggleSidebar} userName="Brandon Sanderson" userImage="img/profile.svg"/>
                     <MainContent contenido={contenido} />
                 </div>
             </div>
