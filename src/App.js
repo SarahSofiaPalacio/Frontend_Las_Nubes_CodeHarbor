@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Administrador from './components/Administrador/Administrador';
+import Administrador from './views/Administrador/Administrador';
 
 function App() {
   // Estado para controlar qué componente se muestra

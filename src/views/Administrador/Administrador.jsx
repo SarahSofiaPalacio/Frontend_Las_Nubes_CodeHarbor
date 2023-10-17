@@ -7,7 +7,6 @@ import Informes from './Informes';
 function Administrador() {
     // Estado para controlar qué componente se muestra
     const [vistaActiva, setVistaActiva] = useState('inicio');
-
     // Función para cambiar la vista
     const cambiarVista = (nuevaVista) => {
         setVistaActiva(nuevaVista);
@@ -37,11 +36,9 @@ function Administrador() {
     };
 
     const [sidebarToggled, setSidebarToggled] = useState(false);
-    
-    const toggleSidebar = () => {
+        const toggleSidebar = () => {
         setSidebarToggled(!sidebarToggled);
     }
-
 
     return (
         <div id="page-top">

@@ -5,14 +5,13 @@ import $ from 'jquery';
 import 'datatables.net-bs4';
 
 function Colaboradores() {
-  useEffect(() => {
-    // Inicializa DataTables
-    if ($.fn.dataTable.isDataTable('#dataTable')) {
-      $('#dataTable').DataTable().destroy();
-    }
-
-    $('#dataTable').DataTable();
-  }, []);
+  const columns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Especialidad', 'Telefono', 'Más'];
+  const data = [
+    {
+      id: 1,
+      values: ['1004755763', 'Johan Fernando', 'Acuña Pérez', 'Médico', 'Medicina general', '3106355956']
+    },
+  ];
 
   const [isEditing, setIsEditing] = useState(false);
   function toggleEdit() {
@@ -23,13 +22,21 @@ function Colaboradores() {
     setIsEditing(!isEditing);
   }
 
+  useEffect(() => {
+    // Inicializa DataTables
+    if ($.fn.dataTable.isDataTable('#dataTable')) {
+      $('#dataTable').DataTable().destroy();
+    }
+
+    $('#dataTable').DataTable();
+  }, []);
+
   return (
     <div>
       {/* Información */}
       <div class="d-sm-flex align-items-center justify-content-between mb-3">
         <h1 class="h3 mb-0 text-gray-800">Gestión de colaboradores</h1>
       </div>
-
       <div class="d-sm-flex align-items-center justify-content-between mb-3">
         <h1 class="h6 mb-0 text-gray-800">Información personal de los colaboradores del centro médico</h1>
         <a href="/#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#addModal"><i
@@ -46,29 +53,26 @@ function Colaboradores() {
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th>Identificación</th>
-                  <th>Nombres</th>
-                  <th>Apellidos</th>
-                  <th>Jerarquia</th>
-                  <th>Especialidad</th>
-                  <th>Telefono</th>
-                  <th>Más</th>
+                  {columns.map(column => <th key={column}>{column}</th>)}
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1004755763</td>
-                  <td>Johan Fernando</td>
-                  <td>Acuña Pérez</td>
-                  <td>Médico</td>
-                  <td>Medicina general</td>
-                  <td>3106355956</td>
-                  <td class="d-flex justify-content-center align-items-center">
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal">
-                      <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                  </td>
-                </tr>
+                {data.map(row => (
+                  <tr key={row.id}>
+                    {row.values.map((value, index) => (
+                      <td key={index}>{value}</td>
+                    ))}
+                    <td className="d-flex justify-content-center align-items-center">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        data-toggle="modal"
+                        data-target="#editModal">
+                        <i className="fas fa-ellipsis-h"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
