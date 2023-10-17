@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Inicio() {
+function Home() {
   return (
     <div className="row justify-content-center align-items-center" style={{height: '80vh'}}>
       <div className="col-12 text-center">
@@ -10,4 +10,4 @@ function Inicio() {
   );
 }
 
-export default Inicio;
+export default Home;

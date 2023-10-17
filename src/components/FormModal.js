@@ -1,6 +1,6 @@
 import React from "react";
 
-function ModalForm(props) {
+function FormModal(props) {
     return (
       <div className="modal fade" id={props.modalId} tabIndex="-1" role="dialog" aria-labelledby={`${props.modalId}Label`} aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -23,4 +23,4 @@ function ModalForm(props) {
     );
   }
   
-  export default ModalForm;
+  export default FormModal;
