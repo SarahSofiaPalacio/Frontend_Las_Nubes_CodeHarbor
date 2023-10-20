@@ -1,6 +1,6 @@
 import React from "react";
 
-function Header({ title, subTitle, labelButton }) {
+function Header({ title, subTitle }) {
     return (
         <div className="d-flex flex-column mb-3">
             <h1 className="h3 mb-0 text-gray-800">{title}</h1>

@@ -2130,6 +2130,13 @@ textarea.form-control {
   box-shadow: 0 0 0 0.2rem rgba(28, 200, 138, 0.25);
 }
 
+.error-message {
+  color: #e74a3b;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
 .invalid-feedback {
   display: none;
   width: 100%;
