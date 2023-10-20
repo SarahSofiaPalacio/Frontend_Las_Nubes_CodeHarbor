@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import $ from 'jquery';
 import 'datatables.net-bs4';
 
-function Table({ label, columns, data }) {
+function Table({ label, columns, data, children }) {
   // Efecto para inicializar DataTables
   useEffect(() => {
     if ($.fn.dataTable.isDataTable('#dataTable')) {
@@ -30,26 +30,7 @@ function Table({ label, columns, data }) {
               </tr>
             </thead>
             <tbody>
-              {data.map((colaborador) => (
-                <tr key={colaborador.numeroDocumento}>
-                  <td>{colaborador.numeroDocumento}</td>
-                  <td>{colaborador.nombres}</td>
-                  <td>{colaborador.apellidos}</td>
-                  <td>{colaborador.jerarquia}</td>
-                  <td>{colaborador.especialidad}</td>
-                  <td>{colaborador.telefono}</td>
-                  <td className="d-flex justify-content-center align-items-center">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      data-toggle="modal"
-                      data-target={`#editModal-${colaborador.numeroDocumento}`}
-                      aria-label="Más opciones">
-                      <i className="fas fa-ellipsis-h"></i>
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {children}
             </tbody>
           </table>
         </div>
