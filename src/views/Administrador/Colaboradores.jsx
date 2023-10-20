@@ -52,6 +52,11 @@ function Colaboradores() {
     }
   };
 
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setFormErrors(initialFormErrors);
+  };
+
   const openAddModal = () => {
     setIsAddModalOpen(true);
   };
@@ -61,13 +66,10 @@ function Colaboradores() {
     resetForm();
   };
 
-  const resetForm = () => {
-    setFormData(initialFormData);
-    setFormErrors(initialFormErrors);
-  };
-
   const openEditModal = (colaborador) => {
     setSelectedColaborador(colaborador);
+    setFormData(colaborador);
+    //setFormErrors(initialFormErrors);
     setIsEditModalOpen(true);
   };
 
@@ -77,6 +79,7 @@ function Colaboradores() {
     } else {
       setIsEditModalOpen(false);
       setSelectedColaborador(null);
+      resetForm();
     }
   };
 
@@ -89,21 +92,28 @@ function Colaboradores() {
     setIsEditModalOpen(false);
     setIsConfirmationModalOpen(false);
     setSelectedColaborador(null);
+    resetForm();
   };
 
   const handleFormChange = (e) => {
-    const { id, value } = e.target;
+    const { field, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [id]: value,
+      [field]: value,
     }));
   };
 
   const handleInputChange = (field, value) => {
-    setSelectedColaborador(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
+    if (isEditing) {
+      setSelectedColaborador(prevState => ({
+        ...prevState,
+        [field]: value,
+      }));
+      setFormData(prevData => ({
+        ...prevData,
+        [field]: value,
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -168,18 +178,19 @@ function Colaboradores() {
     }
   }
 
-  function toggleEdit() {
-    if (isEditing) {
-      if (validateForm()) {
-        console.log('Datos editados');
-        setIsEditing(false);
-      } else {
-        console.log('Datos inválidos');
-      }
+  const startEditing = () => {
+    setIsEditing(true);
+  };
+
+  const saveChanges = () => {
+    if (validateForm()) {
+      console.log('Datos editados');
+      // Aquí, puedes hacer una llamada a la API para actualizar los datos del colaborador...
+      setIsEditing(false);
     } else {
-      setIsEditing(true);
+      console.log('Datos inválidos');
     }
-  }
+  };
 
   return (
     <div>
@@ -242,7 +253,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormInput
               label="Nombres"
@@ -261,7 +271,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormInput
               label="Fecha de Nacimiento"
@@ -281,7 +290,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormSelect
               label="Sexo"
@@ -301,7 +309,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormInput
               label="Teléfono"
@@ -320,7 +327,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormInput
               label="Salario"
@@ -340,7 +346,6 @@ function Colaboradores() {
               onChange={handleFormChange}
             />
           </div>
-
           <div className="form-row">
             <FormInput
               label="Fecha de ingreso"
@@ -367,12 +372,15 @@ function Colaboradores() {
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         title="Más información del colaborador"
+
         footerButtons={
           <>
             <button type="button" className="btn btn-secondary" onClick={closeEditModal}>Cerrar</button>
-            <button type="button" className="btn btn-primary" onClick={toggleEdit}>
-              {isEditing ? "Guardar" : "Editar"}
-            </button>
+            {isEditing ? (
+              <button type="button" className="btn btn-success" onClick={saveChanges}>Guardar</button>
+            ) : (
+              <button type="button" className="btn btn-primary" onClick={startEditing}>Editar</button>
+            )}
           </>
         }
       >
@@ -384,56 +392,140 @@ function Colaboradores() {
                 id="tipoDocumento"
                 type="text"
                 options={['CC']}
-                value={selectedColaborador.tipoDocumento || 'CC'}
-
-                error={formErrors.fechaIngreso}
-                onChange={handleFormChange}
-                
-                onChange={(e) => handleInputChange('tipoDocumento', e.target.value)}
+                value={formData.tipoDocumento}
+                error={formErrors.tipoDocumento}
                 isEditing={isEditing}
+                onChange={(e) => handleInputChange('tipoDocumento', e.target.value)}
               />
               <FormInput
                 label="Número de documento"
                 id="numeroDocumento"
                 type="number"
-                value={selectedColaborador.numeroDocumento}
-
-                error={formErrors.fechaIngreso}
-                onChange={handleFormChange}
-
-                onChange={(e) => handleInputChange('numeroDocumento', e.target.value)}
+                value={formData.numeroDocumento}
+                error={formErrors.numeroDocumento}
                 isEditing={isEditing}
+                onChange={(e) => handleInputChange('numeroDocumento', e.target.value)}
               />
             </div>
-
             <div className="form-row">
-              <FormInput label="Nombres" id="nombres" type="text" value={selectedColaborador.nombres} isEditing={isEditing} onChange={(e) => handleInputChange('nombres', e.target.value)} />
-              <FormInput label="Apellidos" id="apellidos" type="text" value={selectedColaborador.apellidos} isEditing={isEditing} onChange={(e) => handleInputChange('apellidos', e.target.value)} />
+              <FormInput
+                label="Nombres"
+                id="nombres"
+                type="text"
+                value={formData.nombres}
+                error={formErrors.nombres}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('nombres', e.target.value)}
+              />
+              <FormInput
+                label="Apellidos"
+                id="apellidos"
+                type="text"
+                value={formData.apellidos}
+                error={formErrors.apellidos}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('apellidos', e.target.value)}
+              />
             </div>
-
             <div className="form-row">
-              <FormInput label="Fecha de Nacimiento" id="fechaNacimiento" type="date" value={selectedColaborador.fechaNacimiento} isEditing={isEditing} onChange={(e) => handleInputChange('fechaNacimiento', e.target.value)} />
-              <FormSelect label="Estado Civil" id="estadoCivil" options={['Seleccione...', 'Soltero', 'Casado']} value={selectedColaborador.estadoCivil} isEditing={isEditing} onChange={(e) => handleInputChange('estadoCivil', e.target.value)} />
+              <FormInput
+                label="Fecha de Nacimiento"
+                id="fechaNacimiento"
+                type="date"
+                value={formData.fechaNacimiento}
+                error={formErrors.fechaNacimiento}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('fechaNacimiento', e.target.value)}
+              />
+              <FormSelect
+                label="Estado Civil"
+                id="estadoCivil"
+                options={['Seleccione...', 'Soltero', 'Casado']}
+                value={formData.estadoCivil}
+                error={formErrors.estadoCivil}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('estadoCivil', e.target.value)}
+              />
             </div>
-
             <div className="form-row">
-              <FormSelect label="Sexo" id="sexo" options={['Seleccione...', 'Masculino', 'Femenino']} value={selectedColaborador.sexo} isEditing={isEditing} onChange={(e) => handleInputChange('sexo', e.target.value)} />
-              <FormInput label="Dirección" id="direccion" value={selectedColaborador.direccion} isEditing={isEditing} onChange={(e) => handleInputChange('direccion', e.target.value)} />
+              <FormSelect
+                label="Sexo"
+                id="sexo"
+                options={['Seleccione...', 'Masculino', 'Femenino']}
+                value={formData.sexo}
+                error={formErrors.sexo}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('sexo', e.target.value)}
+              />
+              <FormInput
+                label="Dirección"
+                id="direccion"
+                type="text"
+                value={formData.direccion}
+                error={formErrors.direccion}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('direccion', e.target.value)}
+              />
             </div>
-
             <div className="form-row">
-              <FormInput label="Teléfono" id="telefono" type="number" value={selectedColaborador.telefono} isEditing={isEditing} onChange={(e) => handleInputChange('telefono', e.target.value)} />
-              <FormInput label="Correo Electrónico" id="correo" type="email" value={selectedColaborador.correo} isEditing={isEditing} onChange={(e) => handleInputChange('correo', e.target.value)} />
+              <FormInput
+                label="Teléfono"
+                id="telefono"
+                type="number"
+                value={formData.telefono}
+                error={formErrors.telefono}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('telefono', e.target.value)}
+              />
+              <FormInput
+                label="Correo Electrónico"
+                id="correo"
+                type="email"
+                value={formData.correo}
+                error={formErrors.correo}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('correo', e.target.value)}
+              />
             </div>
-
             <div className="form-row">
-              <FormInput label="Salario" id="salario" type="number" value={selectedColaborador.salario} isEditing={isEditing} onChange={(e) => handleInputChange('salario', e.target.value)} />
-              <FormSelect label="Jerarquía" id="jerarquia" options={['Seleccione...', 'Médico', 'Enfermero']} value={selectedColaborador.jerarquia} isEditing={isEditing} onChange={(e) => handleInputChange('jerarquia', e.target.value)} />
+              <FormInput
+                label="Salario"
+                id="salario"
+                type="number"
+                value={formData.salario}
+                error={formErrors.salario}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('salario', e.target.value)}
+              />
+              <FormSelect
+                label="Jerarquía"
+                id="jerarquia"
+                options={['Seleccione...', 'Médico', 'Enfermero']}
+                value={formData.jerarquia}
+                error={formErrors.jerarquia}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('jerarquia', e.target.value)}
+              />
             </div>
-
             <div className="form-row">
-              <FormInput label="Fecha de ingreso" id="fechaIngreso" type="date" value={selectedColaborador.fechaIngreso} isEditing={isEditing} onChange={(e) => handleInputChange('fechaIngreso', e.target.value)} />
-              <FormSelect label="Especialidad" id="especialidad" options={['Seleccione...', '1', '2']} value={selectedColaborador.especialidad} isEditing={isEditing} onChange={(e) => handleInputChange('especialidad', e.target.value)} />
+              <FormInput
+                label="Fecha de ingreso"
+                id="fechaIngreso"
+                type="date"
+                value={formData.fechaIngreso}
+                error={formErrors.fechaIngreso}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('fechaIngreso', e.target.value)}
+              />
+              <FormSelect
+                label="Especialidad"
+                id="especialidad"
+                options={['Seleccione...', '1', '2']}
+                value={formData.especialidad}
+                error={formErrors.especialidad}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('especialidad', e.target.value)}
+              />
             </div>
           </form>
         ) : (
