@@ -14,7 +14,7 @@ function FormSelect({ id, label, type, options, value, error, onChange, isEditin
             >
                 {options.map(option => <option key={option} value={option}>{option}</option>)}
             </select>
-            {error && <div class="error-message">{error}</div>}
+            {error && <div className="error-message">{error}</div>}
         </div>
     );
 }

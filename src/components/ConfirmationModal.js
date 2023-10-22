@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ConfirmationModal = ({ isOpen, onCancel, onDiscard, message }) => {
+const ConfirmationModal = ({ isOpen, onCancel, title, message, footerButtons }) => {
     
     if (!isOpen) return null;
 
@@ -12,13 +12,13 @@ const ConfirmationModal = ({ isOpen, onCancel, onDiscard, message }) => {
             id="confirmationModal"
             tabIndex="-1"
             role="dialog"
-            aria-labelledby="confimationModalLabel"
+            aria-labelledby="confirmationModalLabel"
             aria-hidden="true"
         >
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Confirmación</h5>
+                        <h5 className="modal-title">{title}</h5>
                         <button
                             type="button"
                             className="close"
@@ -33,23 +33,7 @@ const ConfirmationModal = ({ isOpen, onCancel, onDiscard, message }) => {
                         <p>{message}</p>
                     </div>
                     <div className="modal-footer">
-                        <button
-                            type="button"
-                            className="btn btn-secondary"
-                            aria-label="Cancel"
-                            onClick={onCancel}
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-danger"
-                            data-dismiss="modal"
-                            aria-label="Discard"
-                            onClick={onDiscard}
-                        >
-                            Descartar Cambios
-                        </button>
+                        {footerButtons}
                     </div>
                 </div>
             </div>
@@ -60,8 +44,9 @@ const ConfirmationModal = ({ isOpen, onCancel, onDiscard, message }) => {
 ConfirmationModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
-    onDiscard: PropTypes.func.isRequired,
-    message: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    footerButtons: PropTypes.object.isRequired,
 };
 
 ConfirmationModal.defaultProps = {

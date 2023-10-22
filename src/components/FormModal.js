@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const FormModal = ({ isOpen, onClose, title, children, footerButtons, modalId }) => {
+const FormModal = ({ isOpen, onClose, title, children, footerButtons }) => {
 
   useEffect(() => {
     if (isOpen) {
@@ -21,10 +21,10 @@ const FormModal = ({ isOpen, onClose, title, children, footerButtons, modalId })
     <div
       className="modal show"
       style={{ display: "block" }}
-      id={modalId}
+      id="FormModal"
       tabIndex="-1"
       role="dialog"
-      aria-labelledby={`${modalId}Label`}
+      aria-labelledby="FormModalLabel"
       aria-hidden="true"
       //onClick={onClose} // Opcional: cerrar el modal al hacer clic fuera del contenido
     >
@@ -35,7 +35,7 @@ const FormModal = ({ isOpen, onClose, title, children, footerButtons, modalId })
       >
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title" id={`${modalId}Label`}>{title}</h5>
+            <h5 className="modal-title">{title}</h5>
             <button
               type="button"
               className="close"

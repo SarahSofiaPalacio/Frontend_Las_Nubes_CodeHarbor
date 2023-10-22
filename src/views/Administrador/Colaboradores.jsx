@@ -33,6 +33,7 @@ function Colaboradores() {
   const [colaboradores, setColaboradores] = useState([]);
   const [selectedColaborador, setSelectedColaborador] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddedModalOpen, setIsAddedModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -69,7 +70,6 @@ function Colaboradores() {
   const openEditModal = (colaborador) => {
     setSelectedColaborador(colaborador);
     setFormData(colaborador);
-    //setFormErrors(initialFormErrors);
     setIsEditModalOpen(true);
   };
 
@@ -81,6 +81,11 @@ function Colaboradores() {
       setSelectedColaborador(null);
       resetForm();
     }
+  };
+
+  const closeAddedModal = () => {
+    setIsAddedModalOpen(false);
+    setIsAddModalOpen(false);
   };
 
   const closeConfirmModal = () => {
@@ -95,8 +100,7 @@ function Colaboradores() {
     resetForm();
   };
 
-  const handleFormChange = (e) => {
-    const { field, value } = e.target;
+  const handleFormChange = (field, value) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       [field]: value,
@@ -118,16 +122,17 @@ function Colaboradores() {
 
   const validateForm = () => {
     const errors = {};
+  
     if (!formData.tipoDocumento) {
       errors.tipoDocumento = "Tipo de documento es requerido";
     }
-    if (!formData.numeroDocumento.trim()) {
+    if (!formData.numeroDocumento || !formData.numeroDocumento.trim()) {
       errors.numeroDocumento = "Número de documento es requerido";
     }
-    if (!formData.nombres.trim()) {
+    if (!formData.nombres || !formData.nombres.trim()) {
       errors.nombres = "Nombres son requeridos";
     }
-    if (!formData.apellidos.trim()) {
+    if (!formData.apellidos || !formData.apellidos.trim()) {
       errors.apellidos = "Apellidos son requeridos";
     }
     if (!formData.fechaNacimiento) {
@@ -139,15 +144,15 @@ function Colaboradores() {
     if (!formData.sexo || formData.sexo === "Seleccione...") {
       errors.sexo = "Sexo es requerido";
     }
-    if (!formData.direccion.trim()) {
+    if (!formData.direccion || !formData.direccion.trim()) {
       errors.direccion = "Dirección es requerida";
     }
-    if (!formData.telefono.trim()) {
+    if (!formData.telefono || !formData.telefono.trim()) {
       errors.telefono = "Teléfono es requerido";
     } else if (!/^\d+$/.test(formData.telefono)) {
       errors.telefono = "Teléfono inválido, solo se permiten números";
     }
-    if (!formData.correo.trim()) {
+    if (!formData.correo || !formData.correo.trim()) {
       errors.correo = "Correo Electrónico es requerido";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
       errors.correo = "Correo Electrónico inválido";
@@ -166,17 +171,19 @@ function Colaboradores() {
     if (!formData.especialidad || formData.especialidad === "Seleccione...") {
       errors.especialidad = "Especialidad es requerida";
     }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+  
+    setFormErrors(errors); // Asumiendo que tienes una función para actualizar el estado de los errores.
+    return Object.keys(errors).length === 0; // Retorna true si no hay errores.
   };
-
-  function toggleAdd() {
+  
+  const toggleAdd = () => {
     if (validateForm()) {
       console.log('Datos añadidos');
+      setIsAddedModalOpen(true);
     } else {
       console.log('Datos inválidos');
     }
-  }
+  };
 
   const startEditing = () => {
     setIsEditing(true);
@@ -239,10 +246,10 @@ function Colaboradores() {
               label="Tipo de documento"
               id="tipoDocumento"
               type="text"
-              options={['CC']}
+              options={['Seleccione...','CC']}
               value={formData.tipoDocumento}
               error={formErrors.tipoDocumento}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('tipoDocumento', e.target.value)}
             />
             <FormInput
               label="Número de documento"
@@ -250,7 +257,7 @@ function Colaboradores() {
               type="number"
               value={formData.numeroDocumento}
               error={formErrors.numeroDocumento}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('numeroDocumento', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -260,7 +267,7 @@ function Colaboradores() {
               type="text"
               value={formData.nombres}
               error={formErrors.nombres}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('nombres', e.target.value)}
             />
             <FormInput
               label="Apellidos"
@@ -268,7 +275,7 @@ function Colaboradores() {
               type="text"
               value={formData.apellidos}
               error={formErrors.apellidos}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('apellidos', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -278,7 +285,7 @@ function Colaboradores() {
               type="date"
               value={formData.fechaNacimiento}
               error={formErrors.fechaNacimiento}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('fechaNacimiento', e.target.value)}
             />
             <FormSelect
               label="Estado Civil"
@@ -287,7 +294,7 @@ function Colaboradores() {
               options={['Seleccione...', 'Soltero', 'Casado']}
               value={formData.estadoCivil}
               error={formErrors.estadoCivil}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('estadoCivil', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -298,7 +305,7 @@ function Colaboradores() {
               options={['Seleccione...', 'Masculino', 'Femenino']}
               value={formData.sexo}
               error={formErrors.sexo}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('sexo', e.target.value)}
             />
             <FormInput
               label="Dirección"
@@ -306,7 +313,7 @@ function Colaboradores() {
               type="text"
               value={formData.direccion}
               error={formErrors.direccion}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('direccion', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -316,7 +323,7 @@ function Colaboradores() {
               type="number"
               value={formData.telefono}
               error={formErrors.telefono}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('telefono', e.target.value)}
             />
             <FormInput
               label="Correo Electrónico"
@@ -324,7 +331,7 @@ function Colaboradores() {
               type="email"
               value={formData.correo}
               error={formErrors.correo}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('correo', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -334,7 +341,7 @@ function Colaboradores() {
               type="number"
               value={formData.salario}
               error={formErrors.salario}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('salario', e.target.value)}
             />
             <FormSelect
               label="Jerarquía"
@@ -343,7 +350,7 @@ function Colaboradores() {
               options={['Seleccione...', 'Médico', 'Enfermero']}
               value={formData.jerarquia}
               error={formErrors.jerarquia}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('jerarquia', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -353,7 +360,7 @@ function Colaboradores() {
               type="date"
               value={formData.fechaIngreso}
               error={formErrors.fechaIngreso}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('fechaIngreso', e.target.value)}
             />
             <FormSelect
               label="Especialidad"
@@ -362,17 +369,28 @@ function Colaboradores() {
               options={['Seleccione...', '1', '2']}
               value={formData.especialidad}
               error={formErrors.especialidad}
-              onChange={handleFormChange}
+              onChange={(e) => handleFormChange('especialidad', e.target.value)}
             />
           </div>
         </form>
       </FormModal>
 
+      <ConfirmationModal
+        isOpen={isAddedModalOpen}
+        onCancel={closeAddedModal}
+        title="Colaborador añadido"
+        message="El colaborador ha sido añadido correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-primary" onClick={closeAddedModal}>Aceptar</button>
+          </>
+        }
+      />
+
       <FormModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         title="Más información del colaborador"
-
         footerButtons={
           <>
             <button type="button" className="btn btn-secondary" onClick={closeEditModal}>Cerrar</button>
@@ -391,7 +409,7 @@ function Colaboradores() {
                 label="Tipo de documento"
                 id="tipoDocumento"
                 type="text"
-                options={['CC']}
+                options={['Seleccione...','CC']}
                 value={formData.tipoDocumento}
                 error={formErrors.tipoDocumento}
                 isEditing={isEditing}
@@ -537,10 +555,15 @@ function Colaboradores() {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         onCancel={closeConfirmModal}
-        onDiscard={closeConfirmModalDiscard}
+        title="Descartar cambios"
         message="Tiene cambios sin guardar. ¿Está seguro de que quiere descartarlos?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={closeConfirmModal}>Cancelar</button>
+            <button type="button" className="btn btn-danger" onClick={closeConfirmModalDiscard}>Descartar cambios</button>
+          </>
+        }
       />
-
     </div>
   );
 }
