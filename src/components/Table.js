@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import $ from 'jquery';
 import 'datatables.net-bs4';
+import LoadingSpinner from './LoadingSpinner';
 
 function Table({ label, columns, data, children }) {
+  const [loading, setLoading] = useState(true); // Nuevo estado para controlar la carga
+ 
   // Efecto para inicializar DataTables
   useEffect(() => {
     if ($.fn.dataTable.isDataTable('#dataTable')) {
@@ -13,8 +16,13 @@ function Table({ label, columns, data, children }) {
     if (data && data.length > 0) {
       // Inicializa DataTables nuevamente
       $('#dataTable').DataTable();
+      setLoading(false); // Establece la carga en false cuando los datos están listos
     }
-  }, [data]); // Dependencia del efecto en 'data'
+  }, [data, loading]); // Dependencia del efecto en 'data'
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="card shadow mb-4">

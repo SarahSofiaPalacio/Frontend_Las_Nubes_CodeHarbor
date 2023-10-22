@@ -27,6 +27,14 @@ const initialFormData = {
   especialidad: '',
 }
 
+const initialFormSelectData = {
+  tipoDocumento: ['Seleccione...','CC','TI','RC','CE','CI','DNI','NIT','PASAPORTE'],
+  estadoCivil: ['Seleccione...','Soltero','Casado','Viudo','Divorciado','Unión libre'],
+  sexo: ['Seleccione...','Masculino','Femenino','No binario'],
+  jerarquia: ['Seleccione...','Médico','Enfermero','Secretario','Regente de farmacia'],
+  especialidad: ['Seleccione...','1','2','3','4','5'],
+}
+
 const initialFormErrors = {};
 
 function Colaboradores() {
@@ -172,13 +180,14 @@ function Colaboradores() {
       errors.especialidad = "Especialidad es requerida";
     }
   
-    setFormErrors(errors); // Asumiendo que tienes una función para actualizar el estado de los errores.
-    return Object.keys(errors).length === 0; // Retorna true si no hay errores.
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0; 
   };
   
   const toggleAdd = () => {
     if (validateForm()) {
       console.log('Datos añadidos');
+      // Aquí, puedes hacer una llamada a la API para añadir un nuevo colaborador...
       setIsAddedModalOpen(true);
     } else {
       console.log('Datos inválidos');
@@ -246,7 +255,7 @@ function Colaboradores() {
               label="Tipo de documento"
               id="tipoDocumento"
               type="text"
-              options={['Seleccione...','CC']}
+              options={initialFormSelectData.tipoDocumento}
               value={formData.tipoDocumento}
               error={formErrors.tipoDocumento}
               onChange={(e) => handleFormChange('tipoDocumento', e.target.value)}
@@ -291,7 +300,7 @@ function Colaboradores() {
               label="Estado Civil"
               id="estadoCivil"
               type="text"
-              options={['Seleccione...', 'Soltero', 'Casado']}
+              options={initialFormSelectData.estadoCivil}
               value={formData.estadoCivil}
               error={formErrors.estadoCivil}
               onChange={(e) => handleFormChange('estadoCivil', e.target.value)}
@@ -302,7 +311,7 @@ function Colaboradores() {
               label="Sexo"
               id="sexo"
               type="text"
-              options={['Seleccione...', 'Masculino', 'Femenino']}
+              options={initialFormSelectData.sexo}
               value={formData.sexo}
               error={formErrors.sexo}
               onChange={(e) => handleFormChange('sexo', e.target.value)}
@@ -347,7 +356,7 @@ function Colaboradores() {
               label="Jerarquía"
               id="jerarquia"
               type="text"
-              options={['Seleccione...', 'Médico', 'Enfermero']}
+              options={initialFormSelectData.jerarquia}
               value={formData.jerarquia}
               error={formErrors.jerarquia}
               onChange={(e) => handleFormChange('jerarquia', e.target.value)}
@@ -366,7 +375,7 @@ function Colaboradores() {
               label="Especialidad"
               id="especialidad"
               type="text"
-              options={['Seleccione...', '1', '2']}
+              options={initialFormSelectData.especialidad}
               value={formData.especialidad}
               error={formErrors.especialidad}
               onChange={(e) => handleFormChange('especialidad', e.target.value)}
@@ -409,7 +418,7 @@ function Colaboradores() {
                 label="Tipo de documento"
                 id="tipoDocumento"
                 type="text"
-                options={['Seleccione...','CC']}
+                options={initialFormSelectData.tipoDocumento}
                 value={formData.tipoDocumento}
                 error={formErrors.tipoDocumento}
                 isEditing={isEditing}
@@ -458,7 +467,7 @@ function Colaboradores() {
               <FormSelect
                 label="Estado Civil"
                 id="estadoCivil"
-                options={['Seleccione...', 'Soltero', 'Casado']}
+                options={initialFormSelectData.estadoCivil}
                 value={formData.estadoCivil}
                 error={formErrors.estadoCivil}
                 isEditing={isEditing}
@@ -469,7 +478,7 @@ function Colaboradores() {
               <FormSelect
                 label="Sexo"
                 id="sexo"
-                options={['Seleccione...', 'Masculino', 'Femenino']}
+                options={initialFormSelectData.sexo}
                 value={formData.sexo}
                 error={formErrors.sexo}
                 isEditing={isEditing}
@@ -518,7 +527,7 @@ function Colaboradores() {
               <FormSelect
                 label="Jerarquía"
                 id="jerarquia"
-                options={['Seleccione...', 'Médico', 'Enfermero']}
+                options={initialFormSelectData.jerarquia}
                 value={formData.jerarquia}
                 error={formErrors.jerarquia}
                 isEditing={isEditing}
@@ -538,7 +547,7 @@ function Colaboradores() {
               <FormSelect
                 label="Especialidad"
                 id="especialidad"
-                options={['Seleccione...', '1', '2']}
+                options={initialFormSelectData.especialidad}
                 value={formData.especialidad}
                 error={formErrors.especialidad}
                 isEditing={isEditing}
