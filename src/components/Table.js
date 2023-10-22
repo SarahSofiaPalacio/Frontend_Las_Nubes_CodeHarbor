@@ -4,21 +4,18 @@ import 'datatables.net-bs4';
 import LoadingSpinner from './LoadingSpinner';
 
 function Table({ label, columns, data, children }) {
-  const [loading, setLoading] = useState(true); // Nuevo estado para controlar la carga
+  const [loading, setLoading] = useState(true);
  
-  // Efecto para inicializar DataTables
   useEffect(() => {
     if ($.fn.dataTable.isDataTable('#dataTable')) {
       $('#dataTable').DataTable().destroy();
     }
-
     // Verifica si hay datos disponibles para evitar inicializar la tabla vacía
     if (data && data.length > 0) {
-      // Inicializa DataTables nuevamente
       $('#dataTable').DataTable();
-      setLoading(false); // Establece la carga en false cuando los datos están listos
+      setLoading(false);
     }
-  }, [data, loading]); // Dependencia del efecto en 'data'
+  }, [data, loading]);
 
   if (loading) {
     return <LoadingSpinner />;

@@ -18,3 +18,31 @@ export const getColaboradores = () => {
       .then(response => response.data);
   }
 };
+
+export const addColaborador = (colaboradorData) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Simula una respuesta exitosa; podrías querer actualizar tu mock data aquí.
+        resolve({ message: 'Colaborador añadido exitosamente' });
+      }, 1000);
+    });
+  } else {
+    return axios.post(`${URL_BASE}/colaboradores`, colaboradorData)
+      .then(response => response.data);
+  }
+};
+
+export const updateColaborador = (numeroDocumento, colaboradorData) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Simula una respuesta exitosa; podrías querer actualizar tu mock data aquí.
+        resolve({ message: 'Colaborador actualizado exitosamente' });
+      }, 1000);
+    });
+  } else {
+    return axios.put(`${URL_BASE}/colaboradores/${numeroDocumento}`, colaboradorData)
+      .then(response => response.data);
+  }
+};
