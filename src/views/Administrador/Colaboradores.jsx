@@ -28,11 +28,11 @@ const initialFormData = {
 }
 
 const initialFormSelectData = {
-  tipoDocumento: ['Seleccione...','CC','TI','RC','CE','CI','DNI','NIT','PASAPORTE'],
-  estadoCivil: ['Seleccione...','Soltero','Casado','Viudo','Divorciado','Unión libre'],
-  sexo: ['Seleccione...','Masculino','Femenino','No binario'],
-  jerarquia: ['Seleccione...','Médico','Enfermero','Secretario','Regente de farmacia'],
-  especialidad: ['Seleccione...','1','2','3','4','5'],
+  tipoDocumento: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
+  estadoCivil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
+  sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
+  jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia'],
+  especialidad: ['Seleccione...', '1', '2', '3', '4', '5'],
 }
 
 const initialFormErrors = {};
@@ -43,12 +43,15 @@ function Colaboradores() {
 
   const [formData, setFormData] = useState({ initialFormData });
   const [formErrors, setFormErrors] = useState({ initialFormErrors });
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
+  const [isErrorAddModalOpen, setIsErrorAddModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isConfimEditModalOpen, setIsConfimEditModalOpen] = useState(false);
+  const [isErrorEditModalOpen, setIsErrorEditModalOpen] = useState(false);
   const [isDiscardEditModalOpen, setIsDiscardEditModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -72,7 +75,7 @@ function Colaboradores() {
 
   const validateForm = () => {
     const errors = {};
-  
+
     if (!formData.tipoDocumento) {
       errors.tipoDocumento = "Tipo de documento es requerido";
     }
@@ -121,9 +124,9 @@ function Colaboradores() {
     if (!formData.especialidad || formData.especialidad === "Seleccione...") {
       errors.especialidad = "Especialidad es requerida";
     }
-  
+
     setFormErrors(errors);
-    return Object.keys(errors).length === 0; 
+    return Object.keys(errors).length === 0;
   };
 
   // Resetear formulario
@@ -147,6 +150,13 @@ function Colaboradores() {
   const closeConfirmAddModal = () => {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
+    setIsLoading(false);
+    loadColaboradores();
+  };
+
+  const closeErrorAddModal = () => {
+    setIsErrorAddModalOpen(false);
+    setIsLoading(false);
   };
 
   const handleAddFormChange = (name, value) => {
@@ -159,14 +169,15 @@ function Colaboradores() {
   const saveColaborator = () => {
     if (validateForm()) {
       console.log('Datos válidos, añadiendo colaborador...');
+      setIsLoading(true);
       addColaborador(formData)
         .then(response => {
           console.log(response.message);
           setIsConfimAddModalOpen(true);
-          loadColaboradores();
         })
         .catch(error => {
           console.error('Hubo un error al añadir el colaborador:', error);
+          setIsErrorAddModalOpen(true);
         });
     } else {
       console.log('Datos inválidos');
@@ -198,6 +209,14 @@ function Colaboradores() {
   const closeConfirmEditModal = () => {
     setIsConfimEditModalOpen(false);
     setIsEditModalOpen(false);
+    setIsEditing(false);
+    setIsLoading(false);
+    loadColaboradores();
+  };
+
+  const closeErrorEditModal = () => {
+    setIsErrorEditModalOpen(false);
+    setIsLoading(false);
   };
 
   const closeDiscardEditModal = () => {
@@ -224,19 +243,19 @@ function Colaboradores() {
       }));
     }
   };
-  
+
   const saveChanges = () => {
     if (validateForm()) {
       console.log('Datos válidos, editando colaborador...');
+      setIsLoading(true);
       updateColaborador(selectedColaborador.numeroDocumento, formData)
         .then(response => {
           console.log(response.message);
-          setIsEditing(false);
-          // Aquí puedes también manejar la actualización de la lista de colaboradores o cualquier otro estado si es necesario.
+          setIsConfimEditModalOpen(true);
         })
         .catch(error => {
           console.error('Hubo un error al actualizar el colaborador:', error);
-          // Aquí puedes manejar errores, mostrar un mensaje de error en la UI, etc.
+          setIsErrorEditModalOpen(true);
         });
     } else {
       console.log('Datos inválidos');
@@ -279,8 +298,20 @@ function Colaboradores() {
         title="Añadir colaborador"
         footerButtons={
           <>
-            <button type="button" className="btn btn-secondary" onClick={closeAddModal}>Cancelar</button>
-            <button type="button" className="btn btn-primary" onClick={saveColaborator}>Añadir</button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={closeAddModal}
+              disabled={isLoading}
+            > Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={saveColaborator}
+              disabled={isLoading}
+            > {isLoading ? "Cargando..." : "Añadir"}
+            </button>
           </>
         }
       >
@@ -426,7 +457,19 @@ function Colaboradores() {
         message="El colaborador ha sido añadido correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-primary" onClick={closeConfirmAddModal}>Aceptar</button>
+            <button type="button" className="btn btn-success" onClick={closeConfirmAddModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isErrorAddModalOpen}
+        onCancel={closeErrorAddModal}
+        title="Error al añadir colaborador"
+        message="El colaborador no pudo ser añadido debido a un error inesperado, por favor intente de nuevo."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-danger" onClick={closeErrorAddModal}>Aceptar</button>
           </>
         }
       />
@@ -437,11 +480,29 @@ function Colaboradores() {
         title="Más información del colaborador"
         footerButtons={
           <>
-            <button type="button" className="btn btn-secondary" onClick={closeEditModal}>Cerrar</button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={closeEditModal}
+              disabled={isLoading}
+            > Cerrar
+            </button>
             {isEditing ? (
-              <button type="button" className="btn btn-success" onClick={saveChanges}>Guardar</button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={saveChanges}
+                disabled={isLoading}
+              > {isLoading ? "Cargando..." : "Guardar"}
+              </button>
             ) : (
-              <button type="button" className="btn btn-primary" onClick={startEditing}>Editar</button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={startEditing}
+                disabled={isLoading}
+              > Editar
+              </button>
             )}
           </>
         }
@@ -603,7 +664,19 @@ function Colaboradores() {
         message="El colaborador ha sido actualizado correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-primary" onClick={closeConfirmEditModal}>Aceptar</button>
+            <button type="button" className="btn btn-success" onClick={closeConfirmEditModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isErrorEditModalOpen}
+        onCancel={closeErrorEditModal}
+        title="Error al actualizar colaborador"
+        message="El colaborador no pudo ser actualizado debido a un error inesperado, por favor intente de nuevo."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-danger" onClick={closeErrorEditModal}>Aceptar</button>
           </>
         }
       />
@@ -616,10 +689,11 @@ function Colaboradores() {
         footerButtons={
           <>
             <button type="button" className="btn btn-secondary" onClick={closeDiscardEditModal}>Cancelar</button>
-            <button type="button" className="btn btn-danger" onClick={closeAndDiscardEditModal}>Descartar cambios</button>
+            <button type="button" className="btn btn-warning" onClick={closeAndDiscardEditModal}>Descartar cambios</button>
           </>
         }
       />
+
     </div>
   );
 }
