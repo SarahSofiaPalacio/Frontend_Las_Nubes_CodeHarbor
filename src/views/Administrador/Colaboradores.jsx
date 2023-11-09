@@ -50,10 +50,11 @@ function Colaboradores() {
   const [isErrorAddModalOpen, setIsErrorAddModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isConfimEditModalOpen, setIsConfimEditModalOpen] = useState(false);
   const [isErrorEditModalOpen, setIsErrorEditModalOpen] = useState(false);
   const [isDiscardEditModalOpen, setIsDiscardEditModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteEditModalOpen, setIsDeleteEditModalOpen] = useState(false);
 
 
   // Cargar lista de colaboradores al cargar la página
@@ -147,18 +148,6 @@ function Colaboradores() {
     resetForm();
   };
 
-  const closeConfirmAddModal = () => {
-    setIsConfimAddModalOpen(false);
-    setIsAddModalOpen(false);
-    setIsLoading(false);
-    loadColaboradores();
-  };
-
-  const closeErrorAddModal = () => {
-    setIsErrorAddModalOpen(false);
-    setIsLoading(false);
-  };
-
   const handleAddFormChange = (name, value) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -184,6 +173,19 @@ function Colaboradores() {
     }
   };
 
+  const closeConfirmAddModal = () => {
+    setIsConfimAddModalOpen(false);
+    setIsAddModalOpen(false);
+    setIsLoading(false);
+    loadColaboradores();
+  };
+
+  const closeErrorAddModal = () => {
+    setIsErrorAddModalOpen(false);
+    setIsLoading(false);
+  };
+
+
   // Funciones para el modal editar
 
   const openEditModal = (colaborador) => {
@@ -204,31 +206,6 @@ function Colaboradores() {
 
   const startEditing = () => {
     setIsEditing(true);
-  };
-
-  const closeConfirmEditModal = () => {
-    setIsConfimEditModalOpen(false);
-    setIsEditModalOpen(false);
-    setIsEditing(false);
-    setIsLoading(false);
-    loadColaboradores();
-  };
-
-  const closeErrorEditModal = () => {
-    setIsErrorEditModalOpen(false);
-    setIsLoading(false);
-  };
-
-  const closeDiscardEditModal = () => {
-    setIsDiscardEditModalOpen(false);
-  };
-
-  const closeAndDiscardEditModal = () => {
-    setIsEditing(false);
-    setIsEditModalOpen(false);
-    setIsDiscardEditModalOpen(false);
-    setSelectedColaborador(null);
-    resetForm();
   };
 
   const handleEditFormChange = (name, value) => {
@@ -262,6 +239,60 @@ function Colaboradores() {
     }
   };
 
+  const closeConfirmEditModal = () => {
+    setIsConfimEditModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedColaborador(null);
+    resetForm();
+    setIsEditing(false);
+    setIsLoading(false);
+    loadColaboradores();
+  };
+
+  const closeErrorEditModal = () => {
+    setIsErrorEditModalOpen(false);
+    setIsLoading(false);
+  };
+
+  const closeDiscardEditModal = () => {
+    setIsDiscardEditModalOpen(false);
+  };
+
+  const closeAndDiscardEditModal = () => {
+    setIsDiscardEditModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedColaborador(null);
+    resetForm();
+    setIsEditing(false);
+  };
+
+  // Abre sin mas
+  const deleteColaborator = () => {
+    setIsDeleteEditModalOpen(true);
+  };
+
+  // Cierra sin mas
+  const closeDeleteEditModal = () => {
+    setIsDeleteEditModalOpen(false);
+  };
+
+  // Funcion de borrado
+
+  // Se llama en funcion de borrado bien
+  const closeAndDeleteEditModal = () => {
+    setIsDeleteEditModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedColaborador(null);
+    resetForm();
+    setIsEditing(false);
+    setIsLoading(false);
+    loadColaboradores();
+  }
+
+  // Se llama en funcion de borrado error
+
+  
+
   return (
     <div>
       <Header title="Gestión de colaboradores" />
@@ -294,23 +325,22 @@ function Colaboradores() {
 
       <FormModal
         isOpen={isAddModalOpen}
-        onClose={closeAddModal}
         title="Añadir colaborador"
         footerButtons={
           <>
             <button
               type="button"
-              className="btn btn-secondary"
-              onClick={closeAddModal}
-              disabled={isLoading}
-            > Cancelar
-            </button>
-            <button
-              type="button"
-              className="btn btn-success"
+              className="btn btn-success w-25"
               onClick={saveColaborator}
               disabled={isLoading}
             > {isLoading ? "Cargando..." : "Añadir"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary w-25"
+              onClick={closeAddModal}
+              disabled={isLoading}
+            > Cancelar
             </button>
           </>
         }
@@ -452,58 +482,64 @@ function Colaboradores() {
 
       <ConfirmationModal
         isOpen={isConfimAddModalOpen}
-        onCancel={closeConfirmAddModal}
         title="Colaborador añadido"
         message="El colaborador ha sido añadido correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-success" onClick={closeConfirmAddModal}>Aceptar</button>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
           </>
         }
       />
 
       <ConfirmationModal
         isOpen={isErrorAddModalOpen}
-        onCancel={closeErrorAddModal}
         title="Error al añadir colaborador"
         message="El colaborador no pudo ser añadido debido a un error inesperado, por favor intente de nuevo."
         footerButtons={
           <>
-            <button type="button" className="btn btn-danger" onClick={closeErrorAddModal}>Aceptar</button>
+            <button type="button" className="btn btn-danger w-25" onClick={closeErrorAddModal}>Aceptar</button>
           </>
         }
       />
 
       <FormModal
         isOpen={isEditModalOpen}
-        onClose={closeEditModal}
         title="Más información del colaborador"
         footerButtons={
-          <>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={closeEditModal}
-              disabled={isLoading}
-            > Cerrar
-            </button>
+          <>            
             {isEditing ? (
               <button
                 type="button"
-                className="btn btn-success"
+                className="btn btn-success w-25"
                 onClick={saveChanges}
                 disabled={isLoading}
               > {isLoading ? "Cargando..." : "Guardar"}
               </button>
             ) : (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={startEditing}
-                disabled={isLoading}
-              > Editar
+              <>
+                <button
+                  type="button"
+                  className="btn btn-primary w-25"
+                  onClick={startEditing}
+                  disabled={isLoading}
+                > Editar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger w-25"
+                  onClick={deleteColaborator}
+                  disabled={isLoading}
+                > Eliminar
               </button>
+              </>
             )}
+            <button
+              type="button"
+              className="btn btn-secondary w-25"
+              onClick={closeEditModal}
+              disabled={isLoading}
+            > Cancelar
+            </button>
           </>
         }
       >
@@ -659,37 +695,46 @@ function Colaboradores() {
 
       <ConfirmationModal
         isOpen={isConfimEditModalOpen}
-        onCancel={closeConfirmEditModal}
         title="Colaborador actualizado"
         message="El colaborador ha sido actualizado correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-success" onClick={closeConfirmEditModal}>Aceptar</button>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmEditModal}>Aceptar</button>
           </>
         }
       />
 
       <ConfirmationModal
         isOpen={isErrorEditModalOpen}
-        onCancel={closeErrorEditModal}
         title="Error al actualizar colaborador"
         message="El colaborador no pudo ser actualizado debido a un error inesperado, por favor intente de nuevo."
         footerButtons={
           <>
-            <button type="button" className="btn btn-danger" onClick={closeErrorEditModal}>Aceptar</button>
+            <button type="button" className="btn btn-danger w-25" onClick={closeErrorEditModal}>Aceptar</button>
           </>
         }
       />
 
       <ConfirmationModal
         isOpen={isDiscardEditModalOpen}
-        onCancel={closeDiscardEditModal}
         title="Descartar cambios"
         message="Tiene cambios sin guardar. ¿Está seguro de que quiere descartarlos?"
         footerButtons={
           <>
-            <button type="button" className="btn btn-secondary" onClick={closeDiscardEditModal}>Cancelar</button>
-            <button type="button" className="btn btn-warning" onClick={closeAndDiscardEditModal}>Descartar cambios</button>
+            <button type="button" className="btn btn-warning w-25" onClick={closeAndDiscardEditModal}>Descartar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardEditModal}>Cancelar</button>            
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteEditModalOpen}
+        title="Eliminar colaborador"
+        message="Esta acción no se puede deshacer. ¿Está seguro de que quiere eliminar este colaborador?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-danger w-25" onClick={closeAndDeleteEditModal}>Eliminar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDeleteEditModal}>Cancelar</button>
           </>
         }
       />

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const FormModal = ({ isOpen, onClose, title, children, footerButtons }) => {
+const FormModal = ({ isOpen, title, children, footerButtons }) => {
 
   useEffect(() => {
     if (isOpen) {
@@ -26,7 +26,6 @@ const FormModal = ({ isOpen, onClose, title, children, footerButtons }) => {
       role="dialog"
       aria-labelledby="FormModalLabel"
       aria-hidden="true"
-      //onClick={onClose} // Opcional: cerrar el modal al hacer clic fuera del contenido
     >
       <div
         className="modal-dialog modal-dialog-centered modal-lg"
@@ -34,22 +33,13 @@ const FormModal = ({ isOpen, onClose, title, children, footerButtons }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
-          <div className="modal-header">
+          <div className="modal-header justify-content-center">
             <h5 className="modal-title">{title}</h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-              onClick={onClose}
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
           </div>
           <div className="modal-body">
             {children}
           </div>
-          <div className="modal-footer">
+          <div className="modal-footer justify-content-center">
             {footerButtons}
           </div>
         </div>

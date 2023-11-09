@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ConfirmationModal = ({ isOpen, onCancel, title, message, footerButtons }) => {
+const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
     
     if (!isOpen) return null;
 
@@ -17,22 +17,13 @@ const ConfirmationModal = ({ isOpen, onCancel, title, message, footerButtons }) 
         >
             <div className="modal-dialog">
                 <div className="modal-content">
-                    <div className="modal-header">
+                    <div className="modal-header justify-content-center">
                         <h5 className="modal-title">{title}</h5>
-                        <button
-                            type="button"
-                            className="close"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                            onClick={onCancel}
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
                     <div className="modal-body">
                         <p>{message}</p>
                     </div>
-                    <div className="modal-footer">
+                    <div className="modal-footer justify-content-center">
                         {footerButtons}
                     </div>
                 </div>
@@ -43,7 +34,6 @@ const ConfirmationModal = ({ isOpen, onCancel, title, message, footerButtons }) 
 
 ConfirmationModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
-    onCancel: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     footerButtons: PropTypes.object.isRequired,
