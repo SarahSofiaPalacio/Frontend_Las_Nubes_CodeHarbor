@@ -46,3 +46,17 @@ export const updateColaborador = (numeroDocumento, colaboradorData) => {
       .then(response => response.data);
   }
 };
+
+export const deleteColaborador = (numeroDocumento) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Simula una respuesta exitosa; podrías querer actualizar tu mock data aquí.
+        resolve({ message: 'Colaborador eliminado exitosamente' });
+      }, 1000);
+    });
+  } else {
+    return axios.delete(`${URL_BASE}/colaboradores/${numeroDocumento}`)
+      .then(response => response.data);
+  }
+}
