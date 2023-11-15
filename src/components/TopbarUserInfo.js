@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ConfirmationModal from './ConfirmationModal';
 
-function TopbarUserInfo({ userName, userImage }) {
+function TopbarUserInfo({ userName, userImage, cambiarVista}) {
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -35,7 +35,7 @@ function TopbarUserInfo({ userName, userImage }) {
             </a>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
-                <a className="dropdown-item" href="/#">
+                <a className="dropdown-item" href="/#" onClick={() => cambiarVista('perfil')} >
                     <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Mi perfil
                 </a>

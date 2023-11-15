@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import Perfil from './Perfil';
 import Colaboradores from './Colaboradores';
 import Pacientes from './Pacientes';
 import Informes from './Informes';
@@ -13,21 +14,16 @@ import Divider from '../../components/SidebarDivider';
 import Heading from '../../components/SidebarHeading';
 
 function Administrador() {
-    // Estado para controlar qué componente se muestra
     const [vistaActiva, setVistaActiva] = useState('home');
+    const [sidebarToggled, setSidebarToggled] = useState(false);
 
-    // Función para cambiar la vista
-    const cambiarVista = (nuevaVista) => {
-        setVistaActiva(nuevaVista);
-    };
-
-    // Variable para almacenar el contenido de la vista activa
     let contenido;
-
-    // Switch para determinar qué vista se muestra
     switch (vistaActiva) {
         case 'home':
             contenido = <Home />;
+            break;
+        case 'perfil':
+            contenido = <Perfil />;
             break;
         case 'colaboradores':
             contenido = <Colaboradores />;
@@ -42,15 +38,14 @@ function Administrador() {
             contenido = <Home />;
     }
 
-    // Esta función determina si una vista es la activa y retorna 'active' si lo es
-    const obtenerClaseActive = (vista) => {
+    const cambiarVista = (nuevaVista) => {
+        setVistaActiva(nuevaVista);
+    };
+
+    const obtenerVistaActiva = (vista) => {
         return vistaActiva === vista ? 'active' : '';
     };
 
-    // Estado para controlar si el sidebar está abierto o cerrado
-    const [sidebarToggled, setSidebarToggled] = useState(false);
-
-    // Función para cambiar el estado del sidebar
     const toggleSidebar = () => {
         setSidebarToggled(!sidebarToggled);
     }
@@ -61,21 +56,26 @@ function Administrador() {
                 <Sidebar
                     sidebarToggled={sidebarToggled}
                     cambiarVista={cambiarVista}
-                    obtenerClaseActive={obtenerClaseActive}
+                    obtenerVistaActiva={obtenerVistaActiva}
                 >
                     <div>
                         <Divider />
                         <Heading text="Gestión de usuarios" />
-                        <NavItem icon="fa-address-card" label="Colaboradores" isActive={obtenerClaseActive('colaboradores') === 'active'} onClick={() => cambiarVista('colaboradores')} />
-                        <NavItem icon="fa-address-card" label="Pacientes" isActive={obtenerClaseActive('pacientes') === 'active'} onClick={() => cambiarVista('pacientes')} />
+                        <NavItem icon="fa-address-card" label="Colaboradores" isActive={obtenerVistaActiva('colaboradores') === 'active'} onClick={() => cambiarVista('colaboradores')} />
+                        <NavItem icon="fa-address-card" label="Pacientes" isActive={obtenerVistaActiva('pacientes') === 'active'} onClick={() => cambiarVista('pacientes')} />
                         <Divider />
                         <Heading text="Informes" />
-                        <NavItem icon="fa-address-card" label="Generar informes" isActive={obtenerClaseActive('informes') === 'active'} onClick={() => cambiarVista('informes')} />
+                        <NavItem icon="fa-address-card" label="Generar informes" isActive={obtenerVistaActiva('informes') === 'active'} onClick={() => cambiarVista('informes')} />
                         <Divider />
                     </div>
                 </Sidebar>
                 <div id="content-wrapper" className="d-flex flex-column">
-                    <Topbar toggleSidebar={toggleSidebar} userName="Brandon Sanderson" userImage="img/profile.svg" />
+                    <Topbar
+                        toggleSidebar={toggleSidebar}
+                        userName="Brandon Sanderson"
+                        userImage="img/profile.svg"
+                        cambiarVista={cambiarVista}
+                    />
                     <MainContent contenido={contenido} />
                 </div>
             </div>

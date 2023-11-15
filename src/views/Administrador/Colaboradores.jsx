@@ -224,19 +224,23 @@ function Colaboradores() {
 
   const handleEditFormChange = (name, value) => {
     if (isEditing) {
-      setSelectedUser(prevState => ({
-        ...prevState,
-        [name]: value,
-        especialidad: name === 'jerarquia' && value !== 'Médico' ? 'Seleccione...' : prevState.especialidad,
-      }));
-      setFormData(prevData => ({
-        ...prevData,
-        [name]: value,
-        especialidad: name === 'jerarquia' && value !== 'Médico' ? 'Seleccione...' : prevData.especialidad,
-      }));
+      setSelectedUser(prevState => {
+        const newValues = { ...prevState, [name]: value };
+        if (name === 'jerarquia' && value !== 'Médico') {
+          newValues.especialidad = 'Seleccione...';
+        }
+        return newValues;
+      });
+      setFormData(prevData => {
+        const newValues = { ...prevData, [name]: value };
+        if (name === 'jerarquia' && value !== 'Médico') {
+          newValues.especialidad = 'Seleccione...';
+        }
+        return newValues;
+      });
     }
   };
-
+  
   const updateUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, editando colaborador...');
@@ -698,6 +702,7 @@ function Colaboradores() {
               <FormSelect
                 label="Especialidad"
                 id="especialidad"
+                type="text"
                 options={initialFormSelectData.especialidad}
                 value={formData.especialidad}
                 error={formErrors.especialidad}
