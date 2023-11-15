@@ -6,33 +6,33 @@ import FormModal from '../../components/FormModal';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
-import { getColaboradores, addColaborador, updateColaborador, deleteColaborador } from '../../services/api';
+import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
-const columns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Especialidad', 'Telefono', 'Más'];
+const columns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 const initialFormData = {
-  tipoDocumento: '',
-  numeroDocumento: '',
-  nombres: '',
-  apellidos: '',
-  fechaNacimiento: '',
-  estadoCivil: '',
+  tipo_identificacion: '',
+  numero_identificacion: '',
+  nombre: '',
+  apellido: '',
+  fecha_nacimiento: '',
+  estado_civil: '',
   sexo: '',
   direccion: '',
   telefono: '',
-  correo: '',
+  correo_electronico: '',
   salario: '',
   jerarquia: '',
-  fechaIngreso: '',
+  fecha_ingreso: '',
   especialidad: '',
 }
 
 const initialFormSelectData = {
-  tipoDocumento: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
-  estadoCivil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
+  tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
+  estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
   sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
   jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia'],
-  especialidad: ['Seleccione...', '1', '2', '3', '4', '5'],
+  especialidad: ['Seleccione...', 'Medicina general', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría', 'Medicina interna', 'Medicina nuclear', 'Medicina del deporte', 'Medicina del trabajo', 'Medicina de urgencias', 'Medicina de rehabilitación', 'Medicina de familia', 'Medicina de cuidados intensivos', 'Medicina de emergencias', 'Medicina de cuidados paliativos', 'Medicina de la educación física y el deporte', 'Medicina de la obesidad', 'Medicina de la adolescencia', 'Medicina de la aviación', 'Medicina de la reproducción', 'Medicina de la sexualidad humana', 'Medicina de urgencias y emergencias', 'Medicina de urgencias y emergencias pediátricas', 'Medicina de urgencias y emergencias geriátricas'],
 }
 
 const initialFormErrors = {};
@@ -78,31 +78,31 @@ function Colaboradores() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.numeroDocumento || !formData.numeroDocumento.trim()) {
-      errors.numeroDocumento = "Número de documento es requerido";
-    } else if (!/^\d{7,10}$/.test(formData.numeroDocumento.trim())) {
-      errors.numeroDocumento = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
+    if (!formData.tipo_identificacion || !formData.tipo_identificacion.trim()) {
+      errors.tipo_identificacion = "Tipo de documento es requerido";
     }
-    if (!formData.numeroDocumento || !formData.numeroDocumento.trim()) {
-      errors.numeroDocumento = "Número de documento es requerido";
+    if (!formData.numero_identificacion || !formData.numero_identificacion.trim()) {
+      errors.numero_identificacion = "Número de documento es requerido";
+    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion.trim())) {
+      errors.numero_identificacion = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
     }
-    if (!formData.nombres || !formData.nombres.trim()) {
-      errors.nombres = "Nombres son requeridos";
-    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombres.trim())) {
-      errors.nombres = "Nombres inválidos, solo se permiten letras y espacios";
+    if (!formData.nombre || !formData.nombre.trim()) {
+      errors.nombre = "Nombres son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre.trim())) {
+      errors.nombre = "Nombres inválidos, solo se permiten letras y espacios";
     }
-    if (!formData.apellidos || !formData.apellidos.trim()) {
-      errors.apellidos = "Apellidos son requeridos";
-    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellidos.trim())) {
-      errors.apellidos = "Apellidos inválidos, solo se permiten letras y espacios";
+    if (!formData.apellido || !formData.apellido.trim()) {
+      errors.apellido = "Apellidos son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellido.trim())) {
+      errors.apellido = "Apellidos inválidos, solo se permiten letras y espacios";
     }
-    if (!formData.fechaNacimiento) {
-      errors.fechaNacimiento = "Fecha de nacimiento es requerida";
-    } else if (new Date(formData.fechaNacimiento) > new Date()) {
-      errors.fechaNacimiento = "Fecha de nacimiento no puede ser una fecha futura";
+    if (!formData.fecha_nacimiento) {
+      errors.fecha_nacimiento = "Fecha de nacimiento es requerida";
+    } else if (new Date(formData.fecha_nacimiento) > new Date()) {
+      errors.fecha_nacimiento = "Fecha de nacimiento no puede ser una fecha futura";
     }
-    if (!formData.estadoCivil || formData.estadoCivil === "Seleccione...") {
-      errors.estadoCivil = "Estado civil es requerido";
+    if (!formData.estado_civil || formData.estado_civil === "Seleccione...") {
+      errors.estado_civil = "Estado civil es requerido";
     }
     if (!formData.sexo || formData.sexo === "Seleccione...") {
       errors.sexo = "Sexo es requerido";
@@ -115,10 +115,10 @@ function Colaboradores() {
     } else if (!/^\d{7,10}$/.test(formData.telefono.trim())) {
       errors.telefono = "Teléfono inválido, debe tener entre 7 y 10 dígitos";
     }
-    if (!formData.correo || !formData.correo.trim()) {
-      errors.correo = "Correo Electrónico es requerido";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.correo.trim())) {
-      errors.correo = "Correo Electrónico inválido";
+    if (!formData.correo_electronico || !formData.correo_electronico.trim()) {
+      errors.correo_electronico = "Correo Electrónico es requerido";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.correo_electronico.trim())) {
+      errors.correo_electronico = "Correo Electrónico inválido";
     }
     if (!formData.salario || !formData.salario.trim()) {
       errors.salario = "Salario es requerido";
@@ -128,10 +128,10 @@ function Colaboradores() {
     if (!formData.jerarquia || formData.jerarquia === "Seleccione...") {
       errors.jerarquia = "Jerarquía es requerida";
     }
-    if (!formData.fechaIngreso) {
-      errors.fechaIngreso = "Fecha de ingreso es requerida";
-    } else if (new Date(formData.fechaIngreso) > new Date()) {
-      errors.fechaIngreso = "Fecha de ingreso no puede ser una fecha futura";
+    if (!formData.fecha_ingreso) {
+      errors.fecha_ingreso = "Fecha de ingreso es requerida";
+    } else if (new Date(formData.fecha_ingreso) > new Date()) {
+      errors.fecha_ingreso = "Fecha de ingreso no puede ser una fecha futura";
     }
     if (formData.jerarquia === 'Médico' && (!formData.especialidad || formData.especialidad === "Seleccione...")) {
       errors.especialidad = "Especialidad es requerida";
@@ -175,11 +175,11 @@ function Colaboradores() {
     });
   };
 
-  const addUser = () => {
+  const createUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, añadiendo colaborador...');
       setIsLoading(true);
-      addColaborador(formData)
+      createColaborador(formData)
         .then(response => {
           console.log(response.message);
           setIsConfimAddModalOpen(true);
@@ -242,7 +242,7 @@ function Colaboradores() {
       console.log('Datos válidos, editando colaborador...');
       setIsLoading(true);
       //setIsEditing(false);
-      updateColaborador(selectedUser.numeroDocumento, formData)
+      updateColaborador(selectedUser.numero_identificacion, formData)
         .then(response => {
           console.log(response.message);
           setIsConfimUpdateModalOpen(true);
@@ -290,7 +290,7 @@ function Colaboradores() {
     console.log('Eliminando colaborador...');
     setIsLoading(true);
     setIsDeleteModalOpen(false);
-    deleteColaborador(selectedUser.numeroDocumento, formData)
+    deleteColaborador(selectedUser.numero_identificacion, formData)
       .then(response => {
         console.log(response.message);
         setIsConfirmDeleteModalOpen(true);
@@ -321,12 +321,12 @@ function Colaboradores() {
 
       <Table label="Listado de colaboradores" columns={columns} data={user} loading={loading}>
         {user.map((colaborador) => (
-          <tr key={colaborador.numeroDocumento}>
-            <td>{colaborador.numeroDocumento}</td>
-            <td>{colaborador.nombres}</td>
-            <td>{colaborador.apellidos}</td>
+          <tr key={colaborador.numero_identificacion}>
+            <td>{colaborador.numero_identificacion}</td>
+            <td>{colaborador.nombre}</td>
+            <td>{colaborador.apellido}</td>
             <td>{colaborador.jerarquia}</td>
-            <td>{colaborador.especialidad}</td>
+            <td>{colaborador.fecha_nacimiento}</td>
             <td>{colaborador.telefono}</td>
             <td className="d-flex justify-content-center align-items-center">
               <button
@@ -360,7 +360,7 @@ function Colaboradores() {
             <button
               type="button"
               className="btn btn-success w-25"
-              onClick={addUser}
+              onClick={createUser}
               disabled={isLoading}
             > {isLoading ? "Cargando..." : "Añadir"}
             </button>
@@ -378,57 +378,57 @@ function Colaboradores() {
           <div className="form-row">
             <FormSelect
               label="Tipo de documento"
-              id="tipoDocumento"
+              id="tipo_identificacion"
               type="text"
-              options={initialFormSelectData.tipoDocumento}
-              value={formData.tipoDocumento}
-              error={formErrors.tipoDocumento}
-              onChange={(e) => handleAddFormChange('tipoDocumento', e.target.value)}
+              options={initialFormSelectData.tipo_identificacion}
+              value={formData.tipo_identificacion}
+              error={formErrors.tipo_identificacion}
+              onChange={(e) => handleAddFormChange('tipo_identificacion', e.target.value)}
             />
             <FormInput
               label="Número de documento"
-              id="numeroDocumento"
+              id="numero_identificacion"
               type="number"
-              value={formData.numeroDocumento}
-              error={formErrors.numeroDocumento}
-              onChange={(e) => handleAddFormChange('numeroDocumento', e.target.value)}
+              value={formData.numero_identificacion}
+              error={formErrors.numero_identificacion}
+              onChange={(e) => handleAddFormChange('numero_identificacion', e.target.value)}
             />
           </div>
           <div className="form-row">
             <FormInput
               label="Nombres"
-              id="nombres"
+              id="nombre"
               type="text"
-              value={formData.nombres}
-              error={formErrors.nombres}
-              onChange={(e) => handleAddFormChange('nombres', e.target.value)}
+              value={formData.nombre}
+              error={formErrors.nombre}
+              onChange={(e) => handleAddFormChange('nombre', e.target.value)}
             />
             <FormInput
               label="Apellidos"
-              id="apellidos"
+              id="apellido"
               type="text"
-              value={formData.apellidos}
-              error={formErrors.apellidos}
-              onChange={(e) => handleAddFormChange('apellidos', e.target.value)}
+              value={formData.apellido}
+              error={formErrors.apellido}
+              onChange={(e) => handleAddFormChange('apellido', e.target.value)}
             />
           </div>
           <div className="form-row">
             <FormInput
               label="Fecha de Nacimiento"
-              id="fechaNacimiento"
+              id="fecha_nacimiento"
               type="date"
-              value={formData.fechaNacimiento}
-              error={formErrors.fechaNacimiento}
-              onChange={(e) => handleAddFormChange('fechaNacimiento', e.target.value)}
+              value={formData.fecha_nacimiento}
+              error={formErrors.fecha_nacimiento}
+              onChange={(e) => handleAddFormChange('fecha_nacimiento', e.target.value)}
             />
             <FormSelect
               label="Estado Civil"
-              id="estadoCivil"
+              id="estado_civil"
               type="text"
-              options={initialFormSelectData.estadoCivil}
-              value={formData.estadoCivil}
-              error={formErrors.estadoCivil}
-              onChange={(e) => handleAddFormChange('estadoCivil', e.target.value)}
+              options={initialFormSelectData.estado_civil}
+              value={formData.estado_civil}
+              error={formErrors.estado_civil}
+              onChange={(e) => handleAddFormChange('estado_civil', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -461,11 +461,11 @@ function Colaboradores() {
             />
             <FormInput
               label="Correo Electrónico"
-              id="correo"
+              id="correo_electronico"
               type="email"
-              value={formData.correo}
-              error={formErrors.correo}
-              onChange={(e) => handleAddFormChange('correo', e.target.value)}
+              value={formData.correo_electronico}
+              error={formErrors.correo_electronico}
+              onChange={(e) => handleAddFormChange('correo_electronico', e.target.value)}
             />
           </div>
           <div className="form-row">
@@ -490,11 +490,11 @@ function Colaboradores() {
           <div className="form-row">
             <FormInput
               label="Fecha de ingreso"
-              id="fechaIngreso"
+              id="fecha_ingreso"
               type="date"
-              value={formData.fechaIngreso}
-              error={formErrors.fechaIngreso}
-              onChange={(e) => handleAddFormChange('fechaIngreso', e.target.value)}
+              value={formData.fecha_ingreso}
+              error={formErrors.fecha_ingreso}
+              onChange={(e) => handleAddFormChange('fecha_ingreso', e.target.value)}
             />
             <FormSelect
               label="Especialidad"
@@ -567,62 +567,62 @@ function Colaboradores() {
             <div className="form-row">
               <FormSelect
                 label="Tipo de documento"
-                id="tipoDocumento"
+                id="tipo_identificacion"
                 type="text"
-                options={initialFormSelectData.tipoDocumento}
-                value={formData.tipoDocumento}
-                error={formErrors.tipoDocumento}
+                options={initialFormSelectData.tipo_identificacion}
+                value={formData.tipo_identificacion}
+                error={formErrors.tipo_identificacion}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('tipoDocumento', e.target.value)}
+                onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
               />
               <FormInput
                 label="Número de documento"
-                id="numeroDocumento"
+                id="numero_identificacion"
                 type="number"
-                value={formData.numeroDocumento}
-                error={formErrors.numeroDocumento}
+                value={formData.numero_identificacion}
+                error={formErrors.numero_identificacion}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('numeroDocumento', e.target.value)}
+                onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
               />
             </div>
             <div className="form-row">
               <FormInput
                 label="Nombres"
-                id="nombres"
+                id="nombre"
                 type="text"
-                value={formData.nombres}
-                error={formErrors.nombres}
+                value={formData.nombre}
+                error={formErrors.nombre}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('nombres', e.target.value)}
+                onChange={(e) => handleEditFormChange('nombre', e.target.value)}
               />
               <FormInput
                 label="Apellidos"
-                id="apellidos"
+                id="apellido"
                 type="text"
-                value={formData.apellidos}
-                error={formErrors.apellidos}
+                value={formData.apellido}
+                error={formErrors.apellido}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('apellidos', e.target.value)}
+                onChange={(e) => handleEditFormChange('apellido', e.target.value)}
               />
             </div>
             <div className="form-row">
               <FormInput
                 label="Fecha de Nacimiento"
-                id="fechaNacimiento"
+                id="fecha_nacimiento"
                 type="date"
-                value={formData.fechaNacimiento}
-                error={formErrors.fechaNacimiento}
+                value={formData.fecha_nacimiento}
+                error={formErrors.fecha_nacimiento}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('fechaNacimiento', e.target.value)}
+                onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
               <FormSelect
                 label="Estado Civil"
-                id="estadoCivil"
-                options={initialFormSelectData.estadoCivil}
-                value={formData.estadoCivil}
-                error={formErrors.estadoCivil}
+                id="estado_civil"
+                options={initialFormSelectData.estado_civil}
+                value={formData.estado_civil}
+                error={formErrors.estado_civil}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('estadoCivil', e.target.value)}
+                onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
               />
             </div>
             <div className="form-row">
@@ -657,12 +657,12 @@ function Colaboradores() {
               />
               <FormInput
                 label="Correo Electrónico"
-                id="correo"
+                id="correo_electronico"
                 type="email"
-                value={formData.correo}
-                error={formErrors.correo}
+                value={formData.correo_electronico}
+                error={formErrors.correo_electronico}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('correo', e.target.value)}
+                onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
               />
             </div>
             <div className="form-row">
@@ -688,12 +688,12 @@ function Colaboradores() {
             <div className="form-row">
               <FormInput
                 label="Fecha de ingreso"
-                id="fechaIngreso"
+                id="fecha_ingreso"
                 type="date"
-                value={formData.fechaIngreso}
-                error={formErrors.fechaIngreso}
+                value={formData.fecha_ingreso}
+                error={formErrors.fecha_ingreso}
                 isEditing={isEditing}
-                onChange={(e) => handleEditFormChange('fechaIngreso', e.target.value)}
+                onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
               />
               <FormSelect
                 label="Especialidad"

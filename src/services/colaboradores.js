@@ -19,7 +19,7 @@ export const getColaboradores = () => {
   }
 };
 
-export const addColaborador = (colaboradorData) => {
+export const createColaborador = (colaboradorData) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {

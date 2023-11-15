@@ -1,4 +1,4 @@
-export const colaboradoresMock = [
+export const pacientesMock = [
   {
     tipo_identificacion: 'CC',
     numero_identificacion: '1004755763',
@@ -10,10 +10,6 @@ export const colaboradoresMock = [
     direccion: 'Casa 13',
     telefono: '3105433439',
     correo_electronico: 'johan.acuna@gmail.com',
-    salario: '100000000',
-    jerarquia: 'Médico',
-    fecha_ingreso: '2018-11-11',
-    especialidad: 'Medicina general'
   },
   {
     tipo_identificacion: 'CC',
@@ -26,10 +22,6 @@ export const colaboradoresMock = [
     direccion: 'Apartamento 204',
     telefono: '3201234567',
     correo_electronico: 'laura.vargas89@example.com',
-    salario: '75000000',
-    jerarquia: 'Enfermero',
-    fecha_ingreso: '2015-01-01',
-    especialidad: ''
   },
   {
     tipo_identificacion: 'CC',
@@ -42,10 +34,6 @@ export const colaboradoresMock = [
     direccion: 'Calle 45 #23-58',
     telefono: '3009876543',
     correo_electronico: 'carlos.mendoza@example.com',
-    salario: '120000000',
-    jerarquia: 'Enfermero',
-    fecha_ingreso: '2005-05-05',
-    especialidad: ''
   },
   {
     tipo_identificacion: 'CC',
@@ -58,10 +46,6 @@ export const colaboradoresMock = [
     direccion: 'Carrera 10 #34-12',
     telefono: '3151234567',
     correo_electronico: 'diana.rojas@example.com',
-    salario: '60000000',
-    jerarquia: 'Médico',
-    fecha_ingreso: '1999-02-02',
-    especialidad: 'Pediatría'
   },
   {
     tipo_identificacion: 'CC',
@@ -74,10 +58,6 @@ export const colaboradoresMock = [
     direccion: 'Calle 70 #14-05',
     telefono: '3124567890',
     correo_electronico: 'sergio.quintero@example.com',
-    salario: '85000000',
-    jerarquia: 'Médico',
-    fecha_ingreso: '2010-10-10',
-    especialidad: 'Ginecología'
   },
   {
     tipo_identificacion: 'CC',
@@ -90,10 +70,6 @@ export const colaboradoresMock = [
     direccion: 'Avenida 34 #15-87',
     telefono: '3178945612',
     correo_electronico: 'angela.fernandez@example.com',
-    salario: '65000000',
-    jerarquia: 'Regente de farmacia',
-    fecha_ingreso: '2016-03-03',
-    especialidad: ''
   },
   {
     tipo_identificacion: 'CC',
@@ -106,10 +82,6 @@ export const colaboradoresMock = [
     direccion: 'Carrera 85 #23-60',
     telefono: '3204567891',
     correo_electronico: 'luis.moreno@example.com',
-    salario: '90000000',
-    jerarquia: 'Médico',
-    fecha_ingreso: '2000-01-01',
-    especialidad: 'Pediatría'
   },
   {
     tipo_identificacion: 'CC',
@@ -122,9 +94,5 @@ export const colaboradoresMock = [
     direccion: 'Calle 98 #56-34',
     telefono: '3001234569',
     correo_electronico: 'patricia.lopez@example.com',
-    salario: '72000000',
-    jerarquia: 'Secretario',
-    fecha_ingreso: '2012-12-12',
-    especialidad: ''
   }
 ];

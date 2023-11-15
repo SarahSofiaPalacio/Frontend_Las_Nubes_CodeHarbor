@@ -69,6 +69,10 @@ function Administrador() {
                         <Heading text="Gestión de usuarios" />
                         <NavItem icon="fa-address-card" label="Colaboradores" isActive={obtenerClaseActive('colaboradores') === 'active'} onClick={() => cambiarVista('colaboradores')} />
                         <NavItem icon="fa-address-card" label="Pacientes" isActive={obtenerClaseActive('pacientes') === 'active'} onClick={() => cambiarVista('pacientes')} />
+                        <Divider />
+                        <Heading text="Informes" />
+                        <NavItem icon="fa-address-card" label="Generar informes" isActive={obtenerClaseActive('informes') === 'active'} onClick={() => cambiarVista('informes')} />
+                        <Divider />
                     </div>
                 </Sidebar>
                 <div id="content-wrapper" className="d-flex flex-column">

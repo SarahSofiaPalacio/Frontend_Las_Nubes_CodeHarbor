@@ -1,519 +1,657 @@
-import React, { useEffect } from 'react';
-import $ from 'jquery';
-import 'datatables.net-bs4';
+import React, { useState, useEffect } from 'react';
+import Header from '../../components/Header';
+import AddButtom from '../../components/AddButtom';
+import Table from '../../components/Table';
+import FormModal from '../../components/FormModal';
+import FormInput from '../../components/FormInput';
+import FormSelect from '../../components/FormSelect';
+import ConfirmationModal from '../../components/ConfirmationModal.js';
+import { getPacientes, createPaciente, updatePaciente, deletePaciente } from '../../services/pacientes.js';
+
+const columns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
+
+const initialFormData = {
+  tipo_identificacion: '',
+  numero_identificacion: '',
+  nombre: '',
+  apellido: '',
+  fecha_nacimiento: '',
+  estado_civil: '',
+  sexo: '',
+  direccion: '',
+  telefono: '',
+  correo_electronico: '',
+}
+
+const initialFormSelectData = {
+  tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
+  estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
+  sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario']
+}
+
+const initialFormErrors = {};
 
 function Pacientes() {
-  // Esto se ejecutará cuando el componente se monte y cada vez que se actualice.
-  useEffect(() => {
-    // Inicializa DataTables
-    if ($.fn.dataTable.isDataTable('#dataTable')) {
-      $('#dataTable').DataTable().destroy();
-    }
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    $('#dataTable').DataTable();
+  const [formData, setFormData] = useState({ initialFormData });
+  const [formErrors, setFormErrors] = useState({ initialFormErrors });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
+  const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+
+  // Cargar lista de user al cargar la página
+
+  const loadUser = async () => {
+    setLoading(true);
+    try {
+      const userData = await getPacientes();
+      setUser(userData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUser();
   }, []);
+
+  // Validar formulario de paciente
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.tipo_identificacion || !formData.tipo_identificacion.trim()) {
+      errors.tipo_identificacion = "Tipo de documento es requerido";
+    }
+    if (!formData.numero_identificacion || !formData.numero_identificacion.trim()) {
+      errors.numero_identificacion = "Número de documento es requerido";
+    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion.trim())) {
+      errors.numero_identificacion = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
+    }
+    if (!formData.nombre || !formData.nombre.trim()) {
+      errors.nombre = "Nombres son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre.trim())) {
+      errors.nombre = "Nombres inválidos, solo se permiten letras y espacios";
+    }
+    if (!formData.apellido || !formData.apellido.trim()) {
+      errors.apellido = "Apellidos son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellido.trim())) {
+      errors.apellido = "Apellidos inválidos, solo se permiten letras y espacios";
+    }
+    if (!formData.fecha_nacimiento) {
+      errors.fecha_nacimiento = "Fecha de nacimiento es requerida";
+    } else if (new Date(formData.fecha_nacimiento) > new Date()) {
+      errors.fecha_nacimiento = "Fecha de nacimiento no puede ser una fecha futura";
+    }
+    if (!formData.estado_civil || formData.estado_civil === "Seleccione...") {
+      errors.estado_civil = "Estado civil es requerido";
+    }
+    if (!formData.sexo || formData.sexo === "Seleccione...") {
+      errors.sexo = "Sexo es requerido";
+    }
+    if (!formData.direccion || !formData.direccion.trim()) {
+      errors.direccion = "Dirección es requerida";
+    }
+    if (!formData.telefono || !formData.telefono.trim()) {
+      errors.telefono = "Teléfono es requerido";
+    } else if (!/^\d{7,10}$/.test(formData.telefono.trim())) {
+      errors.telefono = "Teléfono inválido, debe tener entre 7 y 10 dígitos";
+    }
+    if (!formData.correo_electronico || !formData.correo_electronico.trim()) {
+      errors.correo_electronico = "Correo Electrónico es requerido";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.correo_electronico.trim())) {
+      errors.correo_electronico = "Correo Electrónico inválido";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Resetear formulario
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setFormErrors(initialFormErrors);
+  };
+
+  // Modal de error inesperado
+
+  const closeErrorModal = () => {
+    setIsErrorModalOpen(false);
+    setIsLoading(false);
+  };
+
+  // Funciones para el modal añadir
+
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+    resetForm();
+  };
+
+  const handleAddFormChange = (name, value) => {
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+      return updatedFormData;
+    });
+  };
+
+  const createUser = () => {
+    if (validateForm()) {
+      console.log('Datos válidos, añadiendo paciente...');
+      setIsLoading(true);
+      createPaciente(formData)
+        .then(response => {
+          console.log(response.message);
+          setIsConfimAddModalOpen(true);
+        })
+        .catch(error => {
+          console.error('Hubo un error al añadir el paciente:', error);
+          setIsErrorModalOpen(true);
+        });
+    } else {
+      console.log('Datos inválidos');
+    }
+  };
+
+  const closeConfirmAddModal = () => {
+    setIsConfimAddModalOpen(false);
+    setIsAddModalOpen(false);
+    setIsLoading(false);
+    loadUser();
+  };
+
+  // Funciones para el modal editar
+
+  const openEditModal = (paciente) => {
+    setSelectedUser(paciente);
+    setFormData(paciente);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    if (isEditing) {
+      setIsDiscardUpdateModalOpen(true);
+    } else {
+      setIsEditModalOpen(false);
+      setSelectedUser(null);
+      resetForm();
+    }
+  };
+
+  const startEditing = () => {
+    setIsEditing(true);
+  };
+
+  const handleEditFormChange = (name, value) => {
+    if (isEditing) {
+      setSelectedUser(prevState => ({
+        ...prevState,
+        [name]: value,
+      }));
+      setFormData(prevData => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const updateUser = () => {
+    if (validateForm()) {
+      console.log('Datos válidos, editando paciente...');
+      setIsLoading(true);
+      //setIsEditing(false);
+      updatePaciente(selectedUser.numero_identificacion, formData)
+        .then(response => {
+          console.log(response.message);
+          setIsConfimUpdateModalOpen(true);
+        })
+        .catch(error => {
+          console.error('Hubo un error al actualizar el paciente:', error);
+          setIsErrorModalOpen(true);
+        });
+    } else {
+      console.log('Datos inválidos');
+    }
+  };
+
+  const closeConfirmUpdateModal = () => {
+    setIsConfimUpdateModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    resetForm();
+    setIsEditing(false);
+    setIsLoading(false);
+    loadUser();
+  };
+
+  const closeDiscardUpdateModal = () => {
+    setIsDiscardUpdateModalOpen(false);
+  };
+
+  const closeAndDiscardUpdateModal = () => {
+    setIsDiscardUpdateModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    resetForm();
+    setIsEditing(false);
+  };
+
+  const OpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
+  const deleteUser = () => {
+    console.log('Eliminando paciente...');
+    setIsLoading(true);
+    setIsDeleteModalOpen(false);
+    deletePaciente(selectedUser.numero_identificacion, formData)
+      .then(response => {
+        console.log(response.message);
+        setIsConfirmDeleteModalOpen(true);
+      })
+      .catch(error => {
+        console.error('Hubo un error al actualizar el paciente:', error);
+        setIsErrorModalOpen(true);
+      });
+  };
+
+  const closeConfirmDeleteModal = () => {
+    setIsConfirmDeleteModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+    resetForm();
+    setIsEditing(false);
+    setIsLoading(false);
+    loadUser();
+  }
 
   return (
     <div>
-      <div class="d-sm-flex align-items-center justify-content-between mb-3">
-        <h1 class="h3 mb-0 text-gray-800">Gestión de pacientes</h1>
+      <Header title="Gestión de pacientes" />
+      <div className="d-sm-flex align-items-start justify-content-between mb-3">
+        <Header subTitle="Información personal de los pacientes del centro médico" />
+        <AddButtom label="Añadir paciente" onClick={openAddModal} />
       </div>
 
-      <div class="d-sm-flex align-items-center justify-content-between mb-3">
-        <h1 class="h6 mb-0 text-gray-800">Información personal de los pacientes del centro médico</h1>
-        <a href="/#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-          class="fas fa-plus mr-3 text-white-50"></i>Añadir paciente</a>
-      </div>
+      <Table label="Listado de pacientes" columns={columns} data={user} loading={loading}>
+        {user.map((paciente) => (
+          <tr key={paciente.numero_identificacion}>
+            <td>{paciente.numero_identificacion}</td>
+            <td>{paciente.nombre}</td>
+            <td>{paciente.apellido}</td>
+            <td>{paciente.estado_civil}</td>
+            <td>{paciente.fecha_nacimiento}</td>
+            <td>{paciente.telefono}</td>
+            <td className="d-flex justify-content-center align-items-center">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => openEditModal(paciente)}
+                aria-label="Más opciones">
+                <i className="fas fa-ellipsis-h"></i>
+              </button>
+            </td>
+          </tr>
+        ))}
+      </Table>
 
-      <div class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Listado de pacientes</h6>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Position</th>
-                  <th>Office</th>
-                  <th>Age</th>
-                  <th>Start date</th>
-                  <th>Salary</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th>Name</th>
-                  <th>Position</th>
-                  <th>Office</th>
-                  <th>Age</th>
-                  <th>Start date</th>
-                  <th>Salary</th>
-                </tr>
-              </tfoot>
-              <tbody>
-                <tr>
-                  <td>Tiger Nixon</td>
-                  <td>System Architect</td>
-                  <td>Edinburgh</td>
-                  <td>61</td>
-                  <td>2011/04/25</td>
-                  <td>$320,800</td>
-                </tr>
-                <tr>
-                  <td>Garrett Winters</td>
-                  <td>Accountant</td>
-                  <td>Tokyo</td>
-                  <td>63</td>
-                  <td>2011/07/25</td>
-                  <td>$170,750</td>
-                </tr>
-                <tr>
-                  <td>Ashton Cox</td>
-                  <td>Junior Technical Author</td>
-                  <td>San Francisco</td>
-                  <td>66</td>
-                  <td>2009/01/12</td>
-                  <td>$86,000</td>
-                </tr>
-                <tr>
-                  <td>Cedric Kelly</td>
-                  <td>Senior Javascript Developer</td>
-                  <td>Edinburgh</td>
-                  <td>22</td>
-                  <td>2012/03/29</td>
-                  <td>$433,060</td>
-                </tr>
-                <tr>
-                  <td>Airi Satou</td>
-                  <td>Accountant</td>
-                  <td>Tokyo</td>
-                  <td>33</td>
-                  <td>2008/11/28</td>
-                  <td>$162,700</td>
-                </tr>
-                <tr>
-                  <td>Brielle Williamson</td>
-                  <td>Integration Specialist</td>
-                  <td>New York</td>
-                  <td>61</td>
-                  <td>2012/12/02</td>
-                  <td>$372,000</td>
-                </tr>
-                <tr>
-                  <td>Herrod Chandler</td>
-                  <td>Sales Assistant</td>
-                  <td>San Francisco</td>
-                  <td>59</td>
-                  <td>2012/08/06</td>
-                  <td>$137,500</td>
-                </tr>
-                <tr>
-                  <td>Rhona Davidson</td>
-                  <td>Integration Specialist</td>
-                  <td>Tokyo</td>
-                  <td>55</td>
-                  <td>2010/10/14</td>
-                  <td>$327,900</td>
-                </tr>
-                <tr>
-                  <td>Colleen Hurst</td>
-                  <td>Javascript Developer</td>
-                  <td>San Francisco</td>
-                  <td>39</td>
-                  <td>2009/09/15</td>
-                  <td>$205,500</td>
-                </tr>
-                <tr>
-                  <td>Sonya Frost</td>
-                  <td>Software Engineer</td>
-                  <td>Edinburgh</td>
-                  <td>23</td>
-                  <td>2008/12/13</td>
-                  <td>$103,600</td>
-                </tr>
-                <tr>
-                  <td>Jena Gaines</td>
-                  <td>Office Manager</td>
-                  <td>London</td>
-                  <td>30</td>
-                  <td>2008/12/19</td>
-                  <td>$90,560</td>
-                </tr>
-                <tr>
-                  <td>Quinn Flynn</td>
-                  <td>Support Lead</td>
-                  <td>Edinburgh</td>
-                  <td>22</td>
-                  <td>2013/03/03</td>
-                  <td>$342,000</td>
-                </tr>
-                <tr>
-                  <td>Charde Marshall</td>
-                  <td>Regional Director</td>
-                  <td>San Francisco</td>
-                  <td>36</td>
-                  <td>2008/10/16</td>
-                  <td>$470,600</td>
-                </tr>
-                <tr>
-                  <td>Haley Kennedy</td>
-                  <td>Senior Marketing Designer</td>
-                  <td>London</td>
-                  <td>43</td>
-                  <td>2012/12/18</td>
-                  <td>$313,500</td>
-                </tr>
-                <tr>
-                  <td>Tatyana Fitzpatrick</td>
-                  <td>Regional Director</td>
-                  <td>London</td>
-                  <td>19</td>
-                  <td>2010/03/17</td>
-                  <td>$385,750</td>
-                </tr>
-                <tr>
-                  <td>Michael Silva</td>
-                  <td>Marketing Designer</td>
-                  <td>London</td>
-                  <td>66</td>
-                  <td>2012/11/27</td>
-                  <td>$198,500</td>
-                </tr>
-                <tr>
-                  <td>Paul Byrd</td>
-                  <td>Chief Financial Officer (CFO)</td>
-                  <td>New York</td>
-                  <td>64</td>
-                  <td>2010/06/09</td>
-                  <td>$725,000</td>
-                </tr>
-                <tr>
-                  <td>Gloria Little</td>
-                  <td>Systems Administrator</td>
-                  <td>New York</td>
-                  <td>59</td>
-                  <td>2009/04/10</td>
-                  <td>$237,500</td>
-                </tr>
-                <tr>
-                  <td>Bradley Greer</td>
-                  <td>Software Engineer</td>
-                  <td>London</td>
-                  <td>41</td>
-                  <td>2012/10/13</td>
-                  <td>$132,000</td>
-                </tr>
-                <tr>
-                  <td>Dai Rios</td>
-                  <td>Personnel Lead</td>
-                  <td>Edinburgh</td>
-                  <td>35</td>
-                  <td>2012/09/26</td>
-                  <td>$217,500</td>
-                </tr>
-                <tr>
-                  <td>Jenette Caldwell</td>
-                  <td>Development Lead</td>
-                  <td>New York</td>
-                  <td>30</td>
-                  <td>2011/09/03</td>
-                  <td>$345,000</td>
-                </tr>
-                <tr>
-                  <td>Yuri Berry</td>
-                  <td>Chief Marketing Officer (CMO)</td>
-                  <td>New York</td>
-                  <td>40</td>
-                  <td>2009/06/25</td>
-                  <td>$675,000</td>
-                </tr>
-                <tr>
-                  <td>Caesar Vance</td>
-                  <td>Pre-Sales Support</td>
-                  <td>New York</td>
-                  <td>21</td>
-                  <td>2011/12/12</td>
-                  <td>$106,450</td>
-                </tr>
-                <tr>
-                  <td>Doris Wilder</td>
-                  <td>Sales Assistant</td>
-                  <td>Sidney</td>
-                  <td>23</td>
-                  <td>2010/09/20</td>
-                  <td>$85,600</td>
-                </tr>
-                <tr>
-                  <td>Angelica Ramos</td>
-                  <td>Chief Executive Officer (CEO)</td>
-                  <td>London</td>
-                  <td>47</td>
-                  <td>2009/10/09</td>
-                  <td>$1,200,000</td>
-                </tr>
-                <tr>
-                  <td>Gavin Joyce</td>
-                  <td>Developer</td>
-                  <td>Edinburgh</td>
-                  <td>42</td>
-                  <td>2010/12/22</td>
-                  <td>$92,575</td>
-                </tr>
-                <tr>
-                  <td>Jennifer Chang</td>
-                  <td>Regional Director</td>
-                  <td>Singapore</td>
-                  <td>28</td>
-                  <td>2010/11/14</td>
-                  <td>$357,650</td>
-                </tr>
-                <tr>
-                  <td>Brenden Wagner</td>
-                  <td>Software Engineer</td>
-                  <td>San Francisco</td>
-                  <td>28</td>
-                  <td>2011/06/07</td>
-                  <td>$206,850</td>
-                </tr>
-                <tr>
-                  <td>Fiona Green</td>
-                  <td>Chief Operating Officer (COO)</td>
-                  <td>San Francisco</td>
-                  <td>48</td>
-                  <td>2010/03/11</td>
-                  <td>$850,000</td>
-                </tr>
-                <tr>
-                  <td>Shou Itou</td>
-                  <td>Regional Marketing</td>
-                  <td>Tokyo</td>
-                  <td>20</td>
-                  <td>2011/08/14</td>
-                  <td>$163,000</td>
-                </tr>
-                <tr>
-                  <td>Michelle House</td>
-                  <td>Integration Specialist</td>
-                  <td>Sidney</td>
-                  <td>37</td>
-                  <td>2011/06/02</td>
-                  <td>$95,400</td>
-                </tr>
-                <tr>
-                  <td>Suki Burks</td>
-                  <td>Developer</td>
-                  <td>London</td>
-                  <td>53</td>
-                  <td>2009/10/22</td>
-                  <td>$114,500</td>
-                </tr>
-                <tr>
-                  <td>Prescott Bartlett</td>
-                  <td>Technical Author</td>
-                  <td>London</td>
-                  <td>27</td>
-                  <td>2011/05/07</td>
-                  <td>$145,000</td>
-                </tr>
-                <tr>
-                  <td>Gavin Cortez</td>
-                  <td>Team Leader</td>
-                  <td>San Francisco</td>
-                  <td>22</td>
-                  <td>2008/10/26</td>
-                  <td>$235,500</td>
-                </tr>
-                <tr>
-                  <td>Martena Mccray</td>
-                  <td>Post-Sales support</td>
-                  <td>Edinburgh</td>
-                  <td>46</td>
-                  <td>2011/03/09</td>
-                  <td>$324,050</td>
-                </tr>
-                <tr>
-                  <td>Unity Butler</td>
-                  <td>Marketing Designer</td>
-                  <td>San Francisco</td>
-                  <td>47</td>
-                  <td>2009/12/09</td>
-                  <td>$85,675</td>
-                </tr>
-                <tr>
-                  <td>Howard Hatfield</td>
-                  <td>Office Manager</td>
-                  <td>San Francisco</td>
-                  <td>51</td>
-                  <td>2008/12/16</td>
-                  <td>$164,500</td>
-                </tr>
-                <tr>
-                  <td>Hope Fuentes</td>
-                  <td>Secretary</td>
-                  <td>San Francisco</td>
-                  <td>41</td>
-                  <td>2010/02/12</td>
-                  <td>$109,850</td>
-                </tr>
-                <tr>
-                  <td>Vivian Harrell</td>
-                  <td>Financial Controller</td>
-                  <td>San Francisco</td>
-                  <td>62</td>
-                  <td>2009/02/14</td>
-                  <td>$452,500</td>
-                </tr>
-                <tr>
-                  <td>Timothy Mooney</td>
-                  <td>Office Manager</td>
-                  <td>London</td>
-                  <td>37</td>
-                  <td>2008/12/11</td>
-                  <td>$136,200</td>
-                </tr>
-                <tr>
-                  <td>Jackson Bradshaw</td>
-                  <td>Director</td>
-                  <td>New York</td>
-                  <td>65</td>
-                  <td>2008/09/26</td>
-                  <td>$645,750</td>
-                </tr>
-                <tr>
-                  <td>Olivia Liang</td>
-                  <td>Support Engineer</td>
-                  <td>Singapore</td>
-                  <td>64</td>
-                  <td>2011/02/03</td>
-                  <td>$234,500</td>
-                </tr>
-                <tr>
-                  <td>Bruno Nash</td>
-                  <td>Software Engineer</td>
-                  <td>London</td>
-                  <td>38</td>
-                  <td>2011/05/03</td>
-                  <td>$163,500</td>
-                </tr>
-                <tr>
-                  <td>Sakura Yamamoto</td>
-                  <td>Support Engineer</td>
-                  <td>Tokyo</td>
-                  <td>37</td>
-                  <td>2009/08/19</td>
-                  <td>$139,575</td>
-                </tr>
-                <tr>
-                  <td>Thor Walton</td>
-                  <td>Developer</td>
-                  <td>New York</td>
-                  <td>61</td>
-                  <td>2013/08/11</td>
-                  <td>$98,540</td>
-                </tr>
-                <tr>
-                  <td>Finn Camacho</td>
-                  <td>Support Engineer</td>
-                  <td>San Francisco</td>
-                  <td>47</td>
-                  <td>2009/07/07</td>
-                  <td>$87,500</td>
-                </tr>
-                <tr>
-                  <td>Serge Baldwin</td>
-                  <td>Data Coordinator</td>
-                  <td>Singapore</td>
-                  <td>64</td>
-                  <td>2012/04/09</td>
-                  <td>$138,575</td>
-                </tr>
-                <tr>
-                  <td>Zenaida Frank</td>
-                  <td>Software Engineer</td>
-                  <td>New York</td>
-                  <td>63</td>
-                  <td>2010/01/04</td>
-                  <td>$125,250</td>
-                </tr>
-                <tr>
-                  <td>Zorita Serrano</td>
-                  <td>Software Engineer</td>
-                  <td>San Francisco</td>
-                  <td>56</td>
-                  <td>2012/06/01</td>
-                  <td>$115,000</td>
-                </tr>
-                <tr>
-                  <td>Jennifer Acosta</td>
-                  <td>Junior Javascript Developer</td>
-                  <td>Edinburgh</td>
-                  <td>43</td>
-                  <td>2013/02/01</td>
-                  <td>$75,650</td>
-                </tr>
-                <tr>
-                  <td>Cara Stevens</td>
-                  <td>Sales Assistant</td>
-                  <td>New York</td>
-                  <td>46</td>
-                  <td>2011/12/06</td>
-                  <td>$145,600</td>
-                </tr>
-                <tr>
-                  <td>Hermione Butler</td>
-                  <td>Regional Director</td>
-                  <td>London</td>
-                  <td>47</td>
-                  <td>2011/03/21</td>
-                  <td>$356,250</td>
-                </tr>
-                <tr>
-                  <td>Lael Greer</td>
-                  <td>Systems Administrator</td>
-                  <td>London</td>
-                  <td>21</td>
-                  <td>2009/02/27</td>
-                  <td>$103,500</td>
-                </tr>
-                <tr>
-                  <td>Jonas Alexander</td>
-                  <td>Developer</td>
-                  <td>San Francisco</td>
-                  <td>30</td>
-                  <td>2010/07/14</td>
-                  <td>$86,500</td>
-                </tr>
-                <tr>
-                  <td>Shad Decker</td>
-                  <td>Regional Director</td>
-                  <td>Edinburgh</td>
-                  <td>51</td>
-                  <td>2008/11/13</td>
-                  <td>$183,000</td>
-                </tr>
-                <tr>
-                  <td>Michael Bruce</td>
-                  <td>Javascript Developer</td>
-                  <td>Singapore</td>
-                  <td>29</td>
-                  <td>2011/06/27</td>
-                  <td>$183,000</td>
-                </tr>
-                <tr>
-                  <td>Donna Snider</td>
-                  <td>Customer Support</td>
-                  <td>New York</td>
-                  <td>27</td>
-                  <td>2011/01/25</td>
-                  <td>$112,000</td>
-                </tr>
-              </tbody>
-            </table>
+      <ConfirmationModal
+        isOpen={isErrorModalOpen}
+        title="Error insperado"
+        message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      <FormModal
+        isOpen={isAddModalOpen}
+        title="Añadir paciente"
+        footerButtons={
+          <>
+            <button
+              type="button"
+              className="btn btn-success w-25"
+              onClick={createUser}
+              disabled={isLoading}
+            > {isLoading ? "Cargando..." : "Añadir"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary w-25"
+              onClick={closeAddModal}
+              disabled={isLoading}
+            > Cancelar
+            </button>
+          </>
+        }
+      >
+        <form>
+          <div className="form-row">
+            <FormSelect
+              label="Tipo de documento"
+              id="tipo_identificacion"
+              type="text"
+              options={initialFormSelectData.tipo_identificacion}
+              value={formData.tipo_identificacion}
+              error={formErrors.tipo_identificacion}
+              onChange={(e) => handleAddFormChange('tipo_identificacion', e.target.value)}
+            />
+            <FormInput
+              label="Número de documento"
+              id="numero_identificacion"
+              type="number"
+              value={formData.numero_identificacion}
+              error={formErrors.numero_identificacion}
+              onChange={(e) => handleAddFormChange('numero_identificacion', e.target.value)}
+            />
           </div>
-        </div>
-      </div>
+          <div className="form-row">
+            <FormInput
+              label="Nombres"
+              id="nombre"
+              type="text"
+              value={formData.nombre}
+              error={formErrors.nombre}
+              onChange={(e) => handleAddFormChange('nombre', e.target.value)}
+            />
+            <FormInput
+              label="Apellidos"
+              id="apellido"
+              type="text"
+              value={formData.apellido}
+              error={formErrors.apellido}
+              onChange={(e) => handleAddFormChange('apellido', e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <FormInput
+              label="Fecha de Nacimiento"
+              id="fecha_nacimiento"
+              type="date"
+              value={formData.fecha_nacimiento}
+              error={formErrors.fecha_nacimiento}
+              onChange={(e) => handleAddFormChange('fecha_nacimiento', e.target.value)}
+            />
+            <FormSelect
+              label="Estado Civil"
+              id="estado_civil"
+              type="text"
+              options={initialFormSelectData.estado_civil}
+              value={formData.estado_civil}
+              error={formErrors.estado_civil}
+              onChange={(e) => handleAddFormChange('estado_civil', e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <FormSelect
+              label="Sexo"
+              id="sexo"
+              type="text"
+              options={initialFormSelectData.sexo}
+              value={formData.sexo}
+              error={formErrors.sexo}
+              onChange={(e) => handleAddFormChange('sexo', e.target.value)}
+            />
+            <FormInput
+              label="Dirección"
+              id="direccion"
+              type="text"
+              value={formData.direccion}
+              error={formErrors.direccion}
+              onChange={(e) => handleAddFormChange('direccion', e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <FormInput
+              label="Teléfono"
+              id="telefono"
+              type="number"
+              value={formData.telefono}
+              error={formErrors.telefono}
+              onChange={(e) => handleAddFormChange('telefono', e.target.value)}
+            />
+            <FormInput
+              label="Correo Electrónico"
+              id="correo_electronico"
+              type="email"
+              value={formData.correo_electronico}
+              error={formErrors.correo_electronico}
+              onChange={(e) => handleAddFormChange('correo_electronico', e.target.value)}
+            />
+          </div>
+        </form>
+      </FormModal>
+
+      <ConfirmationModal
+        isOpen={isConfimAddModalOpen}
+        title="Paciente añadido"
+        message="El paciente ha sido añadido correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      <FormModal
+        isOpen={isEditModalOpen}
+        title="Más información del paciente"
+        footerButtons={
+          <>            
+            {isEditing ? (
+              <button
+                type="button"
+                className="btn btn-success w-25"
+                onClick={updateUser}
+                disabled={isLoading}
+              > {isLoading ? "Cargando..." : "Guardar"}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-primary w-25"
+                  onClick={startEditing}
+                  disabled={isLoading}
+                > Editar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger w-25"
+                  onClick={OpenDeleteModal}
+                  disabled={isLoading}
+                > {isLoading ? "Cargando..." : "Eliminar"}
+              </button>
+              </>
+            )}
+            <button
+              type="button"
+              className="btn btn-secondary w-25"
+              onClick={closeEditModal}
+              disabled={isLoading}
+            > Cancelar
+            </button>
+          </>
+        }
+      >
+        {selectedUser ? (
+          <form>
+            <div className="form-row">
+              <FormSelect
+                label="Tipo de documento"
+                id="tipo_identificacion"
+                type="text"
+                options={initialFormSelectData.tipo_identificacion}
+                value={formData.tipo_identificacion}
+                error={formErrors.tipo_identificacion}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
+              />
+              <FormInput
+                label="Número de documento"
+                id="numero_identificacion"
+                type="number"
+                value={formData.numero_identificacion}
+                error={formErrors.numero_identificacion}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <FormInput
+                label="Nombres"
+                id="nombre"
+                type="text"
+                value={formData.nombre}
+                error={formErrors.nombre}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('nombre', e.target.value)}
+              />
+              <FormInput
+                label="Apellidos"
+                id="apellido"
+                type="text"
+                value={formData.apellido}
+                error={formErrors.apellido}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('apellido', e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <FormInput
+                label="Fecha de Nacimiento"
+                id="fecha_nacimiento"
+                type="date"
+                value={formData.fecha_nacimiento}
+                error={formErrors.fecha_nacimiento}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
+              />
+              <FormSelect
+                label="Estado Civil"
+                id="estado_civil"
+                options={initialFormSelectData.estado_civil}
+                value={formData.estado_civil}
+                error={formErrors.estado_civil}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <FormSelect
+                label="Sexo"
+                id="sexo"
+                options={initialFormSelectData.sexo}
+                value={formData.sexo}
+                error={formErrors.sexo}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('sexo', e.target.value)}
+              />
+              <FormInput
+                label="Dirección"
+                id="direccion"
+                type="text"
+                value={formData.direccion}
+                error={formErrors.direccion}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('direccion', e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <FormInput
+                label="Teléfono"
+                id="telefono"
+                type="number"
+                value={formData.telefono}
+                error={formErrors.telefono}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('telefono', e.target.value)}
+              />
+              <FormInput
+                label="Correo Electrónico"
+                id="correo_electronico"
+                type="email"
+                value={formData.correo_electronico}
+                error={formErrors.correo_electronico}
+                isEditing={isEditing}
+                onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
+              />
+            </div>
+          </form>
+        ) : (
+          <p>Cargando...</p>
+        )}
+
+      </FormModal>
+
+      <ConfirmationModal
+        isOpen={isConfimUpdateModalOpen}
+        title="Paciente actualizado"
+        message="El paciente ha sido actualizado correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmUpdateModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isDiscardUpdateModalOpen}
+        title="Descartar cambios"
+        message="Tiene cambios sin guardar. ¿Está seguro de que quiere descartarlos?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-warning w-25" onClick={closeAndDiscardUpdateModal}>Descartar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardUpdateModal}>Cancelar</button>            
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        title="Eliminar paciente"
+        message="Esta acción no se puede deshacer. ¿Está seguro de que quiere eliminar este paciente?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-danger w-25" onClick={deleteUser}>Eliminar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDeleteModal}>Cancelar</button>
+          </>
+        }
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmDeleteModalOpen}
+        title="Paciente eliminado"
+        message="El paciente ha sido eliminado correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmDeleteModal}>Aceptar</button>
+          </>
+        }
+      />
+
     </div>
   );
 }
