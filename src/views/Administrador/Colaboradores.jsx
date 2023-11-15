@@ -38,8 +38,9 @@ const initialFormSelectData = {
 const initialFormErrors = {};
 
 function Colaboradores() {
-  const [colaboradores, setColaboradores] = useState([]);
-  const [selectedColaborador, setSelectedColaborador] = useState(null);
+  const [user, setUser] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({ initialFormData });
   const [formErrors, setFormErrors] = useState({ initialFormErrors });
@@ -56,40 +57,49 @@ function Colaboradores() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
-  // Cargar lista de colaboradores al cargar la página
+  // Cargar lista de user al cargar la página
 
-  useEffect(() => {
-    loadColaboradores();
-  }, []);
-
-  const loadColaboradores = async () => {
+  const loadUser = async () => {
+    setLoading(true);
     try {
-      const colaboradoresData = await getColaboradores();
-      setColaboradores(colaboradoresData);
+      const userData = await getColaboradores();
+      setUser(userData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
 
   // Validar formulario de colaborador
 
   const validateForm = () => {
     const errors = {};
-
-    if (!formData.tipoDocumento) {
-      errors.tipoDocumento = "Tipo de documento es requerido";
+    if (!formData.numeroDocumento || !formData.numeroDocumento.trim()) {
+      errors.numeroDocumento = "Número de documento es requerido";
+    } else if (!/^\d{7,10}$/.test(formData.numeroDocumento.trim())) {
+      errors.numeroDocumento = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.numeroDocumento || !formData.numeroDocumento.trim()) {
       errors.numeroDocumento = "Número de documento es requerido";
     }
     if (!formData.nombres || !formData.nombres.trim()) {
       errors.nombres = "Nombres son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombres.trim())) {
+      errors.nombres = "Nombres inválidos, solo se permiten letras y espacios";
     }
     if (!formData.apellidos || !formData.apellidos.trim()) {
       errors.apellidos = "Apellidos son requeridos";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellidos.trim())) {
+      errors.apellidos = "Apellidos inválidos, solo se permiten letras y espacios";
     }
     if (!formData.fechaNacimiento) {
       errors.fechaNacimiento = "Fecha de nacimiento es requerida";
+    } else if (new Date(formData.fechaNacimiento) > new Date()) {
+      errors.fechaNacimiento = "Fecha de nacimiento no puede ser una fecha futura";
     }
     if (!formData.estadoCivil || formData.estadoCivil === "Seleccione...") {
       errors.estadoCivil = "Estado civil es requerido";
@@ -102,29 +112,30 @@ function Colaboradores() {
     }
     if (!formData.telefono || !formData.telefono.trim()) {
       errors.telefono = "Teléfono es requerido";
-    } else if (!/^\d+$/.test(formData.telefono)) {
-      errors.telefono = "Teléfono inválido, solo se permiten números";
+    } else if (!/^\d{7,10}$/.test(formData.telefono.trim())) {
+      errors.telefono = "Teléfono inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.correo || !formData.correo.trim()) {
       errors.correo = "Correo Electrónico es requerido";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.correo.trim())) {
       errors.correo = "Correo Electrónico inválido";
     }
-    if (!formData.salario) {
+    if (!formData.salario || !formData.salario.trim()) {
       errors.salario = "Salario es requerido";
-    } else if (isNaN(Number(formData.salario)) || Number(formData.salario) <= 0) {
-      errors.salario = "Salario inválido";
+    } else if (!/^\d+$/.test(formData.salario.trim())) {
+      errors.salario = "Salario inválido, solo se permiten números";
     }
     if (!formData.jerarquia || formData.jerarquia === "Seleccione...") {
       errors.jerarquia = "Jerarquía es requerida";
     }
     if (!formData.fechaIngreso) {
       errors.fechaIngreso = "Fecha de ingreso es requerida";
+    } else if (new Date(formData.fechaIngreso) > new Date()) {
+      errors.fechaIngreso = "Fecha de ingreso no puede ser una fecha futura";
     }
-    if (!formData.especialidad || formData.especialidad === "Seleccione...") {
+    if (formData.jerarquia === 'Médico' && (!formData.especialidad || formData.especialidad === "Seleccione...")) {
       errors.especialidad = "Especialidad es requerida";
     }
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -155,10 +166,13 @@ function Colaboradores() {
   };
 
   const handleAddFormChange = (name, value) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+      if (name === 'jerarquia' && value !== 'Médico') {
+        updatedFormData.especialidad = 'Seleccione...';
+      }
+      return updatedFormData;
+    });
   };
 
   const addUser = () => {
@@ -183,13 +197,13 @@ function Colaboradores() {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoading(false);
-    loadColaboradores();
+    loadUser();
   };
 
   // Funciones para el modal editar
 
   const openEditModal = (colaborador) => {
-    setSelectedColaborador(colaborador);
+    setSelectedUser(colaborador);
     setFormData(colaborador);
     setIsEditModalOpen(true);
   };
@@ -199,7 +213,7 @@ function Colaboradores() {
       setIsDiscardUpdateModalOpen(true);
     } else {
       setIsEditModalOpen(false);
-      setSelectedColaborador(null);
+      setSelectedUser(null);
       resetForm();
     }
   };
@@ -210,13 +224,15 @@ function Colaboradores() {
 
   const handleEditFormChange = (name, value) => {
     if (isEditing) {
-      setSelectedColaborador(prevState => ({
+      setSelectedUser(prevState => ({
         ...prevState,
         [name]: value,
+        especialidad: name === 'jerarquia' && value !== 'Médico' ? 'Seleccione...' : prevState.especialidad,
       }));
       setFormData(prevData => ({
         ...prevData,
         [name]: value,
+        especialidad: name === 'jerarquia' && value !== 'Médico' ? 'Seleccione...' : prevData.especialidad,
       }));
     }
   };
@@ -226,7 +242,7 @@ function Colaboradores() {
       console.log('Datos válidos, editando colaborador...');
       setIsLoading(true);
       //setIsEditing(false);
-      updateColaborador(selectedColaborador.numeroDocumento, formData)
+      updateColaborador(selectedUser.numeroDocumento, formData)
         .then(response => {
           console.log(response.message);
           setIsConfimUpdateModalOpen(true);
@@ -243,11 +259,11 @@ function Colaboradores() {
   const closeConfirmUpdateModal = () => {
     setIsConfimUpdateModalOpen(false);
     setIsEditModalOpen(false);
-    setSelectedColaborador(null);
+    setSelectedUser(null);
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadColaboradores();
+    loadUser();
   };
 
   const closeDiscardUpdateModal = () => {
@@ -257,7 +273,7 @@ function Colaboradores() {
   const closeAndDiscardUpdateModal = () => {
     setIsDiscardUpdateModalOpen(false);
     setIsEditModalOpen(false);
-    setSelectedColaborador(null);
+    setSelectedUser(null);
     resetForm();
     setIsEditing(false);
   };
@@ -274,7 +290,7 @@ function Colaboradores() {
     console.log('Eliminando colaborador...');
     setIsLoading(true);
     setIsDeleteModalOpen(false);
-    deleteColaborador(selectedColaborador.numeroDocumento, formData)
+    deleteColaborador(selectedUser.numeroDocumento, formData)
       .then(response => {
         console.log(response.message);
         setIsConfirmDeleteModalOpen(true);
@@ -288,11 +304,11 @@ function Colaboradores() {
   const closeConfirmDeleteModal = () => {
     setIsConfirmDeleteModalOpen(false);
     setIsEditModalOpen(false);
-    setSelectedColaborador(null);
+    setSelectedUser(null);
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadColaboradores();
+    loadUser();
   }
 
   return (
@@ -303,8 +319,8 @@ function Colaboradores() {
         <AddButtom label="Añadir colaborador" onClick={openAddModal} />
       </div>
 
-      <Table label="Listado de colaboradores" columns={columns} data={colaboradores}>
-        {colaboradores.map((colaborador) => (
+      <Table label="Listado de colaboradores" columns={columns} data={user} loading={loading}>
+        {user.map((colaborador) => (
           <tr key={colaborador.numeroDocumento}>
             <td>{colaborador.numeroDocumento}</td>
             <td>{colaborador.nombres}</td>
@@ -488,6 +504,7 @@ function Colaboradores() {
               value={formData.especialidad}
               error={formErrors.especialidad}
               onChange={(e) => handleAddFormChange('especialidad', e.target.value)}
+              isEditing={formData.jerarquia === 'Médico'}
             />
           </div>
         </form>
@@ -545,7 +562,7 @@ function Colaboradores() {
           </>
         }
       >
-        {selectedColaborador ? (
+        {selectedUser ? (
           <form>
             <div className="form-row">
               <FormSelect
@@ -684,7 +701,7 @@ function Colaboradores() {
                 options={initialFormSelectData.especialidad}
                 value={formData.especialidad}
                 error={formErrors.especialidad}
-                isEditing={isEditing}
+                isEditing={isEditing && formData.jerarquia === 'Médico'}
                 onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
               />
             </div>

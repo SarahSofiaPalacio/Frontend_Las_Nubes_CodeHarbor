@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import $ from 'jquery';
 import 'datatables.net-bs4';
 import LoadingSpinner from './LoadingSpinner';
 
-function Table({ label, columns, data, children }) {
-  const [loading, setLoading] = useState(true);
- 
+function Table({ label, columns, data, children, loading }) { 
   useEffect(() => {
     if ($.fn.dataTable.isDataTable('#dataTable')) {
       $('#dataTable').DataTable().destroy();
     }
-    // Verifica si hay datos disponibles para evitar inicializar la tabla vacía
     if (data && data.length > 0) {
       $('#dataTable').DataTable();
-      setLoading(false);
     }
   }, [data, loading]);
 
