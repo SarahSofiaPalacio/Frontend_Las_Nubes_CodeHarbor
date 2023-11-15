@@ -15,12 +15,12 @@ const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
             aria-labelledby="confirmationModalLabel"
             aria-hidden="true"
         >
-            <div className="modal-dialog">
+            <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header justify-content-center">
                         <h5 className="modal-title">{title}</h5>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body text-center">
                         <p>{message}</p>
                     </div>
                     <div className="modal-footer justify-content-center">

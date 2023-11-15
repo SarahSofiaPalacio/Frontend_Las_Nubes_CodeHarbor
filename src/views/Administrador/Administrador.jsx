@@ -8,7 +8,6 @@ import Home from '../../components/Home';
 import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import MainContent from '../../components/MainContent';
-import LogoutModal from '../../components/LogoutModal';
 import NavItem from '../../components/SidebarNavItem';
 import Divider from '../../components/SidebarDivider';
 import Heading from '../../components/SidebarHeading';
@@ -76,11 +75,10 @@ function Administrador() {
                     </div>
                 </Sidebar>
                 <div id="content-wrapper" className="d-flex flex-column">
-                    <Topbar toggleSidebar={toggleSidebar} userName="Brandon Sanderson" userImage="img/profile.svg"/>
+                    <Topbar toggleSidebar={toggleSidebar} userName="Brandon Sanderson" userImage="img/profile.svg" />
                     <MainContent contenido={contenido} />
                 </div>
             </div>
-            <LogoutModal />
         </div>
 
     );
