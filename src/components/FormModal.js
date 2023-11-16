@@ -4,6 +4,7 @@ const FormModal = ({ isOpen, title, children, footerButtons }) => {
 
   useEffect(() => {
     if (isOpen) {
+      if (document.querySelector('.modal-backdrop')) return;
       document.body.classList.add('modal-open');
       document.body.insertAdjacentHTML('beforeend', '<div class="modal-backdrop fade show"></div>');
     } else {
@@ -27,11 +28,7 @@ const FormModal = ({ isOpen, title, children, footerButtons }) => {
       aria-labelledby="FormModalLabel"
       aria-hidden="true"
     >
-      <div
-        className="modal-dialog modal-dialog-centered modal-lg"
-        role="document"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="modal-dialog modal-dialog-centered modal-lg">
         <div className="modal-content">
           <div className="modal-header justify-content-center">
             <h5 className="modal-title">{title}</h5>

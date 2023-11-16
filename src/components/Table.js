@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 import $ from 'jquery';
 import 'datatables.net-bs4';
-import LoadingSpinner from './LoadingSpinner';
 
 function Table({ label, columns, data, children, loading }) { 
+  
   useEffect(() => {
     if ($.fn.dataTable.isDataTable('#dataTable')) {
       $('#dataTable').DataTable().destroy();
@@ -11,15 +12,13 @@ function Table({ label, columns, data, children, loading }) {
     if (data && data.length > 0) {
       $('#dataTable').DataTable();
     }
-  }, [data, loading]);
+  }, [data]);
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="card shadow mb-4">
-      <div className="card-header py-3">
+      <div className="card-header text-center py-3">
         <h6 className="m-0 font-weight-bold text-primary">{label}</h6>
       </div>
       <div className="card-body">

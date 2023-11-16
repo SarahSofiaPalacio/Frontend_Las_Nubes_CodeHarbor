@@ -19,6 +19,20 @@ export const getColaboradores = () => {
   }
 };
 
+export const getColaborador = (numero_identificacion) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Simula una respuesta exitosa; podrías querer actualizar tu mock data aquí.
+        resolve(colaboradoresMock.find(colaborador => colaborador.numero_identificacion === numero_identificacion));
+      }, 1000);
+    });
+  } else {
+    return axios.get(`${URL_BASE}/colaboradores/${numero_identificacion}`)
+      .then(response => response.data);
+  }
+}
+
 export const createColaborador = (colaboradorData) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
@@ -33,7 +47,7 @@ export const createColaborador = (colaboradorData) => {
   }
 };
 
-export const updateColaborador = (numeroDocumento, colaboradorData) => {
+export const updateColaborador = (numero_identificacion, colaboradorData) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -42,12 +56,12 @@ export const updateColaborador = (numeroDocumento, colaboradorData) => {
       }, 1000);
     });
   } else {
-    return axios.put(`${URL_BASE}/colaboradores/${numeroDocumento}`, colaboradorData)
+    return axios.put(`${URL_BASE}/colaboradores/${numero_identificacion}`, colaboradorData)
       .then(response => response.data);
   }
 };
 
-export const deleteColaborador = (numeroDocumento) => {
+export const deleteColaborador = (numero_identificacion) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -56,7 +70,7 @@ export const deleteColaborador = (numeroDocumento) => {
       }, 1000);
     });
   } else {
-    return axios.delete(`${URL_BASE}/colaboradores/${numeroDocumento}`)
+    return axios.delete(`${URL_BASE}/colaboradores/${numero_identificacion}`)
       .then(response => response.data);
   }
 }

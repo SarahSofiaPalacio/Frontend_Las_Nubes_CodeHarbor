@@ -31,14 +31,14 @@ const initialFormSelectData = {
   tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
   estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
   sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
-  jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia'],
-  especialidad: ['Seleccione...', 'Medicina general', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría', 'Medicina interna', 'Medicina nuclear', 'Medicina del deporte', 'Medicina del trabajo', 'Medicina de urgencias', 'Medicina de rehabilitación', 'Medicina de familia', 'Medicina de cuidados intensivos', 'Medicina de emergencias', 'Medicina de cuidados paliativos', 'Medicina de la educación física y el deporte', 'Medicina de la obesidad', 'Medicina de la adolescencia', 'Medicina de la aviación', 'Medicina de la reproducción', 'Medicina de la sexualidad humana', 'Medicina de urgencias y emergencias', 'Medicina de urgencias y emergencias pediátricas', 'Medicina de urgencias y emergencias geriátricas'],
+  jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia', 'Administrador'],
+  especialidad: ['Seleccione...', 'Medicina general', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
 }
 
 const initialFormErrors = {};
 
 function Colaboradores() {
-  const [user, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -57,13 +57,14 @@ function Colaboradores() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
-  // Cargar lista de user al cargar la página
+  // Cargar lista de usuarios al cargar la página
 
-  const loadUser = async () => {
+  const loadUsers = async () => {
     setLoading(true);
     try {
-      const userData = await getColaboradores();
-      setUser(userData);
+      const usersData = await getColaboradores();
+      setUsers(usersData);
+      console.log("Data fetched:", usersData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -71,7 +72,7 @@ function Colaboradores() {
   };
 
   useEffect(() => {
-    loadUser();
+    loadUsers();
   }, []);
 
   // Validar formulario de colaborador
@@ -197,7 +198,7 @@ function Colaboradores() {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   };
 
   // Funciones para el modal editar
@@ -245,7 +246,7 @@ function Colaboradores() {
     if (validateForm()) {
       console.log('Datos válidos, editando colaborador...');
       setIsLoading(true);
-      //setIsEditing(false);
+      setIsEditing(false);
       updateColaborador(selectedUser.numero_identificacion, formData)
         .then(response => {
           console.log(response.message);
@@ -267,7 +268,7 @@ function Colaboradores() {
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   };
 
   const closeDiscardUpdateModal = () => {
@@ -312,7 +313,7 @@ function Colaboradores() {
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   }
 
   return (
@@ -323,8 +324,8 @@ function Colaboradores() {
         <AddButtom label="Añadir colaborador" onClick={openAddModal} />
       </div>
 
-      <Table label="Listado de colaboradores" columns={columns} data={user} loading={loading}>
-        {user.map((colaborador) => (
+      <Table label="Listado de colaboradores" columns={columns} data={users} loading={loading}>
+        {users.map((colaborador) => (
           <tr key={colaborador.numero_identificacion}>
             <td>{colaborador.numero_identificacion}</td>
             <td>{colaborador.nombre}</td>
@@ -530,7 +531,7 @@ function Colaboradores() {
         title="Más información del colaborador"
         footerButtons={
           <>            
-            {isEditing ? (
+            {isEditing || isLoading ? (
               <button
                 type="button"
                 className="btn btn-success w-25"

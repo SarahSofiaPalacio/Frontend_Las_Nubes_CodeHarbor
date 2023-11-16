@@ -214,7 +214,7 @@ function Pacientes() {
     if (validateForm()) {
       console.log('Datos válidos, editando paciente...');
       setIsLoading(true);
-      //setIsEditing(false);
+      setIsEditing(false);
       updatePaciente(selectedUser.numero_identificacion, formData)
         .then(response => {
           console.log(response.message);
@@ -460,7 +460,7 @@ function Pacientes() {
         title="Más información del paciente"
         footerButtons={
           <>            
-            {isEditing ? (
+            {isEditing || isLoading ? (
               <button
                 type="button"
                 className="btn btn-success w-25"
