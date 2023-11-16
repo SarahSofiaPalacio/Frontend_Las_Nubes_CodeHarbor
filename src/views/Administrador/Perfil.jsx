@@ -6,6 +6,8 @@ import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
 
+const numero_identificacion = '1004755763';
+
 const initialFormData = {
     tipo_identificacion: '',
     numero_identificacion: '',
@@ -38,17 +40,22 @@ function UserProfile() {
     const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
     const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
 
-    const loadUser = async () => {
+    const loadUser = () => {
+        console.log('Cargando colaborador...');
         setLoading(true);
-        try {
-            const userData = await getColaborador('1004755763');
-            setFormData(userData);
-            console.log(userData);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-        setLoading(false);
-    };
+        getColaborador(numero_identificacion)
+          .then(response => {
+            console.log('Data fetched:', response);
+            setFormData(response);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+            setIsErrorModalOpen(true);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      };  
 
     useEffect(() => {
         loadUser();
