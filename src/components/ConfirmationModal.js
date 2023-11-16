@@ -1,19 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
+    const hasBeenOpenedRef = useRef(false);
 
     useEffect(() => {
         if (isOpen) {
-            if (document.querySelector('.modal-backdrop')) return;
+            if (!hasBeenOpenedRef.current && document.querySelector('.modal-backdrop')) {
+                hasBeenOpenedRef.current = true;
+                return;
+            }
             document.body.classList.add('modal-open');
             document.body.insertAdjacentHTML('beforeend', '<div class="modal-backdrop fade show"></div>');
         } else {
+            if (hasBeenOpenedRef.current) {
+                hasBeenOpenedRef.current = false;
+                return;
+            }
             document.body.classList.remove('modal-open');
             const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                document.body.removeChild(backdrop);
-            }
+            if (backdrop) document.body.removeChild(backdrop);
         }
     }, [isOpen]);
 

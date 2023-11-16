@@ -32,7 +32,7 @@ const initialFormSelectData = {
 const initialFormErrors = {};
 
 function Pacientes() {
-  const [user, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -51,21 +51,27 @@ function Pacientes() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
 
-  // Cargar lista de user al cargar la página
+  // Cargar lista de usuarios al cargar la página
 
-  const loadUser = async () => {
+  const loadUsers = () => {
+    console.log('Cargando pacientes...');
     setLoading(true);
-    try {
-      const userData = await getPacientes();
-      setUser(userData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  };
+    getPacientes()
+      .then(response => {
+        console.log('Data fetched:', response);
+        setUsers(response);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setIsErrorModalOpen(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };  
 
   useEffect(() => {
-    loadUser();
+    loadUsers();
   }, []);
 
   // Validar formulario de paciente
@@ -172,7 +178,7 @@ function Pacientes() {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   };
 
   // Funciones para el modal editar
@@ -236,7 +242,7 @@ function Pacientes() {
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   };
 
   const closeDiscardUpdateModal = () => {
@@ -281,7 +287,7 @@ function Pacientes() {
     resetForm();
     setIsEditing(false);
     setIsLoading(false);
-    loadUser();
+    loadUsers();
   }
 
   return (
@@ -292,8 +298,8 @@ function Pacientes() {
         <AddButtom label="Añadir paciente" onClick={openAddModal} />
       </div>
 
-      <Table label="Listado de pacientes" columns={columns} data={user} loading={loading}>
-        {user.map((paciente) => (
+      <Table label="Listado de pacientes" columns={columns} data={users} loading={loading}>
+        {users.map((paciente) => (
           <tr key={paciente.numero_identificacion}>
             <td>{paciente.numero_identificacion}</td>
             <td>{paciente.nombre}</td>

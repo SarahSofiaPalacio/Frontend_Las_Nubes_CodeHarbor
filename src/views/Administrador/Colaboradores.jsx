@@ -59,17 +59,22 @@ function Colaboradores() {
 
   // Cargar lista de usuarios al cargar la página
 
-  const loadUsers = async () => {
+  const loadUsers = () => {
+    console.log('Cargando colaboradores...');
     setLoading(true);
-    try {
-      const usersData = await getColaboradores();
-      setUsers(usersData);
-      console.log("Data fetched:", usersData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  };
+    getColaboradores()
+      .then(response => {
+        console.log('Data fetched:', response);
+        setUsers(response);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setIsErrorModalOpen(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };  
 
   useEffect(() => {
     loadUsers();
