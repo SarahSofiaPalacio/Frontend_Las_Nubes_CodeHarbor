@@ -15,7 +15,7 @@ function ProfleCards({ picture, children, loading }) {
                     </div>
                     <div className="card-body text-center">
                         <img
-                            src="path_to_profile_picture.jpg"
+                            src="img/profile.svg"
                             alt="Foto de perfil"
                             className="rounded-circle mb-3"
                             style={{ width: '150px', height: '150px' }}
