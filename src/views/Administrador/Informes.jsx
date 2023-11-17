@@ -34,7 +34,7 @@ function Informes() {
               disabled={isGenerating}
             >
               {/* Poner imagen en un recuadro con los bordes redondeado y con tamaño ajustado */}
-              <img src="img/informe_pacientes.svg" alt="Informe de Pacientes" className="img-fluid mb-2 mt-2 rounded mx-auto d-block "/>
+              <img src="img/informe_pacientes.svg" alt="Informe de Pacientes" className="img-fluid mb-2 mt-2 rounded mx-auto d-block"/>
               Generar informes de Pacientes
             </button>
           </div>

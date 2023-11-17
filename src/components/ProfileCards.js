@@ -1,7 +1,7 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
-function ProfleCards({ picture, children, loading }) {
+function ProfleCards({ children, loading }) {
 
     if (loading) return <LoadingSpinner />;
 
@@ -17,8 +17,7 @@ function ProfleCards({ picture, children, loading }) {
                         <img
                             src="img/profile.svg"
                             alt="Foto de perfil"
-                            className="rounded-circle mb-3"
-                            style={{ width: '150px', height: '150px' }}
+                            className="img-profile mb-3 rounded-circle mx-auto d-block"
                         />
                         <p>JPG o PNG no mayor a 5 MB</p>
                         <button className="btn btn-primary">Cambiar foto</button>
