@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormSelect({ id, label, type, options, value, error, onChange, isEditing=true }) {
+function FormSelect({ id, label, type, options, value, error, onChange, isFormEditing=true }) {
     return (
         <div className="form-group col-md-6">
             <label htmlFor={id}>{label}</label>
@@ -10,7 +10,7 @@ function FormSelect({ id, label, type, options, value, error, onChange, isEditin
                 value={value} 
                 error={error}
                 onChange={onChange} 
-                disabled={!isEditing}
+                disabled={!isFormEditing}
             >
                 {options.map(option => <option key={option} value={option}>{option}</option>)}
             </select>

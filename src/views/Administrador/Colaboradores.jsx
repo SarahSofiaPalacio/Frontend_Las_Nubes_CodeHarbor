@@ -8,7 +8,7 @@ import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
-const columns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
+const columnsTable = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 const initialFormData = {
   tipo_identificacion: '',
@@ -40,18 +40,18 @@ const initialFormErrors = {};
 function Colaboradores() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoadingTable, setLoadingTable] = useState(false);
 
   const [formData, setFormData] = useState({ initialFormData });
   const [formErrors, setFormErrors] = useState({ initialFormErrors });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isFormEditing, setIsFormEditing] = useState(false);
   const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -61,7 +61,7 @@ function Colaboradores() {
 
   const loadUsers = () => {
     console.log('Cargando colaboradores...');
-    setLoading(true);
+    setLoadingTable(true);
     getColaboradores()
       .then(response => {
         console.log('Data fetched:', response);
@@ -72,9 +72,9 @@ function Colaboradores() {
         setIsErrorModalOpen(true);
       })
       .finally(() => {
-        setLoading(false);
+        setLoadingTable(false);
       });
-  };  
+  };
 
   useEffect(() => {
     loadUsers();
@@ -157,7 +157,7 @@ function Colaboradores() {
 
   const closeErrorModal = () => {
     setIsErrorModalOpen(false);
-    setIsLoading(false);
+    setIsLoadingRequest(false);
   };
 
   // Funciones para el modal añadir
@@ -184,7 +184,7 @@ function Colaboradores() {
   const createUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, añadiendo colaborador...');
-      setIsLoading(true);
+      setIsLoadingRequest(true);
       createColaborador(formData)
         .then(response => {
           console.log(response.message);
@@ -202,7 +202,7 @@ function Colaboradores() {
   const closeConfirmAddModal = () => {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
-    setIsLoading(false);
+    setIsLoadingRequest(false);
     loadUsers();
   };
 
@@ -215,7 +215,7 @@ function Colaboradores() {
   };
 
   const closeEditModal = () => {
-    if (isEditing) {
+    if (isFormEditing) {
       setIsDiscardUpdateModalOpen(true);
     } else {
       setIsEditModalOpen(false);
@@ -225,11 +225,11 @@ function Colaboradores() {
   };
 
   const startEditing = () => {
-    setIsEditing(true);
+    setIsFormEditing(true);
   };
 
   const handleEditFormChange = (name, value) => {
-    if (isEditing) {
+    if (isFormEditing) {
       setSelectedUser(prevState => {
         const newValues = { ...prevState, [name]: value };
         if (name === 'jerarquia' && value !== 'Médico') {
@@ -246,12 +246,12 @@ function Colaboradores() {
       });
     }
   };
-  
+
   const updateUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, editando colaborador...');
-      setIsLoading(true);
-      setIsEditing(false);
+      setIsLoadingRequest(true);
+      setIsFormEditing(false);
       updateColaborador(selectedUser.numero_identificacion, formData)
         .then(response => {
           console.log(response.message);
@@ -271,8 +271,8 @@ function Colaboradores() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
-    setIsLoading(false);
+    setIsFormEditing(false);
+    setIsLoadingRequest(false);
     loadUsers();
   };
 
@@ -285,7 +285,7 @@ function Colaboradores() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
+    setIsFormEditing(false);
   };
 
   const OpenDeleteModal = () => {
@@ -298,7 +298,7 @@ function Colaboradores() {
 
   const deleteUser = () => {
     console.log('Eliminando colaborador...');
-    setIsLoading(true);
+    setIsLoadingRequest(true);
     setIsDeleteModalOpen(false);
     deleteColaborador(selectedUser.numero_identificacion, formData)
       .then(response => {
@@ -316,8 +316,8 @@ function Colaboradores() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
-    setIsLoading(false);
+    setIsFormEditing(false);
+    setIsLoadingRequest(false);
     loadUsers();
   }
 
@@ -329,7 +329,9 @@ function Colaboradores() {
         <AddButtom label="Añadir colaborador" onClick={openAddModal} />
       </div>
 
-      <Table label="Listado de colaboradores" columns={columns} data={users} loading={loading}>
+      {/* Tabla de colaboradores */}
+
+      <Table label="Listado de colaboradores" columns={columnsTable} data={users} loading={isLoadingTable}>
         {users.map((colaborador) => (
           <tr key={colaborador.numero_identificacion}>
             <td>{colaborador.numero_identificacion}</td>
@@ -351,6 +353,8 @@ function Colaboradores() {
         ))}
       </Table>
 
+      {/* Modal de error inesperado */}
+
       <ConfirmationModal
         isOpen={isErrorModalOpen}
         title="Error insperado"
@@ -362,6 +366,8 @@ function Colaboradores() {
         }
       />
 
+      {/* Modal añadir */}
+
       <FormModal
         isOpen={isAddModalOpen}
         title="Añadir colaborador"
@@ -371,14 +377,14 @@ function Colaboradores() {
               type="button"
               className="btn btn-success w-25"
               onClick={createUser}
-              disabled={isLoading}
-            > {isLoading ? "Cargando..." : "Añadir"}
+              disabled={isLoadingRequest}
+            > {isLoadingRequest ? "Cargando..." : "Añadir"}
             </button>
             <button
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeAddModal}
-              disabled={isLoading}
+              disabled={isLoadingRequest}
             > Cancelar
             </button>
           </>
@@ -514,11 +520,13 @@ function Colaboradores() {
               value={formData.especialidad}
               error={formErrors.especialidad}
               onChange={(e) => handleAddFormChange('especialidad', e.target.value)}
-              isEditing={formData.jerarquia === 'Médico'}
+              isFormEditing={formData.jerarquia === 'Médico'}
             />
           </div>
         </form>
       </FormModal>
+
+      {/* Modal añadido correctamente */}
 
       <ConfirmationModal
         isOpen={isConfimAddModalOpen}
@@ -531,18 +539,20 @@ function Colaboradores() {
         }
       />
 
+      {/* Modal editar */}
+
       <FormModal
         isOpen={isEditModalOpen}
         title="Más información del colaborador"
         footerButtons={
-          <>            
-            {isEditing || isLoading ? (
+          <>
+            {isFormEditing || isLoadingRequest ? (
               <button
                 type="button"
                 className="btn btn-success w-25"
                 onClick={updateUser}
-                disabled={isLoading}
-              > {isLoading ? "Cargando..." : "Guardar"}
+                disabled={isLoadingRequest}
+              > {isLoadingRequest ? "Cargando..." : "Guardar"}
               </button>
             ) : (
               <>
@@ -550,23 +560,23 @@ function Colaboradores() {
                   type="button"
                   className="btn btn-primary w-25"
                   onClick={startEditing}
-                  disabled={isLoading}
+                  disabled={isLoadingRequest}
                 > Editar
                 </button>
                 <button
                   type="button"
                   className="btn btn-danger w-25"
                   onClick={OpenDeleteModal}
-                  disabled={isLoading}
-                > {isLoading ? "Cargando..." : "Eliminar"}
-              </button>
+                  disabled={isLoadingRequest}
+                > {isLoadingRequest ? "Cargando..." : "Eliminar"}
+                </button>
               </>
             )}
             <button
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeEditModal}
-              disabled={isLoading}
+              disabled={isLoadingRequest}
             > Cancelar
             </button>
           </>
@@ -582,7 +592,7 @@ function Colaboradores() {
                 options={initialFormSelectData.tipo_identificacion}
                 value={formData.tipo_identificacion}
                 error={formErrors.tipo_identificacion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
               />
               <FormInput
@@ -591,7 +601,7 @@ function Colaboradores() {
                 type="number"
                 value={formData.numero_identificacion}
                 error={formErrors.numero_identificacion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
               />
             </div>
@@ -602,7 +612,7 @@ function Colaboradores() {
                 type="text"
                 value={formData.nombre}
                 error={formErrors.nombre}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
               />
               <FormInput
@@ -611,7 +621,7 @@ function Colaboradores() {
                 type="text"
                 value={formData.apellido}
                 error={formErrors.apellido}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
               />
             </div>
@@ -622,7 +632,7 @@ function Colaboradores() {
                 type="date"
                 value={formData.fecha_nacimiento}
                 error={formErrors.fecha_nacimiento}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
               <FormSelect
@@ -631,7 +641,7 @@ function Colaboradores() {
                 options={initialFormSelectData.estado_civil}
                 value={formData.estado_civil}
                 error={formErrors.estado_civil}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
               />
             </div>
@@ -642,7 +652,7 @@ function Colaboradores() {
                 options={initialFormSelectData.sexo}
                 value={formData.sexo}
                 error={formErrors.sexo}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
               />
               <FormInput
@@ -651,7 +661,7 @@ function Colaboradores() {
                 type="text"
                 value={formData.direccion}
                 error={formErrors.direccion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
               />
             </div>
@@ -662,7 +672,7 @@ function Colaboradores() {
                 type="number"
                 value={formData.telefono}
                 error={formErrors.telefono}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
               />
               <FormInput
@@ -671,7 +681,7 @@ function Colaboradores() {
                 type="email"
                 value={formData.correo_electronico}
                 error={formErrors.correo_electronico}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
               />
             </div>
@@ -682,7 +692,7 @@ function Colaboradores() {
                 type="number"
                 value={formData.salario}
                 error={formErrors.salario}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('salario', e.target.value)}
               />
               <FormSelect
@@ -691,7 +701,7 @@ function Colaboradores() {
                 options={initialFormSelectData.jerarquia}
                 value={formData.jerarquia}
                 error={formErrors.jerarquia}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
               />
             </div>
@@ -702,7 +712,7 @@ function Colaboradores() {
                 type="date"
                 value={formData.fecha_ingreso}
                 error={formErrors.fecha_ingreso}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
               />
               <FormSelect
@@ -712,7 +722,7 @@ function Colaboradores() {
                 options={initialFormSelectData.especialidad}
                 value={formData.especialidad}
                 error={formErrors.especialidad}
-                isEditing={isEditing && formData.jerarquia === 'Médico'}
+                isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
                 onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
               />
             </div>
@@ -722,6 +732,8 @@ function Colaboradores() {
         )}
 
       </FormModal>
+
+      {/* Modal actualizado correctamente */}
 
       <ConfirmationModal
         isOpen={isConfimUpdateModalOpen}
@@ -734,6 +746,8 @@ function Colaboradores() {
         }
       />
 
+      {/* Modal descartar cambios */}
+
       <ConfirmationModal
         isOpen={isDiscardUpdateModalOpen}
         title="Descartar cambios"
@@ -741,10 +755,12 @@ function Colaboradores() {
         footerButtons={
           <>
             <button type="button" className="btn btn-warning w-25" onClick={closeAndDiscardUpdateModal}>Descartar</button>
-            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardUpdateModal}>Cancelar</button>            
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardUpdateModal}>Cancelar</button>
           </>
         }
       />
+
+      {/* Modal confirmar eliminar */}
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -757,6 +773,8 @@ function Colaboradores() {
           </>
         }
       />
+
+      {/* Modal eliminado correctamente */}
 
       <ConfirmationModal
         isOpen={isConfirmDeleteModalOpen}

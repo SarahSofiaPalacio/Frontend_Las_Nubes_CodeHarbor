@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormInput({ id, label, type="text", value, error, onChange, isEditing=true }) {
+function FormInput({ id, label, type="text", value, error, onChange, isFormEditing=true }) {
     return (
         <div className="form-group col-md-6">
             <label htmlFor={id}>{label}</label>
@@ -11,7 +11,7 @@ function FormInput({ id, label, type="text", value, error, onChange, isEditing=t
                 value={value} 
                 error={error}
                 onChange={onChange} 
-                readOnly={!isEditing} 
+                readOnly={!isFormEditing} 
             />
             {error && <div className="error-message">{error}</div>}
         </div>

@@ -8,7 +8,7 @@ import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { getPacientes, createPaciente, updatePaciente, deletePaciente } from '../../services/pacientes.js';
 
-const columns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
+const tableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 const initialFormData = {
   tipo_identificacion: '',
@@ -34,18 +34,18 @@ const initialFormErrors = {};
 function Pacientes() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoadingTable, setLoadingTable] = useState(false);
 
   const [formData, setFormData] = useState({ initialFormData });
   const [formErrors, setFormErrors] = useState({ initialFormErrors });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isFormEditing, setIsFormEditing] = useState(false);
   const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,7 +55,7 @@ function Pacientes() {
 
   const loadUsers = () => {
     console.log('Cargando pacientes...');
-    setLoading(true);
+    setLoadingTable(true);
     getPacientes()
       .then(response => {
         console.log('Data fetched:', response);
@@ -66,9 +66,9 @@ function Pacientes() {
         setIsErrorModalOpen(true);
       })
       .finally(() => {
-        setLoading(false);
+        setLoadingTable(false);
       });
-  };  
+  };
 
   useEffect(() => {
     loadUsers();
@@ -135,7 +135,7 @@ function Pacientes() {
 
   const closeErrorModal = () => {
     setIsErrorModalOpen(false);
-    setIsLoading(false);
+    setIsLoadingRequest(false);
   };
 
   // Funciones para el modal añadir
@@ -159,7 +159,7 @@ function Pacientes() {
   const createUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, añadiendo paciente...');
-      setIsLoading(true);
+      setIsLoadingRequest(true);
       createPaciente(formData)
         .then(response => {
           console.log(response.message);
@@ -177,7 +177,7 @@ function Pacientes() {
   const closeConfirmAddModal = () => {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
-    setIsLoading(false);
+    setIsLoadingRequest(false);
     loadUsers();
   };
 
@@ -190,7 +190,7 @@ function Pacientes() {
   };
 
   const closeEditModal = () => {
-    if (isEditing) {
+    if (isFormEditing) {
       setIsDiscardUpdateModalOpen(true);
     } else {
       setIsEditModalOpen(false);
@@ -200,11 +200,11 @@ function Pacientes() {
   };
 
   const startEditing = () => {
-    setIsEditing(true);
+    setIsFormEditing(true);
   };
 
   const handleEditFormChange = (name, value) => {
-    if (isEditing) {
+    if (isFormEditing) {
       setSelectedUser(prevState => ({
         ...prevState,
         [name]: value,
@@ -219,8 +219,8 @@ function Pacientes() {
   const updateUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, editando paciente...');
-      setIsLoading(true);
-      setIsEditing(false);
+      setIsLoadingRequest(true);
+      setIsFormEditing(false);
       updatePaciente(selectedUser.numero_identificacion, formData)
         .then(response => {
           console.log(response.message);
@@ -240,8 +240,8 @@ function Pacientes() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
-    setIsLoading(false);
+    setIsFormEditing(false);
+    setIsLoadingRequest(false);
     loadUsers();
   };
 
@@ -254,7 +254,7 @@ function Pacientes() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
+    setIsFormEditing(false);
   };
 
   const OpenDeleteModal = () => {
@@ -267,7 +267,7 @@ function Pacientes() {
 
   const deleteUser = () => {
     console.log('Eliminando paciente...');
-    setIsLoading(true);
+    setIsLoadingRequest(true);
     setIsDeleteModalOpen(false);
     deletePaciente(selectedUser.numero_identificacion, formData)
       .then(response => {
@@ -285,8 +285,8 @@ function Pacientes() {
     setIsEditModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsEditing(false);
-    setIsLoading(false);
+    setIsFormEditing(false);
+    setIsLoadingRequest(false);
     loadUsers();
   }
 
@@ -298,7 +298,9 @@ function Pacientes() {
         <AddButtom label="Añadir paciente" onClick={openAddModal} />
       </div>
 
-      <Table label="Listado de pacientes" columns={columns} data={users} loading={loading}>
+      {/* Tabla de colaboradores */}
+
+      <Table label="Listado de pacientes" columns={tableColumns} data={users} loading={isLoadingTable}>
         {users.map((paciente) => (
           <tr key={paciente.numero_identificacion}>
             <td>{paciente.numero_identificacion}</td>
@@ -320,6 +322,8 @@ function Pacientes() {
         ))}
       </Table>
 
+      {/* Modal de error inesperado */}
+
       <ConfirmationModal
         isOpen={isErrorModalOpen}
         title="Error insperado"
@@ -331,6 +335,8 @@ function Pacientes() {
         }
       />
 
+      {/* Modal añadir */}
+
       <FormModal
         isOpen={isAddModalOpen}
         title="Añadir paciente"
@@ -340,14 +346,14 @@ function Pacientes() {
               type="button"
               className="btn btn-success w-25"
               onClick={createUser}
-              disabled={isLoading}
-            > {isLoading ? "Cargando..." : "Añadir"}
+              disabled={isLoadingRequest}
+            > {isLoadingRequest ? "Cargando..." : "Añadir"}
             </button>
             <button
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeAddModal}
-              disabled={isLoading}
+              disabled={isLoadingRequest}
             > Cancelar
             </button>
           </>
@@ -450,6 +456,8 @@ function Pacientes() {
         </form>
       </FormModal>
 
+      {/* Modal añadido correctamente */}
+
       <ConfirmationModal
         isOpen={isConfimAddModalOpen}
         title="Paciente añadido"
@@ -461,18 +469,20 @@ function Pacientes() {
         }
       />
 
+      {/* Modal editar */}
+
       <FormModal
         isOpen={isEditModalOpen}
         title="Más información del paciente"
         footerButtons={
-          <>            
-            {isEditing || isLoading ? (
+          <>
+            {isFormEditing || isLoadingRequest ? (
               <button
                 type="button"
                 className="btn btn-success w-25"
                 onClick={updateUser}
-                disabled={isLoading}
-              > {isLoading ? "Cargando..." : "Guardar"}
+                disabled={isLoadingRequest}
+              > {isLoadingRequest ? "Cargando..." : "Guardar"}
               </button>
             ) : (
               <>
@@ -480,23 +490,23 @@ function Pacientes() {
                   type="button"
                   className="btn btn-primary w-25"
                   onClick={startEditing}
-                  disabled={isLoading}
+                  disabled={isLoadingRequest}
                 > Editar
                 </button>
                 <button
                   type="button"
                   className="btn btn-danger w-25"
                   onClick={OpenDeleteModal}
-                  disabled={isLoading}
-                > {isLoading ? "Cargando..." : "Eliminar"}
-              </button>
+                  disabled={isLoadingRequest}
+                > {isLoadingRequest ? "Cargando..." : "Eliminar"}
+                </button>
               </>
             )}
             <button
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeEditModal}
-              disabled={isLoading}
+              disabled={isLoadingRequest}
             > Cancelar
             </button>
           </>
@@ -512,7 +522,7 @@ function Pacientes() {
                 options={initialFormSelectData.tipo_identificacion}
                 value={formData.tipo_identificacion}
                 error={formErrors.tipo_identificacion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
               />
               <FormInput
@@ -521,7 +531,7 @@ function Pacientes() {
                 type="number"
                 value={formData.numero_identificacion}
                 error={formErrors.numero_identificacion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
               />
             </div>
@@ -532,7 +542,7 @@ function Pacientes() {
                 type="text"
                 value={formData.nombre}
                 error={formErrors.nombre}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
               />
               <FormInput
@@ -541,7 +551,7 @@ function Pacientes() {
                 type="text"
                 value={formData.apellido}
                 error={formErrors.apellido}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
               />
             </div>
@@ -552,7 +562,7 @@ function Pacientes() {
                 type="date"
                 value={formData.fecha_nacimiento}
                 error={formErrors.fecha_nacimiento}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
               <FormSelect
@@ -561,7 +571,7 @@ function Pacientes() {
                 options={initialFormSelectData.estado_civil}
                 value={formData.estado_civil}
                 error={formErrors.estado_civil}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
               />
             </div>
@@ -572,7 +582,7 @@ function Pacientes() {
                 options={initialFormSelectData.sexo}
                 value={formData.sexo}
                 error={formErrors.sexo}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
               />
               <FormInput
@@ -581,7 +591,7 @@ function Pacientes() {
                 type="text"
                 value={formData.direccion}
                 error={formErrors.direccion}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
               />
             </div>
@@ -592,7 +602,7 @@ function Pacientes() {
                 type="number"
                 value={formData.telefono}
                 error={formErrors.telefono}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
               />
               <FormInput
@@ -601,7 +611,7 @@ function Pacientes() {
                 type="email"
                 value={formData.correo_electronico}
                 error={formErrors.correo_electronico}
-                isEditing={isEditing}
+                isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
               />
             </div>
@@ -611,6 +621,8 @@ function Pacientes() {
         )}
 
       </FormModal>
+
+      {/* Modal actualizado correctamente */}
 
       <ConfirmationModal
         isOpen={isConfimUpdateModalOpen}
@@ -623,6 +635,8 @@ function Pacientes() {
         }
       />
 
+      {/* Modal descartar cambios */}
+
       <ConfirmationModal
         isOpen={isDiscardUpdateModalOpen}
         title="Descartar cambios"
@@ -630,10 +644,12 @@ function Pacientes() {
         footerButtons={
           <>
             <button type="button" className="btn btn-warning w-25" onClick={closeAndDiscardUpdateModal}>Descartar</button>
-            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardUpdateModal}>Cancelar</button>            
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDiscardUpdateModal}>Cancelar</button>
           </>
         }
       />
+
+      {/* Modal confirmar eliminar */}
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -646,6 +662,8 @@ function Pacientes() {
           </>
         }
       />
+
+      {/* Modal eliminado correctamente */}
 
       <ConfirmationModal
         isOpen={isConfirmDeleteModalOpen}

@@ -19,6 +19,10 @@ const initialFormData = {
     direccion: '',
     telefono: '',
     correo_electronico: '',
+    salario: '',
+    jerarquia: '',
+    fecha_ingreso: '',
+    especialidad: '',
 }
 
 const initialFormErrors = {};
@@ -26,36 +30,38 @@ const initialFormErrors = {};
 const initialFormSelectData = {
     tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
     estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
-    sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario']
+    sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
+    jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia', 'Administrador'],
+    especialidad: ['Seleccione...', 'Medicina general', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
 }
 
 function UserProfile() {
-    const [loading, setLoading] = useState(false);
+    const [isLoadingForm, setLoadingForm] = useState(false);
     const [formData, setFormData] = useState({ initialFormData });
     const [formErrors, setFormErrors] = useState({ initialFormErrors });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingRequest, setIsLoadingRequest] = useState(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [isFormEditing, setIsFormEditing] = useState(false);
     const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
     const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
 
     const loadUser = () => {
         console.log('Cargando colaborador...');
-        setLoading(true);
+        setLoadingForm(true);
         getColaborador(numero_identificacion)
-          .then(response => {
-            console.log('Data fetched:', response);
-            setFormData(response);
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-            setIsErrorModalOpen(true);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      };  
+            .then(response => {
+                console.log('Data fetched:', response);
+                setFormData(response);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setIsErrorModalOpen(true);
+            })
+            .finally(() => {
+                setLoadingForm(false);
+            });
+    };
 
     useEffect(() => {
         loadUser();
@@ -105,16 +111,35 @@ function UserProfile() {
         } else if (!/^\S+@\S+\.\S+$/.test(formData.correo_electronico.trim())) {
             errors.correo_electronico = "Correo Electrónico inválido";
         }
+        if (!formData.salario || !formData.salario.trim()) {
+            errors.salario = "Salario es requerido";
+        } else if (!/^\d+$/.test(formData.salario.trim())) {
+            errors.salario = "Salario inválido, solo se permiten números";
+        }
+        if (!formData.jerarquia || formData.jerarquia === "Seleccione...") {
+            errors.jerarquia = "Jerarquía es requerida";
+        }
+        if (!formData.fecha_ingreso) {
+            errors.fecha_ingreso = "Fecha de ingreso es requerida";
+        } else if (new Date(formData.fecha_ingreso) > new Date()) {
+            errors.fecha_ingreso = "Fecha de ingreso no puede ser una fecha futura";
+        }
+        if (formData.jerarquia === 'Médico' && (!formData.especialidad || formData.especialidad === "Seleccione...")) {
+            errors.especialidad = "Especialidad es requerida";
+        }
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
 
     const handleEditFormChange = (name, value) => {
-        if (isEditing) {
-            setFormData(prevData => ({
-                ...prevData,
-                [name]: value,
-            }));
+        if (isFormEditing) {
+            setFormData(prevData => {
+                const newValues = { ...prevData, [name]: value };
+                if (name === 'jerarquia' && value !== 'Médico') {
+                    newValues.especialidad = 'Seleccione...';
+                }
+                return newValues;
+            });
         }
     };
 
@@ -124,14 +149,14 @@ function UserProfile() {
     };
 
     const startEditing = () => {
-        setIsEditing(true);
+        setIsFormEditing(true);
     };
 
     const updateUser = () => {
         if (validateForm()) {
             console.log('Datos válidos, editando colaborador...');
-            setIsLoading(true);
-            setIsEditing(false);
+            setIsLoadingRequest(true);
+            setIsFormEditing(false);
             updateColaborador(formData.numero_identificacion, formData)
                 .then(response => {
                     console.log(response.message);
@@ -149,14 +174,14 @@ function UserProfile() {
     const closeConfirmUpdateModal = () => {
         setIsConfimUpdateModalOpen(false);
         resetForm();
-        setIsEditing(false);
-        setIsLoading(false);
+        setIsFormEditing(false);
+        setIsLoadingRequest(false);
         loadUser();
     };
 
     const closeErrorModal = () => {
         setIsErrorModalOpen(false);
-        setIsLoading(false);
+        setIsLoadingRequest(false);
     };
 
     const closeDiscardUpdateModal = () => {
@@ -166,7 +191,7 @@ function UserProfile() {
     const closeAndDiscardUpdateModal = () => {
         setIsDiscardUpdateModalOpen(false);
         resetForm();
-        setIsEditing(false);
+        setIsFormEditing(false);
         loadUser();
     };
 
@@ -177,7 +202,9 @@ function UserProfile() {
                 <Header subTitle="Información personal del colaborador del centro médico" />
             </div>
 
-            <ProfileCards loading={loading}>
+            {/* Perfil de colaborador */}
+
+            <ProfileCards loading={isLoadingForm}>
                 {formData ? (
                     <form>
                         <div className="form-row">
@@ -188,7 +215,7 @@ function UserProfile() {
                                 options={initialFormSelectData.tipo_identificacion}
                                 value={formData.tipo_identificacion}
                                 error={formErrors.tipo_identificacion}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
                             />
                             <FormInput
@@ -197,7 +224,7 @@ function UserProfile() {
                                 type="number"
                                 value={formData.numero_identificacion}
                                 error={formErrors.numero_identificacion}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
                             />
                         </div>
@@ -208,7 +235,7 @@ function UserProfile() {
                                 type="text"
                                 value={formData.nombre}
                                 error={formErrors.nombre}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
                             />
                             <FormInput
@@ -217,7 +244,7 @@ function UserProfile() {
                                 type="text"
                                 value={formData.apellido}
                                 error={formErrors.apellido}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
                             />
                         </div>
@@ -228,7 +255,7 @@ function UserProfile() {
                                 type="date"
                                 value={formData.fecha_nacimiento}
                                 error={formErrors.fecha_nacimiento}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
                             />
                             <FormSelect
@@ -237,7 +264,7 @@ function UserProfile() {
                                 options={initialFormSelectData.estado_civil}
                                 value={formData.estado_civil}
                                 error={formErrors.estado_civil}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
                             />
                         </div>
@@ -248,7 +275,7 @@ function UserProfile() {
                                 options={initialFormSelectData.sexo}
                                 value={formData.sexo}
                                 error={formErrors.sexo}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
                             />
                             <FormInput
@@ -257,7 +284,7 @@ function UserProfile() {
                                 type="text"
                                 value={formData.direccion}
                                 error={formErrors.direccion}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
                             />
                         </div>
@@ -268,7 +295,7 @@ function UserProfile() {
                                 type="number"
                                 value={formData.telefono}
                                 error={formErrors.telefono}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
                             />
                             <FormInput
@@ -277,26 +304,67 @@ function UserProfile() {
                                 type="email"
                                 value={formData.correo_electronico}
                                 error={formErrors.correo_electronico}
-                                isEditing={isEditing}
+                                isFormEditing={isFormEditing}
                                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
+                            />
+                        </div>
+                        <div className="form-row">
+                            <FormInput
+                                label="Salario"
+                                id="salario"
+                                type="number"
+                                value={formData.salario}
+                                error={formErrors.salario}
+                                isFormEditing={isFormEditing}
+                                onChange={(e) => handleEditFormChange('salario', e.target.value)}
+                            />
+                            <FormSelect
+                                label="Jerarquía"
+                                id="jerarquia"
+                                options={initialFormSelectData.jerarquia}
+                                value={formData.jerarquia}
+                                error={formErrors.jerarquia}
+                                isFormEditing={isFormEditing}
+                                onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
+                            />
+                        </div>
+                        <div className="form-row">
+                            <FormInput
+                                label="Fecha de ingreso"
+                                id="fecha_ingreso"
+                                type="date"
+                                value={formData.fecha_ingreso}
+                                error={formErrors.fecha_ingreso}
+                                isFormEditing={isFormEditing}
+                                onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
+                            />
+                            <FormSelect
+                                label="Especialidad"
+                                id="especialidad"
+                                type="text"
+                                options={initialFormSelectData.especialidad}
+                                value={formData.especialidad}
+                                error={formErrors.especialidad}
+                                isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
+                                onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
                             />
                         </div>
 
                         <div className="text-center mt-3">
-                            {isEditing || isLoading ? (
+                            {isFormEditing || isLoadingRequest ? (
                                 <>
                                     <button
                                         type="button"
                                         className="btn btn-success w-25 mr-3"
                                         onClick={updateUser}
-                                        disabled={isLoading}
-                                    > {isLoading ? "Cargando..." : "Guardar"}
+                                        disabled={isLoadingRequest}
+                                    > {isLoadingRequest ? "Cargando..." : "Guardar"}
                                     </button>
                                     <button
                                         type="button"
                                         className="btn btn-secondary w-25 mr-3"
                                         onClick={() => setIsDiscardUpdateModalOpen(true)}
-                                        disabled={isLoading}
+                                        disabled={isLoadingRequest}
                                     > Cancelar
                                     </button>
                                 </>
@@ -305,7 +373,7 @@ function UserProfile() {
                                     type="button"
                                     className="btn btn-primary w-25"
                                     onClick={startEditing}
-                                    disabled={isLoading}
+                                    disabled={isLoadingRequest}
                                 > Editar
                                 </button>
                             )}
@@ -316,6 +384,20 @@ function UserProfile() {
                 )}
             </ProfileCards>
 
+            {/* Modal de error inesperado */}
+
+            <ConfirmationModal
+                isOpen={isErrorModalOpen}
+                title="Error insperado"
+                message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
+                footerButtons={
+                    <>
+                        <button type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar</button>
+                    </>
+                }
+            />
+
+            {/* Modal actualizado correctamente */}
 
             <ConfirmationModal
                 isOpen={isConfimUpdateModalOpen}
@@ -328,16 +410,7 @@ function UserProfile() {
                 }
             />
 
-            <ConfirmationModal
-                isOpen={isErrorModalOpen}
-                title="Error insperado"
-                message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
-                footerButtons={
-                    <>
-                        <button type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar</button>
-                    </>
-                }
-            />
+            {/* Modal descartar cambios */}
 
             <ConfirmationModal
                 isOpen={isDiscardUpdateModalOpen}
