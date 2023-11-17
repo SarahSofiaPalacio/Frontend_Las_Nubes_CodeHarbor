@@ -84,7 +84,7 @@ function Colaboradores() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.tipo_identificacion || !formData.tipo_identificacion.trim()) {
+    if (!formData.tipo_identificacion || formData.tipo_identificacion === "Seleccione...") {
       errors.tipo_identificacion = "Tipo de documento es requerido";
     }
     if (!formData.numero_identificacion || !formData.numero_identificacion.trim()) {
