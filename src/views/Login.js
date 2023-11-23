@@ -1,34 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../services/login';
 
 function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: value
+    }));
+  };
+
+  const validateForm = () => {
+    // Asumiendo una simple validación como ejemplo
+    return formData.username.trim() && formData.password.trim();
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setIsLoading(true);
+      login(formData)
+        .then(data => {
+          setIsLoading(false);
+          // Aquí guardarías el token, por ejemplo en localStorage o cookies
+          localStorage.setItem('token', data.token);
+          navigate('/administrador'); // o la ruta correspondiente al rol del usuario
+        })
+        .catch(err => {
+          setIsLoading(false);
+          setError('Error en el inicio de sesión. Por favor intenta de nuevo.');
+          console.error('Error en el inicio de sesión:', err);
+        });
+    } else {
+      setError('Por favor ingresa todos los campos.');
+    }
+  };
+
   return (
     <div className="vh-100">
-      {/* Contenedor de imagen de fondo fijada */}
-      <div className="position-fixed top-0 start-0 bottom-0 end-0 d-md-block bg-light" style={{ zIndex: -1 }}>
-        <img src={`${process.env.PUBLIC_URL}/img/section_hospital.jpg`} alt="Fondo" className="img-fluid h-100" />
+      <div className="position-fixed top-0 start-0 end-0 bottom-0 d-none d-md-block bg-light" style={{ zIndex: -1 }}>
+        <img src={`${process.env.PUBLIC_URL}/img/section_hospital2.svg`} alt="Fondo" className="img-fluid h-100" />
       </div>
-
       <div className="h-100 d-flex align-items-center justify-content-center">
-        <div className="bg-white p-4 shadow" style={{ zIndex: 2 }}>
-          
-          <h3 className="display-4">Bienvenido de Vuelta</h3>
-          <p className="text-muted mb-4">Ingresa tus datos para continuar.</p>
-          <form>
+        <div className="bg-white p-4 shadow" style={{ zIndex: 2, boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px'}}>
+          <div className="d-flex justify-content-center align-items-center">
+            <img src={`${process.env.PUBLIC_URL}/img/logo.svg`} alt="Logo" className="img-fluid mb-4" style={{ width: '100px' }} />
+          </div>
+          <h3 className="display-5 text-dark text-center">Bienvenido de Vuelta</h3>
+          <p className="text-muted mb-4 text-dark text-center">Ingresa tus datos para continuar.</p>
+          {error && <div className="alert alert-danger" role="alert">{error}</div>}
+          <form onSubmit={handleSubmit}>
             <div className="form-group mb-3">
-              <input id="inputEmail" type="email" placeholder="Cédula o Correo electrónico" required="" autoFocus="" className="form-control rounded-pill border-0 shadow-sm px-4" />
+              <input
+                name="username"
+                type="number"
+                placeholder="Número de documento"
+                required
+                autoFocus
+                className="form-control rounded-pill border-0 shadow-sm px-4 text-primary"
+                onChange={handleChange}
+                value={formData.username}
+                disabled={isLoading}
+              />
             </div>
-            <div className="form-group mb-3">
-              <input id="inputPassword" type="password" placeholder="Contraseña" required="" className="form-control rounded-pill border-0 shadow-sm px-4 text-primary" />
-            </div>
-            <div className="custom-control custom-checkbox mb-3">
-              <input id="customCheck1" type="checkbox" className="custom-control-input" />
-              <label htmlFor="customCheck1" className="custom-control-label">Recordarme</label>
+            <div className="form-group mb-4">
+              <input
+                name="password"
+                type="password"
+                placeholder="Contraseña"
+                required
+                className="form-control rounded-pill border-0 shadow-sm px-4 text-primary"
+                onChange={handleChange}
+                value={formData.password}
+                disabled={isLoading}
+              />
             </div>
             <div className="d-grid gap-2 mt-2">
-              <button type="submit" className="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Ingresar</button>
+              <button
+                type="submit"
+                className="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Cargando...' : 'Ingresar'}
+              </button>
             </div>
             <div className="text-center d-flex justify-content-between mt-4">
-              <p>Si olvidaste tu contraseña debes ponerte en contacto con el centro médico.</p>
+              <p className='small'>Si olvidaste tu contraseña debes ponerte en contacto con el centro médico.</p>
             </div>
           </form>
         </div>
@@ -38,4 +101,3 @@ function Login() {
 }
 
 export default Login;
-

@@ -1,25 +1,23 @@
 // WelcomeSection.js
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function WelcomeSection() {
-  let navigate = useNavigate();
-
   return (
     <section className="container" id="inicio">
       <div className="row align-items-center">
         {/* Columna de texto */}
         <div className="col-md-6 text-center text-md-left">
-        <h1 className="display-5 fw-bold text-dark">Bienvenido a <span className="text-primary">Las Nubes</span></h1>
+          <h1 className="display-5 fw-bold text-dark">Bienvenido a <span className="text-primary">Las Nubes</span></h1>
           <p className="lead text-dark">Trabajamos para que tu bienestar toque el cielo.</p>
-          <button className="btn btn-primary btn-lg rounded-pill" onClick={() => navigate('/login')}>
+          <NavLink to="/login" className="btn btn-primary btn-lg rounded-pill">
             Iniciar Sesión
-          </button>
+          </NavLink>
         </div>
 
         {/* Columna de imagen */}
         <div className="col-md-6 d-md-block">
-          <img src="img/section_welcome.png" alt="Bienvenida" className="img-fluid"/>
+          <img src="img/section_welcome.svg" alt="Bienvenida" className="img-fluid"/>
         </div>
       </div>
     </section>
