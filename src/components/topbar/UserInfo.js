@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import ConfirmationModal from './ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import ConfirmationModal from '../ConfirmationModal';
 
 function TopbarUserInfo({ userName, userImage, cambiarVista}) {
-
+    const navigate = useNavigate();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const openLogoutModal = () => {
@@ -11,6 +13,12 @@ function TopbarUserInfo({ userName, userImage, cambiarVista}) {
 
     const closeLogoutModal = () => {
         setIsLogoutModalOpen(false);
+    };
+
+    const handleLogout = () => {
+      Cookies.remove('token');
+      Cookies.remove('role');
+      navigate('/login');
     };
 
     return (
@@ -40,7 +48,7 @@ function TopbarUserInfo({ userName, userImage, cambiarVista}) {
                         <button
                             type="button"
                             className="btn btn-primary"
-                            //onClick={cerrarSesion}
+                            onClick={handleLogout}
                         > Cerrar sesión
                         </button>
                         <button

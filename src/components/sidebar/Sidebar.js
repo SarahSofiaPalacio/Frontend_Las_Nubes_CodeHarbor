@@ -1,6 +1,6 @@
 import React from 'react';
-import Brand from './SidebarBrand';
-import NavItem from './SidebarNavItem';
+import Brand from './Brand';
+import NavItem from './NavItem';
 
 function Sidebar({ sidebarToggled, obtenerVistaActiva, cambiarVista, children}) {
     return (

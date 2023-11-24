@@ -1,6 +1,6 @@
 import React from 'react';
-import Toggler from './TopbarToggler';
-import UserInfo from './TopbarUserInfo';
+import Toggler from './Toggler';
+import UserInfo from './UserInfo';
 
 function Topbar({toggleSidebar, userName, userImage, cambiarVista}) {
     return (

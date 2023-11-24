@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
-import AddButtom from '../../components/AddButtom';
 import Table from '../../components/Table';
 import FormModal from '../../components/FormModal';
 import FormInput from '../../components/FormInput';
@@ -295,7 +294,9 @@ function Pacientes() {
       <Header title="Gestión de pacientes" />
       <div className="d-sm-flex align-items-start justify-content-between mb-3">
         <Header subTitle="Información personal de los pacientes del centro médico" />
-        <AddButtom label="Añadir paciente" onClick={openAddModal} />
+        <a href="/#" className="btn btn-sm btn-primary shadow-sm" onClick={openAddModal}>
+            <i className="fas fa-plus mr-3 text-white-50"></i>Añadir paciente
+        </a>
       </div>
 
       {/* Tabla de colaboradores */}

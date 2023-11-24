@@ -6,12 +6,12 @@ import Pacientes from './Pacientes';
 import Informes from './Informes';
 
 import Home from '../../components/Home';
-import Sidebar from '../../components/Sidebar';
-import Topbar from '../../components/Topbar';
+import Sidebar from '../../components/sidebar/Sidebar';
+import NavItem from '../../components/sidebar/NavItem';
+import Divider from '../../components/sidebar/Divider';
+import Heading from '../../components/sidebar/Heading';
+import Topbar from '../../components/topbar/Topbar';
 import MainContent from '../../components/MainContent';
-import NavItem from '../../components/SidebarNavItem';
-import Divider from '../../components/SidebarDivider';
-import Heading from '../../components/SidebarHeading';
 
 function Administrador() {
     const [vistaActiva, setVistaActiva] = useState('home');

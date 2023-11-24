@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/login';
+import Cookies from 'js-cookie';
 
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const validateForm = () => {
+    if (!formData.username || !formData.username.trim()) {
+      return false;
+    } else if (!/^\d{7,10}$/.test(formData.username.trim())) {
+      return false;
+    }
+    if (!formData.password || !formData.password.trim()) {
+      return false;
+    }
+    return true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,26 +29,22 @@ function Login() {
     }));
   };
 
-  const validateForm = () => {
-    // Asumiendo una simple validación como ejemplo
-    return formData.username.trim() && formData.password.trim();
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
       login(formData)
-        .then(data => {
+        .then(response => {
+          console.log('Response:', response);
           setIsLoading(false);
-          // Aquí guardarías el token, por ejemplo en localStorage o cookies
-          localStorage.setItem('token', data.token);
-          navigate('/administrador'); // o la ruta correspondiente al rol del usuario
+          Cookies.set('token', response.token, { expires: 1, secure: true, sameSite: 'Strict' });
+          Cookies.set('role', response.role, { expires: 1, secure: true, sameSite: 'Strict' });
+          navigate('/dashboard');
         })
         .catch(err => {
+          console.error('Error en el inicio de sesión:', err);
           setIsLoading(false);
           setError('Error en el inicio de sesión. Por favor intenta de nuevo.');
-          console.error('Error en el inicio de sesión:', err);
         });
     } else {
       setError('Por favor ingresa todos los campos.');
