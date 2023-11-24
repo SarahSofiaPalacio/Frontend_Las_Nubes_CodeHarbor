@@ -52,12 +52,18 @@ function Login() {
   };
 
   return (
-    <div className="vh-100">
-      <div className="position-fixed top-0 start-0 end-0 bottom-0 d-none d-md-block bg-light" style={{ zIndex: -1 }}>
-        <img src={`${process.env.PUBLIC_URL}/img/section_hospital2.svg`} alt="Fondo" className="img-fluid h-100" />
-      </div>
+    <div
+      className="vh-100 vw-100"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/img/section_hospital2.svg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="h-100 d-flex align-items-center justify-content-center">
-        <div className="bg-white p-4 shadow" style={{ zIndex: 2, boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px'}}>
+        <div className="bg-white p-4 shadow" style={{ zIndex: 2, boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}>
+          {/* Formulario de login */}
           <div className="d-flex justify-content-center align-items-center">
             <img src={`${process.env.PUBLIC_URL}/img/logo.svg`} alt="Logo" className="img-fluid mb-4" style={{ width: '100px' }} />
           </div>
