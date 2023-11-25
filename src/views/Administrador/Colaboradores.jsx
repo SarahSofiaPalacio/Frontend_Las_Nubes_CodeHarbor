@@ -31,7 +31,7 @@ const initialFormSelectData = {
   estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
   sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
   jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia', 'Administrador'],
-  especialidad: ['Seleccione...', 'Medicina general', 'Odontologia', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
+  especialidad: ['Seleccione...', 'Medicina general', 'Odontología', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
 }
 
 const initialFormErrors = {};
@@ -63,11 +63,11 @@ function Colaboradores() {
     setLoadingTable(true);
     getColaboradores()
       .then(response => {
-        console.log('Data fetched:', response);
+        console.log('Colaboradores cargados: ', response);
         setUsers(response);
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
+        console.error('Error cargando colaboradores: ', error);
         setIsErrorModalOpen(true);
       })
       .finally(() => {
@@ -186,15 +186,15 @@ function Colaboradores() {
       setIsLoadingRequest(true);
       createColaborador(formData)
         .then(response => {
-          console.log(response.message);
+          console.log("Colaborador añadido: ", response.message);
           setIsConfimAddModalOpen(true);
         })
         .catch(error => {
-          console.error('Hubo un error al añadir el colaborador:', error);
+          console.error('Hubo un error al añadir el colaborador: ', error);
           setIsErrorModalOpen(true);
         });
     } else {
-      console.log('Datos inválidos');
+      console.log('Datos inválidos.');
     }
   };
 
@@ -253,15 +253,15 @@ function Colaboradores() {
       setIsFormEditing(false);
       updateColaborador(selectedUser.numero_identificacion, formData)
         .then(response => {
-          console.log(response.message);
+          console.log("Colaborador editado: ", response.message);
           setIsConfimUpdateModalOpen(true);
         })
         .catch(error => {
-          console.error('Hubo un error al actualizar el colaborador:', error);
+          console.error('Hubo un error al editar el colaborador: ', error);
           setIsErrorModalOpen(true);
         });
     } else {
-      console.log('Datos inválidos');
+      console.log('Datos inválidos.');
     }
   };
 
@@ -301,11 +301,11 @@ function Colaboradores() {
     setIsDeleteModalOpen(false);
     deleteColaborador(selectedUser.numero_identificacion, formData)
       .then(response => {
-        console.log(response.message);
+        console.log("Colaborador eliminado: ", response.message);
         setIsConfirmDeleteModalOpen(true);
       })
       .catch(error => {
-        console.error('Hubo un error al actualizar el colaborador:', error);
+        console.error('Hubo un error al eliminar el colaborador:', error);
         setIsErrorModalOpen(true);
       });
   };
@@ -325,9 +325,9 @@ function Colaboradores() {
       <Header title="Gestión de colaboradores" />
       <div className="d-sm-flex align-items-start justify-content-between mb-3">
         <Header subTitle="Información personal de los colaboradores del centro médico" />
-        <a href="/#" className="btn btn-sm btn-primary shadow-sm" onClick={openAddModal}>
-            <i className="fas fa-plus mr-3 text-white-50"></i>Añadir colaborador
-        </a>
+        <button className="btn btn-sm btn-primary" onClick={openAddModal}>
+          <i className="fas fa-plus mr-3 text-white-50"></i> Añadir colaborador
+        </button>
       </div>
 
       {/* Tabla de colaboradores */}

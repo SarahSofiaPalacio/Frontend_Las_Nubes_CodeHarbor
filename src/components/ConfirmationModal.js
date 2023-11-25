@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-const ConfirmationModal = ({ isOpen, title, message, footerButtons, onCloseComplete }) => {
+const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
     const hasBeenOpenedRef = useRef(false);
 
     useEffect(() => {
@@ -21,10 +21,9 @@ const ConfirmationModal = ({ isOpen, title, message, footerButtons, onCloseCompl
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) {
                 document.body.removeChild(backdrop);
-                onCloseComplete && onCloseComplete();
             }
         }
-    }, [isOpen, onCloseComplete]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 

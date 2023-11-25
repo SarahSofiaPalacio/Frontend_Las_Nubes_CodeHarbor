@@ -1,31 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Routes, Route } from 'react-router-dom';
-import Cookies from 'js-cookie';
-
-import Perfil from './Perfil';
-import Colaboradores from './Colaboradores';
-import Pacientes from './Pacientes';
-import Informes from './Informes';
-
-import Home from '../../components/Home';
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from '../../components/sidebar/Sidebar';
 import NavItem from '../../components/sidebar/NavItem';
 import Divider from '../../components/sidebar/Divider';
 import Heading from '../../components/sidebar/Heading';
 import Topbar from '../../components/topbar/Topbar';
+import Home from '../../components/Home';
+import Perfil from './Perfil';
+import Colaboradores from './Colaboradores';
+import Pacientes from './Pacientes';
+import Informes from './Informes';
 
 function Administrador() {
     const [sidebarToggled, setSidebarToggled] = useState(false);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const username = Cookies.get('username');
-        const token = Cookies.get('token');
-        const role = Cookies.get('role');
-        if (!username || !token || !role) {
-            navigate('/login');
-        }
-    }, [navigate]);
 
     const toggleSidebar = () => {
         setSidebarToggled(!sidebarToggled);

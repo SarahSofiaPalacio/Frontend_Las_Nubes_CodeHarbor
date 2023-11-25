@@ -10,7 +10,6 @@ function Index() {
             <main style={{ marginTop: '75px' }} role="main">
                 <Welcome />
                 <Promoters />
-                {/* Otros componentes de sección irían aquí */}
             </main>
         </>
     );

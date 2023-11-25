@@ -1,29 +1,30 @@
-import { React, useState, useEffect} from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useAuth } from '../../AuthContext';
 import { logout } from '../../services/login';
 import { getColaborador } from '../../services/colaboradores';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
+    const { username, setUsername, setRole, setToken } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [userName, setUserName] = useState('Usuario');
     const [userImage, setUserImage] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const username = Cookies.get('username');
         if (username) {
             getColaborador(username)
                 .then(data => {
+                    console.log("Datos del usuario cargados:", data);
                     if (data.nombre) setUserName(data.nombre);
                     if (data.foto) setUserImage(data.foto);
                 })
                 .catch(error => {
-                    console.error("Error fetching user data:", error);
+                    console.error("Error al cargar datos del usuario:", error);
                 });
         }
-    }, []);
+    }, [username]);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
@@ -34,26 +35,32 @@ function UserInfo() {
     };
 
     const handleLogout = () => {
+        logout()
+            .then(response => {
+                console.log("Sesión cerrada exitosamente:", response);
+                Cookies.remove('username');
+                Cookies.remove('token');
+                Cookies.remove('role');
+                setUsername(null);
+                setRole(null);
+                setToken(null);
+                console.log("Datos de usuario eliminados de cookies y contexto.");
+            })
+            .catch(error => {
+                console.error("Error al cerrar sesión:", error);
+            });
         setIsLogoutModalOpen(false);
-        Cookies.remove('username');
-        Cookies.remove('token');
-        Cookies.remove('role');
-        logout();
-    };
-
-    const onModalCloseComplete = () => {
-        navigate('/');
     };
 
     return (
         <li className="nav-item dropdown no-arrow">
-            <button className="btn btn-link nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{ boxShadow: 'none' }}>
+            <button className="btn btn-link nav-link dropdown-toggle shadow-none" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span className="mr-2 d-none d-lg-inline text-gray-600 small">Bienvenido, {userName}</span>
                 <img className="img-profile rounded-circle mx-auto d-block" src={userImage} alt="Foto de perfil" />
             </button>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
-                <NavLink className="dropdown-item" to="/perfil">
+                <NavLink className="dropdown-item" to="perfil">
                     <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Mi perfil
                 </NavLink>
@@ -82,7 +89,6 @@ function UserInfo() {
                         </button>
                     </>
                 }
-                onCloseComplete={onModalCloseComplete}
             />
         </li>
     );

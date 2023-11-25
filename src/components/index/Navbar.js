@@ -20,7 +20,7 @@ function Navbar() {
         </button>
 
         <div className={`${isNavCollapsed ? 'collapse' : 'text-center'} navbar-collapse justify-content-end`} id="navbarNav">
-          <div className="navbar-nav">
+        <div className="navbar-nav">
             <HashLink smooth className="nav-link" to="/#inicio">Inicio</HashLink>
             <HashLink smooth className="nav-link" to="/#convenios">Convenios</HashLink>
             <HashLink smooth className="nav-link" to="/#sobre-nosotros">Sobre nosotros</HashLink>
@@ -29,8 +29,8 @@ function Navbar() {
             <HashLink smooth className="nav-link" to="/#contacto">Contacto</HashLink>
           </div>
 
-          {/* Botón de iniciar sesión a la derecha del todo */}
-          <NavLink to="/login" className="btn btn-primary rounded-pill ml-3">Iniciar Sesión</NavLink>
+          {/* Botón de iniciar sesión a la derecha */}
+          <NavLink to="/login" className="btn btn-primary btn-sm rounded-pill ml-lg-2">Iniciar Sesión</NavLink>
         </div>
       </div>
     </nav>

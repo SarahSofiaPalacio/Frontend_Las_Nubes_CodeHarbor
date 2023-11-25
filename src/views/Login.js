@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { login } from '../services/login';
+import { useAuth } from '../AuthContext';
+import Cookies from 'js-cookie';
 
 function Login() {
   const navigate = useNavigate();
+  const { username, token, role } = useAuth();
+
+  useEffect(() => {
+    if (username && role && token) {
+      console.log("Usuario ya ha iniciado sesión. Redireccionando a dashboard...")
+      navigate('/dashboard');
+    }
+  }, [username, role, token, navigate]);
+  
+  const { setUsername, setRole, setToken } = useAuth();
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     if (!formData.username || !formData.username.trim()) {
@@ -35,22 +46,25 @@ function Login() {
       setIsLoading(true);
       login(formData)
         .then(response => {
-          console.log('Response:', response);
+          console.log('Inicio de sesión exitoso: ', response);
           Cookies.set('username', formData.username, { expires: 1, secure: true, sameSite: 'Strict' });
           Cookies.set('token', response.token, { expires: 1, secure: true, sameSite: 'Strict' });
           Cookies.set('role', response.role, { expires: 1, secure: true, sameSite: 'Strict' });
+          setUsername(formData.username);
+          setRole(response.role);
+          setToken(response.token);
+          console.log("Datos de usuario guardados en cookies y contexto.");
           setIsLoading(false);
-          console.log("Enviando a dashboard...")
           navigate('/dashboard');
-          console.log("Enviado.")
+          console.log("Redireccionando a dashboard...")
         })
         .catch(err => {
-          console.error('Error en el inicio de sesión:', err);
+          console.error('Error en el inicio de sesión: ', err);
           setIsLoading(false);
           setError('Error en el inicio de sesión. Por favor intenta de nuevo.');
         });
     } else {
-      setError('Por favor ingresa todos los campos.');
+      setError('Por favor valida los datos ingresados.');
     }
   };
 

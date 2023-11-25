@@ -7,15 +7,19 @@ function Informes() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDownloadReport = async (reportType) => {
+    console.log("Generando informe de %s...", reportType);
     setIsGenerating(true); // Bloquea los botones mientras se genera el informe
-    try {
-      const fileURL = await getReport(reportType);
-      window.open(fileURL);
-    } catch (error) {
-      console.error("Error fetching report:", error);
-    }
-    setIsGenerating(false); // Desbloquea los botones una vez generado el informe
-  };
+    getReport(reportType)
+      .then(response => {
+        console.log("Informe generado:", response);
+        window.open(response);
+        setIsGenerating(false); // Desbloquea los botones
+      })
+      .catch(error => {
+        console.error("Error al generar informe:", error);
+        setIsGenerating(false); // Desbloquea los botones
+      });
+  }
 
   return (
     <div>

@@ -1,13 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useAuth } from './AuthContext';
 import Index from './views/Index';
 import Login from './views/Login';
 import Administrador from './views/Administrador/Administrador';
 
 function App() {
-  const role = Cookies.get('role');
-  console.log("Role: ", role);
+  const { role } = useAuth();
   return (
     <Router>
       <Routes>

@@ -57,11 +57,11 @@ function Pacientes() {
     setLoadingTable(true);
     getPacientes()
       .then(response => {
-        console.log('Data fetched:', response);
+        console.log('Pacientes cargados: ', response);
         setUsers(response);
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
+        console.error('Error cargando pacientes: ', error);
         setIsErrorModalOpen(true);
       })
       .finally(() => {
@@ -161,15 +161,15 @@ function Pacientes() {
       setIsLoadingRequest(true);
       createPaciente(formData)
         .then(response => {
-          console.log(response.message);
+          console.log("Paciente añadido: ", response.message);
           setIsConfimAddModalOpen(true);
         })
         .catch(error => {
-          console.error('Hubo un error al añadir el paciente:', error);
+          console.error('Hubo un error al añadir el paciente: ', error);
           setIsErrorModalOpen(true);
         });
     } else {
-      console.log('Datos inválidos');
+      console.log('Datos inválidos.');
     }
   };
 
@@ -222,15 +222,15 @@ function Pacientes() {
       setIsFormEditing(false);
       updatePaciente(selectedUser.numero_identificacion, formData)
         .then(response => {
-          console.log(response.message);
+          console.log("Paciente editado: ", response.message);
           setIsConfimUpdateModalOpen(true);
         })
         .catch(error => {
-          console.error('Hubo un error al actualizar el paciente:', error);
+          console.error('Hubo un error al editar el paciente: ', error);
           setIsErrorModalOpen(true);
         });
     } else {
-      console.log('Datos inválidos');
+      console.log('Datos inválidos.');
     }
   };
 
@@ -270,11 +270,11 @@ function Pacientes() {
     setIsDeleteModalOpen(false);
     deletePaciente(selectedUser.numero_identificacion, formData)
       .then(response => {
-        console.log(response.message);
+        console.log("Paciente eliminado: ", response.message);
         setIsConfirmDeleteModalOpen(true);
       })
       .catch(error => {
-        console.error('Hubo un error al actualizar el paciente:', error);
+        console.error('Hubo un error al eliminar el paciente: ', error);
         setIsErrorModalOpen(true);
       });
   };
@@ -294,9 +294,9 @@ function Pacientes() {
       <Header title="Gestión de pacientes" />
       <div className="d-sm-flex align-items-start justify-content-between mb-3">
         <Header subTitle="Información personal de los pacientes del centro médico" />
-        <a href="/#" className="btn btn-sm btn-primary shadow-sm" onClick={openAddModal}>
-            <i className="fas fa-plus mr-3 text-white-50"></i>Añadir paciente
-        </a>
+        <button className="btn btn-sm btn-primary" onClick={openAddModal}>
+          <i className="fas fa-plus mr-3 text-white-50"></i> Añadir paciente
+        </button>
       </div>
 
       {/* Tabla de colaboradores */}
