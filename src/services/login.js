@@ -27,3 +27,17 @@ export const login = (credentials) => {
             .then(response => response.data);
     }
 };
+
+export const logout = () => {
+    if (USE_MOCK) {
+        // Retornar una promesa que simula una llamada al servidor
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 1000);
+        });
+    } else {
+        // Realizar la llamada al backend
+        return axios.post(`${URL_BASE}/auth/logout`);
+    }
+}

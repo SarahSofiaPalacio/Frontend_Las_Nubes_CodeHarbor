@@ -4,12 +4,12 @@ import React from 'react';
 function PromotersSection() {
   // Asumiendo que tienes un array de imágenes de los promotores
   const promoters = [
-    { src: 'img/promoters_cruz_verde.svg', alt: 'Cruz Verde' },
-    { src: 'img/promoters_colsubsidio.svg', alt: 'Colsubsidio' },
-    { src: 'img/promoters_farmatodo.svg', alt: 'Farmatodo' },
-    { src: 'img/promoters_coopidrogas.svg', alt: 'Coopidrogas' },
-    { src: 'img/promoters_cafam.svg', alt: 'Cafam' },
-    { src: 'img/promoters_colsanitas.svg', alt: 'Colsanitas' }
+    { src: `${process.env.PUBLIC_URL}/img/promoters_cruz_verde.svg`, alt: 'Cruz Verde' },
+    { src: `${process.env.PUBLIC_URL}/img/promoters_colsubsidio.svg`, alt: 'Colsubsidio' },
+    { src: `${process.env.PUBLIC_URL}/img/promoters_farmatodo.svg`, alt: 'Farmatodo' },
+    { src: `${process.env.PUBLIC_URL}/img/promoters_coopidrogas.svg`, alt: 'Coopidrogas' },
+    { src: `${process.env.PUBLIC_URL}/img/promoters_cafam.svg`, alt: 'Cafam' },
+    { src: `${process.env.PUBLIC_URL}/img/promoters_colsanitas.svg`, alt: 'Colsanitas' }
   ];
 
 return (

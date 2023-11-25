@@ -34,7 +34,7 @@ function Informes() {
               disabled={isGenerating}
             >
               {/* Poner imagen en un recuadro con los bordes redondeado y con tamaño ajustado */}
-              <img src="img/informe_pacientes.svg" alt="Informe de Pacientes" className="img-fluid mb-2 mt-2 rounded mx-auto d-block"/>
+              <img src={`${process.env.PUBLIC_URL}/img/informe_pacientes.svg`}  alt="Informe de Pacientes" className="img-fluid mb-2 mt-2 rounded mx-auto d-block"/>
               Generar informes de Pacientes
             </button>
           </div>
@@ -46,7 +46,7 @@ function Informes() {
               onClick={() => handleDownloadReport('colaboradores')}
               disabled={isGenerating}
             >
-              <img src="img/informe_colaboradores.svg" alt="Informe de Colaboradores" className="img-fluid mb-2 mt-2 rounded mx-auto d-block "/>
+              <img src={`${process.env.PUBLIC_URL}/img/informe_colaboradores.svg`} alt="Informe de Colaboradores" className="img-fluid mb-2 mt-2 rounded mx-auto d-block "/>
               Generar informes de Colaboradores
             </button>
           </div>
@@ -58,7 +58,7 @@ function Informes() {
               onClick={() => handleDownloadReport('medicamentos')}
               disabled={isGenerating}
             >
-              <img src="img/informe_medicamentos.svg" alt="Informe de Medicamentos" className="img-fluid mb-2 mt-2 rounded mx-auto d-block "/>
+              <img src={`${process.env.PUBLIC_URL}/img/informe_medicamentos.svg`} alt="Informe de Medicamentos" className="img-fluid mb-2 mt-2 rounded mx-auto d-block "/>
               Generar informes de Medicamentos
             </button>
           </div>

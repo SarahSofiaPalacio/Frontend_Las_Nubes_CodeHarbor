@@ -3,9 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 
 function Navbar() {
-  // Estado para manejar la visibilidad del menú en móviles
   const [isNavCollapsed, setIsNavCollapsed] = useState(true);
-
   const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
 
   return (

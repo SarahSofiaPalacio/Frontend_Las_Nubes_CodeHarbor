@@ -2,13 +2,13 @@ import React from 'react';
 import Toggler from './Toggler';
 import UserInfo from './UserInfo';
 
-function Topbar({toggleSidebar, userName, userImage, cambiarVista}) {
+function Topbar({ toggleSidebar }) {
     return (
         <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-            <Toggler toggleSidebar={toggleSidebar}/>
+            <Toggler toggleSidebar={toggleSidebar} />
             <ul className="navbar-nav ml-auto">
-                <div className="topbar-divider d-none d-sm-block"></div>
-                <UserInfo userName={userName} userImage={userImage} cambiarVista={cambiarVista}/>
+                {/* <div className="topbar-divider d-none d-sm-block"></div> */}
+                <UserInfo/>
             </ul>
         </nav>
     );

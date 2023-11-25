@@ -17,7 +17,7 @@ function WelcomeSection() {
 
         {/* Columna de imagen */}
         <div className="col-md-6 d-md-block">
-          <img src="img/section_welcome.svg" alt="Bienvenida" className="img-fluid"/>
+          <img src={`${process.env.PUBLIC_URL}/img/section_welcome.svg`} alt="Bienvenida" className="img-fluid"/>
         </div>
       </div>
     </section>

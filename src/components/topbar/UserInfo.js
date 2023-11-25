@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { React, useState, useEffect} from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { logout } from '../../services/login';
+import { getColaborador } from '../../services/colaboradores';
 import ConfirmationModal from '../ConfirmationModal';
 
-function TopbarUserInfo({ userName, userImage, cambiarVista}) {
-    const navigate = useNavigate();
+function UserInfo() {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [userName, setUserName] = useState('Usuario');
+    const [userImage, setUserImage] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const username = Cookies.get('username');
+        if (username) {
+            getColaborador(username)
+                .then(data => {
+                    if (data.nombre) setUserName(data.nombre);
+                    if (data.foto) setUserImage(data.foto);
+                })
+                .catch(error => {
+                    console.error("Error fetching user data:", error);
+                });
+        }
+    }, []);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
@@ -16,32 +34,37 @@ function TopbarUserInfo({ userName, userImage, cambiarVista}) {
     };
 
     const handleLogout = () => {
-      Cookies.remove('token');
-      Cookies.remove('role');
-      navigate('/login');
+        setIsLogoutModalOpen(false);
+        Cookies.remove('username');
+        Cookies.remove('token');
+        Cookies.remove('role');
+        logout();
+    };
+
+    const onModalCloseComplete = () => {
+        navigate('/');
     };
 
     return (
         <li className="nav-item dropdown no-arrow">
-            <a className="nav-link dropdown-toggle" href="/#" id="userDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span className="mr-2 d-none d-lg-inline text-gray-600 small">{userName}</span>
+            <button className="btn btn-link nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{ boxShadow: 'none' }}>
+                <span className="mr-2 d-none d-lg-inline text-gray-600 small">Bienvenido, {userName}</span>
                 <img className="img-profile rounded-circle mx-auto d-block" src={userImage} alt="Foto de perfil" />
-            </a>
+            </button>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
-                <a className="dropdown-item" href="/#" onClick={() => cambiarVista('perfil')} >
+                <NavLink className="dropdown-item" to="/perfil">
                     <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Mi perfil
-                </a>
-                <a className="dropdown-item" href="/#" onClick={openLogoutModal}>
+                </NavLink>
+                <button className="dropdown-item" onClick={openLogoutModal}>
                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Cerrar sesión
-                </a>
+                </button>
             </div>
             <ConfirmationModal
                 isOpen={isLogoutModalOpen}
-                title="¿Estas seguro?"
+                title="¿Estás seguro?"
                 message="Se terminará tu sesión actual."
                 footerButtons={
                     <>
@@ -49,19 +72,20 @@ function TopbarUserInfo({ userName, userImage, cambiarVista}) {
                             type="button"
                             className="btn btn-primary"
                             onClick={handleLogout}
-                        > Cerrar sesión
+                        >Cerrar sesión
                         </button>
                         <button
                             type="button"
                             className="btn btn-secondary w-25"
                             onClick={closeLogoutModal}
-                        > Cancelar
+                        >Cancelar
                         </button>
                     </>
                 }
+                onCloseComplete={onModalCloseComplete}
             />
         </li>
     );
 }
 
-export default TopbarUserInfo;
+export default UserInfo;

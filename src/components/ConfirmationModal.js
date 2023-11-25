@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
+const ConfirmationModal = ({ isOpen, title, message, footerButtons, onCloseComplete }) => {
     const hasBeenOpenedRef = useRef(false);
 
     useEffect(() => {
@@ -19,9 +19,12 @@ const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
             }
             document.body.classList.remove('modal-open');
             const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) document.body.removeChild(backdrop);
+            if (backdrop) {
+                document.body.removeChild(backdrop);
+                onCloseComplete && onCloseComplete();
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, onCloseComplete]);
 
     if (!isOpen) return null;
 
@@ -57,6 +60,7 @@ ConfirmationModal.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     footerButtons: PropTypes.object.isRequired,
+    onCloseComplete: PropTypes.func,
 };
 
 ConfirmationModal.defaultProps = {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/login';
 import Cookies from 'js-cookie';
+import { login } from '../services/login';
 
 function Login() {
   const navigate = useNavigate();
@@ -36,10 +36,13 @@ function Login() {
       login(formData)
         .then(response => {
           console.log('Response:', response);
-          setIsLoading(false);
+          Cookies.set('username', formData.username, { expires: 1, secure: true, sameSite: 'Strict' });
           Cookies.set('token', response.token, { expires: 1, secure: true, sameSite: 'Strict' });
           Cookies.set('role', response.role, { expires: 1, secure: true, sameSite: 'Strict' });
+          setIsLoading(false);
+          console.log("Enviando a dashboard...")
           navigate('/dashboard');
+          console.log("Enviado.")
         })
         .catch(err => {
           console.error('Error en el inicio de sesión:', err);
