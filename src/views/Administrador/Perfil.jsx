@@ -5,52 +5,27 @@ import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
 import { useAuth } from '../../auth/AuthContext.js';
 
-const initialFormData = {
-    tipo_identificacion: '',
-    numero_identificacion: '',
-    nombre: '',
-    apellido: '',
-    fecha_nacimiento: '',
-    estado_civil: '',
-    sexo: '',
-    direccion: '',
-    telefono: '',
-    correo_electronico: '',
-    salario: '',
-    jerarquia: '',
-    fecha_ingreso: '',
-    especialidad: '',
-    foto: '',
-}
-
-const initialFormErrors = {};
-
-const initialFormSelectData = {
-    tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
-    estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
-    sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
-    jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia', 'Administrador'],
-    especialidad: ['Seleccione...', 'Medicina general', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
-}
+import { colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/AdministradorData.js';
+import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
 
 function UserProfile() {
-    const [isLoadingContent, setIsLoadingContent] = useState(true);
-
     const { username } = useAuth();
     const fileInputRef = useRef();
-
+    const [isLoadingContent, setIsLoadingContent] = useState(true);
     const [isLoadingForm, setLoadingForm] = useState(false);
-    const [formData, setFormData] = useState({ initialFormData });
-    const [formErrors, setFormErrors] = useState({ initialFormErrors });
-    const [isLoadingRequest, setIsLoadingRequest] = useState(false);
+    
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-
-    const [isFormEditing, setIsFormEditing] = useState(false);
     const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
     const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
+    const [isLoadingUpdate, setIsLoadingRequest] = useState(false);
+
+    const [isFormEditing, setIsFormEditing] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+    const [formData, setFormData] = useState({ colaboradorInitialFormData });
+
+    // Cargar datos del colaborador
 
     const loadUser = useCallback(() => {
         console.log('Cargando datos del colaborador...');
@@ -75,6 +50,8 @@ function UserProfile() {
     }, [loadUser]);
 
     if (isLoadingContent) return <LoadingSpinner />;
+
+    // Validar formulario de colaborador
 
     const validateForm = () => {
         const errors = {};
@@ -166,8 +143,8 @@ function UserProfile() {
     };
 
     const resetForm = () => {
-        setFormData(initialFormData);
-        setFormErrors(initialFormErrors);
+        setFormData(colaboradorInitialFormData);
+        setFormErrors({});
     };
 
     const startEditing = () => {
@@ -243,7 +220,7 @@ function UserProfile() {
                             style={{ display: 'none' }} // Oculta el input
                             ref={fileInputRef} // Referencia al input
                         />
-                        <button className="btn btn-primary" onClick={handleButtonClick} disabled={isLoadingRequest || isFormEditing}>
+                        <button className="btn btn-primary" onClick={handleButtonClick} disabled={isLoadingUpdate || isFormEditing}>
                             Cambiar foto
                         </button>
                     </>
@@ -257,7 +234,7 @@ function UserProfile() {
                                         label="Tipo de documento"
                                         id="tipo_identificacion"
                                         type="text"
-                                        options={initialFormSelectData.tipo_identificacion}
+                                        options={colaboradorFormSelectOptions.tipo_identificacion}
                                         value={formData.tipo_identificacion}
                                         error={formErrors.tipo_identificacion}
                                         isFormEditing={isFormEditing}
@@ -306,7 +283,7 @@ function UserProfile() {
                                     <FormSelect
                                         label="Estado Civil"
                                         id="estado_civil"
-                                        options={initialFormSelectData.estado_civil}
+                                        options={colaboradorFormSelectOptions.estado_civil}
                                         value={formData.estado_civil}
                                         error={formErrors.estado_civil}
                                         isFormEditing={isFormEditing}
@@ -317,7 +294,7 @@ function UserProfile() {
                                     <FormSelect
                                         label="Sexo"
                                         id="sexo"
-                                        options={initialFormSelectData.sexo}
+                                        options={colaboradorFormSelectOptions.sexo}
                                         value={formData.sexo}
                                         error={formErrors.sexo}
                                         isFormEditing={isFormEditing}
@@ -366,7 +343,7 @@ function UserProfile() {
                                     <FormSelect
                                         label="Jerarquía"
                                         id="jerarquia"
-                                        options={initialFormSelectData.jerarquia}
+                                        options={colaboradorFormSelectOptions.jerarquia}
                                         value={formData.jerarquia}
                                         error={formErrors.jerarquia}
                                         isFormEditing={isFormEditing}
@@ -387,7 +364,7 @@ function UserProfile() {
                                         label="Especialidad"
                                         id="especialidad"
                                         type="text"
-                                        options={initialFormSelectData.especialidad}
+                                        options={colaboradorFormSelectOptions.especialidad}
                                         value={formData.especialidad}
                                         error={formErrors.especialidad}
                                         isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
@@ -396,20 +373,20 @@ function UserProfile() {
                                 </div>
 
                                 <div className="text-center mt-3">
-                                    {isFormEditing || isLoadingRequest ? (
+                                    {isFormEditing || isLoadingUpdate ? (
                                         <>
                                             <button
                                                 type="button"
                                                 className="btn btn-success w-25 mr-3"
                                                 onClick={updateUser}
-                                                disabled={isLoadingRequest}
-                                            > {isLoadingRequest ? "Cargando..." : "Guardar"}
+                                                disabled={isLoadingUpdate}
+                                            > {isLoadingUpdate ? "Cargando..." : "Guardar"}
                                             </button>
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary w-25 mr-3"
                                                 onClick={() => setIsDiscardUpdateModalOpen(true)}
-                                                disabled={isLoadingRequest}
+                                                disabled={isLoadingUpdate}
                                             > Cancelar
                                             </button>
                                         </>
@@ -418,7 +395,7 @@ function UserProfile() {
                                             type="button"
                                             className="btn btn-primary w-25"
                                             onClick={startEditing}
-                                            disabled={isLoadingRequest}
+                                            disabled={isLoadingUpdate}
                                         > Editar
                                         </button>
                                     )}

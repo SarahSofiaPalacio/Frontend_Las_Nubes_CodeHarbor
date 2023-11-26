@@ -6,58 +6,33 @@ import FormModal from '../../components/FormModal';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
+
+import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/AdministradorData.js';
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
-const columnsTable = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
-
-const initialFormData = {
-  tipo_identificacion: '',
-  numero_identificacion: '',
-  nombre: '',
-  apellido: '',
-  fecha_nacimiento: '',
-  estado_civil: '',
-  sexo: '',
-  direccion: '',
-  telefono: '',
-  correo_electronico: '',
-  salario: '',
-  jerarquia: '',
-  fecha_ingreso: '',
-  especialidad: '',
-}
-
-const initialFormSelectData = {
-  tipo_identificacion: ['Seleccione...', 'CC', 'TI', 'RC', 'CE', 'CI', 'DNI', 'NIT', 'PASAPORTE'],
-  estado_civil: ['Seleccione...', 'Soltero', 'Casado', 'Viudo', 'Divorciado', 'Unión libre'],
-  sexo: ['Seleccione...', 'Masculino', 'Femenino', 'No binario'],
-  jerarquia: ['Seleccione...', 'Médico', 'Enfermero', 'Secretario', 'Regente de farmacia', 'Administrador'],
-  especialidad: ['Seleccione...', 'Medicina general', 'Odontología', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
-}
-
-const initialFormErrors = {};
-
 function Colaboradores() {
-  const [isLoadingContent, setIsLoadingContent] = useState(true);
-
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
 
-  const [formData, setFormData] = useState({ initialFormData });
-  const [formErrors, setFormErrors] = useState({ initialFormErrors });
-  const [isLoadingRequest, setIsLoadingRequest] = useState(false);
+  const [formData, setFormData] = useState({ colaboradorInitialFormData });
+  const [formErrors, setFormErrors] = useState({});
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
+  const [isLoadingAdd, setIsLoadingAdd] = useState(false);
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isFormEditing, setIsFormEditing] = useState(false);
   const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   // Cargar lista de usuarios al cargar la página
 
@@ -154,15 +129,17 @@ function Colaboradores() {
   // Resetear formulario
 
   const resetForm = () => {
-    setFormData(initialFormData);
-    setFormErrors(initialFormErrors);
+    setFormData(colaboradorInitialFormData);
+    setFormErrors({});
   };
 
   // Modal de error inesperado
 
   const closeErrorModal = () => {
     setIsErrorModalOpen(false);
-    setIsLoadingRequest(false);
+    setIsLoadingAdd(false);
+    setIsLoadingUpdate(false);
+    setIsLoadingDelete(false);
   };
 
   // Funciones para el modal añadir
@@ -189,7 +166,7 @@ function Colaboradores() {
   const createUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, añadiendo colaborador...');
-      setIsLoadingRequest(true);
+      setIsLoadingAdd(true);
       createColaborador(formData)
         .then(response => {
           console.log("Colaborador añadido: ", response.message);
@@ -207,7 +184,7 @@ function Colaboradores() {
   const closeConfirmAddModal = () => {
     setIsConfimAddModalOpen(false);
     setIsAddModalOpen(false);
-    setIsLoadingRequest(false);
+    setIsLoadingAdd(false);
     loadUsers();
   };
 
@@ -216,14 +193,14 @@ function Colaboradores() {
   const openEditModal = (colaborador) => {
     setSelectedUser(colaborador);
     setFormData(colaborador);
-    setIsEditModalOpen(true);
+    setIsUpdateModalOpen(true);
   };
 
   const closeEditModal = () => {
     if (isFormEditing) {
       setIsDiscardUpdateModalOpen(true);
     } else {
-      setIsEditModalOpen(false);
+      setIsUpdateModalOpen(false);
       setSelectedUser(null);
       resetForm();
     }
@@ -255,7 +232,7 @@ function Colaboradores() {
   const updateUser = () => {
     if (validateForm()) {
       console.log('Datos válidos, editando colaborador...');
-      setIsLoadingRequest(true);
+      setIsLoadingUpdate(true);
       setIsFormEditing(false);
       updateColaborador(selectedUser.numero_identificacion, formData)
         .then(response => {
@@ -273,11 +250,11 @@ function Colaboradores() {
 
   const closeConfirmUpdateModal = () => {
     setIsConfimUpdateModalOpen(false);
-    setIsEditModalOpen(false);
+    setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
-    setIsLoadingRequest(false);
+    setIsLoadingUpdate(false);
     loadUsers();
   };
 
@@ -287,7 +264,7 @@ function Colaboradores() {
 
   const closeAndDiscardUpdateModal = () => {
     setIsDiscardUpdateModalOpen(false);
-    setIsEditModalOpen(false);
+    setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
@@ -303,7 +280,7 @@ function Colaboradores() {
 
   const deleteUser = () => {
     console.log('Eliminando colaborador...');
-    setIsLoadingRequest(true);
+    setIsLoadingDelete(true);
     setIsDeleteModalOpen(false);
     deleteColaborador(selectedUser.numero_identificacion, formData)
       .then(response => {
@@ -318,11 +295,11 @@ function Colaboradores() {
 
   const closeConfirmDeleteModal = () => {
     setIsConfirmDeleteModalOpen(false);
-    setIsEditModalOpen(false);
+    setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
-    setIsLoadingRequest(false);
+    setIsLoadingDelete(false);
     loadUsers();
   }
 
@@ -340,7 +317,7 @@ function Colaboradores() {
 
       {/* Tabla de colaboradores */}
 
-      <Table label="Listado de colaboradores" columns={columnsTable} data={users} loading={isLoadingTable}>
+      <Table label="Listado de colaboradores" columns={colaboradorTableColumns} data={users} loading={isLoadingTable}>
         {users.map((colaborador) => (
           <tr key={colaborador.numero_identificacion}>
             <td>{colaborador.numero_identificacion}</td>
@@ -386,14 +363,14 @@ function Colaboradores() {
               type="button"
               className="btn btn-success w-25"
               onClick={createUser}
-              disabled={isLoadingRequest}
-            > {isLoadingRequest ? "Cargando..." : "Añadir"}
+              disabled={isLoadingAdd}
+            > {isLoadingAdd ? "Cargando..." : "Añadir"}
             </button>
             <button
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeAddModal}
-              disabled={isLoadingRequest}
+              disabled={isLoadingAdd}
             > Cancelar
             </button>
           </>
@@ -405,7 +382,7 @@ function Colaboradores() {
               label="Tipo de documento"
               id="tipo_identificacion"
               type="text"
-              options={initialFormSelectData.tipo_identificacion}
+              options={colaboradorFormSelectOptions.tipo_identificacion}
               value={formData.tipo_identificacion}
               error={formErrors.tipo_identificacion}
               onChange={(e) => handleAddFormChange('tipo_identificacion', e.target.value)}
@@ -450,7 +427,7 @@ function Colaboradores() {
               label="Estado Civil"
               id="estado_civil"
               type="text"
-              options={initialFormSelectData.estado_civil}
+              options={colaboradorFormSelectOptions.estado_civil}
               value={formData.estado_civil}
               error={formErrors.estado_civil}
               onChange={(e) => handleAddFormChange('estado_civil', e.target.value)}
@@ -461,7 +438,7 @@ function Colaboradores() {
               label="Sexo"
               id="sexo"
               type="text"
-              options={initialFormSelectData.sexo}
+              options={colaboradorFormSelectOptions.sexo}
               value={formData.sexo}
               error={formErrors.sexo}
               onChange={(e) => handleAddFormChange('sexo', e.target.value)}
@@ -506,7 +483,7 @@ function Colaboradores() {
               label="Jerarquía"
               id="jerarquia"
               type="text"
-              options={initialFormSelectData.jerarquia}
+              options={colaboradorFormSelectOptions.jerarquia}
               value={formData.jerarquia}
               error={formErrors.jerarquia}
               onChange={(e) => handleAddFormChange('jerarquia', e.target.value)}
@@ -525,7 +502,7 @@ function Colaboradores() {
               label="Especialidad"
               id="especialidad"
               type="text"
-              options={initialFormSelectData.especialidad}
+              options={colaboradorFormSelectOptions.especialidad}
               value={formData.especialidad}
               error={formErrors.especialidad}
               onChange={(e) => handleAddFormChange('especialidad', e.target.value)}
@@ -551,17 +528,17 @@ function Colaboradores() {
       {/* Modal editar */}
 
       <FormModal
-        isOpen={isEditModalOpen}
+        isOpen={isUpdateModalOpen}
         title="Más información del colaborador"
         footerButtons={
           <>
-            {isFormEditing || isLoadingRequest ? (
+            {isFormEditing || isLoadingUpdate ? (
               <button
                 type="button"
                 className="btn btn-success w-25"
                 onClick={updateUser}
-                disabled={isLoadingRequest}
-              > {isLoadingRequest ? "Cargando..." : "Guardar"}
+                disabled={isLoadingUpdate || isLoadingDelete}
+              > {isLoadingUpdate ? "Cargando..." : "Guardar"}
               </button>
             ) : (
               <>
@@ -569,15 +546,15 @@ function Colaboradores() {
                   type="button"
                   className="btn btn-primary w-25"
                   onClick={startEditing}
-                  disabled={isLoadingRequest}
+                  disabled={isLoadingUpdate || isLoadingDelete}
                 > Editar
                 </button>
                 <button
                   type="button"
                   className="btn btn-danger w-25"
                   onClick={OpenDeleteModal}
-                  disabled={isLoadingRequest}
-                > {isLoadingRequest ? "Cargando..." : "Eliminar"}
+                  disabled={isLoadingUpdate || isLoadingDelete}
+                > {isLoadingDelete ? "Cargando..." : "Eliminar"}
                 </button>
               </>
             )}
@@ -585,7 +562,7 @@ function Colaboradores() {
               type="button"
               className="btn btn-secondary w-25"
               onClick={closeEditModal}
-              disabled={isLoadingRequest}
+              disabled={isLoadingUpdate || isLoadingDelete}
             > Cancelar
             </button>
           </>
@@ -598,7 +575,7 @@ function Colaboradores() {
                 label="Tipo de documento"
                 id="tipo_identificacion"
                 type="text"
-                options={initialFormSelectData.tipo_identificacion}
+                options={colaboradorFormSelectOptions.tipo_identificacion}
                 value={formData.tipo_identificacion}
                 error={formErrors.tipo_identificacion}
                 isFormEditing={isFormEditing}
@@ -647,7 +624,7 @@ function Colaboradores() {
               <FormSelect
                 label="Estado Civil"
                 id="estado_civil"
-                options={initialFormSelectData.estado_civil}
+                options={colaboradorFormSelectOptions.estado_civil}
                 value={formData.estado_civil}
                 error={formErrors.estado_civil}
                 isFormEditing={isFormEditing}
@@ -658,7 +635,7 @@ function Colaboradores() {
               <FormSelect
                 label="Sexo"
                 id="sexo"
-                options={initialFormSelectData.sexo}
+                options={colaboradorFormSelectOptions.sexo}
                 value={formData.sexo}
                 error={formErrors.sexo}
                 isFormEditing={isFormEditing}
@@ -707,7 +684,7 @@ function Colaboradores() {
               <FormSelect
                 label="Jerarquía"
                 id="jerarquia"
-                options={initialFormSelectData.jerarquia}
+                options={colaboradorFormSelectOptions.jerarquia}
                 value={formData.jerarquia}
                 error={formErrors.jerarquia}
                 isFormEditing={isFormEditing}
@@ -728,7 +705,7 @@ function Colaboradores() {
                 label="Especialidad"
                 id="especialidad"
                 type="text"
-                options={initialFormSelectData.especialidad}
+                options={colaboradorFormSelectOptions.especialidad}
                 value={formData.especialidad}
                 error={formErrors.especialidad}
                 isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
