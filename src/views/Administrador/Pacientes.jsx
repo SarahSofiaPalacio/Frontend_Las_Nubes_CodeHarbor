@@ -291,13 +291,15 @@ function Pacientes() {
 
   return (
     <div>
-      <Header title="Gestión de pacientes" />
-      <div className="d-sm-flex align-items-start justify-content-between mb-3">
-        <Header subTitle="Información personal de los pacientes del centro médico" />
-        <button className="btn btn-sm btn-primary" onClick={openAddModal}>
-          <i className="fas fa-plus mr-3 text-white-50"></i> Añadir paciente
-        </button>
-      </div>
+      <Header
+        title="Gestión de pacientes"
+        subTitle="Información personal de los pacientes del centro médico"
+        addButton={
+          <button className="btn btn-sm btn-primary" onClick={openAddModal}>
+            <i className="fas fa-plus mr-3 text-white-50"></i> Añadir paciente
+          </button>
+        }
+      />
 
       {/* Tabla de colaboradores */}
 

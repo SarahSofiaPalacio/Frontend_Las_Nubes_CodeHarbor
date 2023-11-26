@@ -1,8 +1,7 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
-function ProfleCards({ children, loading }) {
-
+function ProfileCards({ loading, profilePicture, profileForm }) {
     if (loading) return <LoadingSpinner />;
 
     return (
@@ -14,13 +13,7 @@ function ProfleCards({ children, loading }) {
                         <h6 className="m-0 font-weight-bold text-primary">Foto de Perfil</h6>
                     </div>
                     <div className="card-body text-center">
-                        <img
-                            src="img/profile.svg"
-                            alt="Foto de perfil"
-                            className="img-profile mb-3 rounded-circle mx-auto d-block"
-                        />
-                        <p>JPG o PNG no mayor a 5 MB</p>
-                        <button className="btn btn-primary">Cambiar foto</button>
+                        {profilePicture}
                     </div>
                 </div>
             </div>
@@ -32,7 +25,7 @@ function ProfleCards({ children, loading }) {
                         <h6 className="m-0 font-weight-bold text-primary">Información Personal</h6>
                     </div>
                     <div className="card-body">
-                        {children}
+                        {profileForm}
                     </div>
                 </div>
             </div>
@@ -40,4 +33,4 @@ function ProfleCards({ children, loading }) {
     );
 }
 
-export default ProfleCards;
+export default ProfileCards;

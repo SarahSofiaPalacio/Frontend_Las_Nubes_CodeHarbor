@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../../components/sidebar/Sidebar';
 import NavItem from '../../components/sidebar/NavItem';
 import Divider from '../../components/sidebar/Divider';
@@ -23,18 +23,19 @@ function Administrador() {
             <div id="wrapper">
                 <Sidebar
                     sidebarToggled={sidebarToggled}
-                >
-                    <div>
-                        <Divider />
-                        <Heading text="Gestión de usuarios" />
-                        <NavItem to="colaboradores" icon="fa-address-card" label="Colaboradores" />
-                        <NavItem to="pacientes" icon="fa-address-card" label="Pacientes" />
-                        <Divider />
-                        <Heading text="Informes" />
-                        <NavItem to="informes" icon="fa-address-card" label="Generar informes" />
-                        <Divider />
-                    </div>
-                </Sidebar>
+                    elements={
+                        <>
+                            <Divider />
+                            <Heading text="Gestión de usuarios" />
+                            <NavItem to="colaboradores" icon="fa-address-card" label="Colaboradores" />
+                            <NavItem to="pacientes" icon="fa-address-card" label="Pacientes" />
+                            <Divider />
+                            <Heading text="Informes" />
+                            <NavItem to="informes" icon="fa-address-card" label="Generar informes" />
+                            <Divider />
+                        </>
+                    }
+                />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <Topbar toggleSidebar={toggleSidebar} />
                     <div className="container-fluid">
@@ -44,6 +45,7 @@ function Administrador() {
                             <Route path="colaboradores" element={<Colaboradores />} />
                             <Route path="pacientes" element={<Pacientes />} />
                             <Route path="informes" element={<Informes />} />
+                            <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
                         </Routes>
                     </div>
                 </div>

@@ -14,14 +14,15 @@ function UserInfo() {
 
     useEffect(() => {
         if (username) {
+            console.log("Cargando datos del usuario (Topbar)...");
             getColaborador(username)
                 .then(data => {
-                    console.log("Datos del usuario cargados:", data);
+                    console.log("Datos del usuario cargados (Topbar): ", data);
                     if (data.nombre) setUserName(data.nombre);
                     if (data.foto) setUserImage(data.foto);
                 })
                 .catch(error => {
-                    console.error("Error al cargar datos del usuario:", error);
+                    console.error("Error al cargar datos del usuario (Topbar): ", error);
                 });
         }
     }, [username]);

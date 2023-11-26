@@ -47,9 +47,9 @@ function Login() {
       login(formData)
         .then(response => {
           console.log('Inicio de sesión exitoso: ', response);
-          Cookies.set('username', formData.username, { expires: 1, secure: true, sameSite: 'Strict' });
-          Cookies.set('token', response.token, { expires: 1, secure: true, sameSite: 'Strict' });
-          Cookies.set('role', response.role, { expires: 1, secure: true, sameSite: 'Strict' });
+          Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
+          Cookies.set('token', response.token, { expires: 1, secure: false, sameSite: 'Lax' });
+          Cookies.set('role', response.role, { expires: 1, secure: false, sameSite: 'Lax' });
           setUsername(formData.username);
           setRole(response.role);
           setToken(response.token);

@@ -23,10 +23,11 @@ function Informes() {
 
   return (
     <div>
-      <Header title="Generar informes" />
-      <div className="d-sm-flex align-items-start justify-content-between mb-3">
-        <Header subTitle="Generación de informes descargables de cada apartado." />
-      </div>
+      <Header
+        title="Generar informes"
+        subTitle="Generación de informes descargables de cada apartado."
+      />
+
       <div className="container my-5">
         <div className="row justify-content-center">
           {/* Button 1 */}

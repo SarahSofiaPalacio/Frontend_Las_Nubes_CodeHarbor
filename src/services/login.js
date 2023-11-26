@@ -11,9 +11,22 @@ const mockResponse = {
     }
 };
 
+export const validateToken = (token) => {
+    if (USE_MOCK) {
+        // Retornar una promesa que simula una llamada al servidor
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true);
+            }, 1000);
+        });
+    } else {
+        // Realizar la llamada al backend
+        return axios.get(`${URL_BASE}/auth/validate-token`, token)
+            .then(response => response.data);
+    }
+}
+
 export const login = (credentials) => {
-    console.log('URL_BASE:', URL_BASE);
-    console.log('USE_MOCK:', USE_MOCK);
     if (USE_MOCK) {
         // Retornar una promesa que simula una llamada al servidor
         return new Promise((resolve) => {

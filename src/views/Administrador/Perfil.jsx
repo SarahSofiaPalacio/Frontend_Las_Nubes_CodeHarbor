@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from '../../components/Header';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
-
-const numero_identificacion = '1004755763';
+import { useAuth } from '../../AuthContext';
 
 const initialFormData = {
     tipo_identificacion: '',
@@ -23,6 +22,7 @@ const initialFormData = {
     jerarquia: '',
     fecha_ingreso: '',
     especialidad: '',
+    foto: '',
 }
 
 const initialFormErrors = {};
@@ -36,6 +36,9 @@ const initialFormSelectData = {
 }
 
 function UserProfile() {
+    const { username } = useAuth();
+    const fileInputRef = useRef(); // Referencia para el input de archivo
+
     const [isLoadingForm, setLoadingForm] = useState(false);
     const [formData, setFormData] = useState({ initialFormData });
     const [formErrors, setFormErrors] = useState({ initialFormErrors });
@@ -46,26 +49,26 @@ function UserProfile() {
     const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
     const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
 
-    const loadUser = () => {
-        console.log('Cargando colaborador...');
+    const loadUser = useCallback(() => {
+        console.log('Cargando datos del colaborador...');
         setLoadingForm(true);
-        getColaborador(numero_identificacion)
+        getColaborador(username)
             .then(response => {
-                console.log('Data fetched:', response);
+                console.log('Datos del colaborador cargados: ', response);
                 setFormData(response);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Error al cargar los datos del colaborador: ', error);
                 setIsErrorModalOpen(true);
             })
             .finally(() => {
                 setLoadingForm(false);
             });
-    };
+    }, [username]);
 
     useEffect(() => {
         loadUser();
-    }, []);
+    }, [loadUser]);
 
     const validateForm = () => {
         const errors = {};
@@ -143,6 +146,19 @@ function UserProfile() {
         }
     };
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (file && (file.type === "image/jpeg" || file.type === "image/png") && file.size <= 5000000) {
+            await updateUser(file); // Llama a uploadUser inmediatamente después de seleccionar un archivo válido
+        } else {
+            alert("El archivo debe ser una imagen JPG o PNG y no mayor a 5 MB.");
+        }
+    };
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click(); // Activa el input oculto
+    };
+
     const resetForm = () => {
         setFormData(initialFormData);
         setFormErrors(initialFormErrors);
@@ -159,15 +175,15 @@ function UserProfile() {
             setIsFormEditing(false);
             updateColaborador(formData.numero_identificacion, formData)
                 .then(response => {
-                    console.log(response.message);
+                    console.log("Colaborador editado: ", response.message);
                     setIsConfimUpdateModalOpen(true);
                 })
                 .catch(error => {
-                    console.error('Hubo un error al actualizar el colaborador:', error);
+                    console.error('Hubo un error al editar el colaborador: ', error);
                     setIsErrorModalOpen(true);
                 });
         } else {
-            console.log('Datos inválidos');
+            console.log('Datos inválidos.');
         }
     };
 
@@ -197,192 +213,217 @@ function UserProfile() {
 
     return (
         <div>
-            <Header title="Configuración de perfil" />
-            <div className="d-sm-flex align-items-start justify-content-between mb-3">
-                <Header subTitle="Información personal del colaborador del centro médico" />
-            </div>
+            <Header 
+                title="Configuración de perfil"
+                subTitle="Información personal del colaborador del centro médico"
+            />
 
             {/* Perfil de colaborador */}
 
-            <ProfileCards loading={isLoadingForm}>
-                {formData ? (
-                    <form>
-                        <div className="form-row">
-                            <FormSelect
-                                label="Tipo de documento"
-                                id="tipo_identificacion"
-                                type="text"
-                                options={initialFormSelectData.tipo_identificacion}
-                                value={formData.tipo_identificacion}
-                                error={formErrors.tipo_identificacion}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
-                            />
-                            <FormInput
-                                label="Número de documento"
-                                id="numero_identificacion"
-                                type="number"
-                                value={formData.numero_identificacion}
-                                error={formErrors.numero_identificacion}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormInput
-                                label="Nombres"
-                                id="nombre"
-                                type="text"
-                                value={formData.nombre}
-                                error={formErrors.nombre}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('nombre', e.target.value)}
-                            />
-                            <FormInput
-                                label="Apellidos"
-                                id="apellido"
-                                type="text"
-                                value={formData.apellido}
-                                error={formErrors.apellido}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('apellido', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormInput
-                                label="Fecha de Nacimiento"
-                                id="fecha_nacimiento"
-                                type="date"
-                                value={formData.fecha_nacimiento}
-                                error={formErrors.fecha_nacimiento}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
-                            />
-                            <FormSelect
-                                label="Estado Civil"
-                                id="estado_civil"
-                                options={initialFormSelectData.estado_civil}
-                                value={formData.estado_civil}
-                                error={formErrors.estado_civil}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormSelect
-                                label="Sexo"
-                                id="sexo"
-                                options={initialFormSelectData.sexo}
-                                value={formData.sexo}
-                                error={formErrors.sexo}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('sexo', e.target.value)}
-                            />
-                            <FormInput
-                                label="Dirección"
-                                id="direccion"
-                                type="text"
-                                value={formData.direccion}
-                                error={formErrors.direccion}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('direccion', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormInput
-                                label="Teléfono"
-                                id="telefono"
-                                type="number"
-                                value={formData.telefono}
-                                error={formErrors.telefono}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('telefono', e.target.value)}
-                            />
-                            <FormInput
-                                label="Correo Electrónico"
-                                id="correo_electronico"
-                                type="email"
-                                value={formData.correo_electronico}
-                                error={formErrors.correo_electronico}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormInput
-                                label="Salario"
-                                id="salario"
-                                type="number"
-                                value={formData.salario}
-                                error={formErrors.salario}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('salario', e.target.value)}
-                            />
-                            <FormSelect
-                                label="Jerarquía"
-                                id="jerarquia"
-                                options={initialFormSelectData.jerarquia}
-                                value={formData.jerarquia}
-                                error={formErrors.jerarquia}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
-                            />
-                        </div>
-                        <div className="form-row">
-                            <FormInput
-                                label="Fecha de ingreso"
-                                id="fecha_ingreso"
-                                type="date"
-                                value={formData.fecha_ingreso}
-                                error={formErrors.fecha_ingreso}
-                                isFormEditing={isFormEditing}
-                                onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
-                            />
-                            <FormSelect
-                                label="Especialidad"
-                                id="especialidad"
-                                type="text"
-                                options={initialFormSelectData.especialidad}
-                                value={formData.especialidad}
-                                error={formErrors.especialidad}
-                                isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
-                                onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
-                            />
-                        </div>
+            <ProfileCards
+                loading={isLoadingForm}
+                profilePicture={
+                    <>
+                        <img
+                            src={formData.foto ? formData.foto : `${process.env.PUBLIC_URL}/img/profile.svg`}
+                            alt="Foto de perfil"
+                            className="img-profile mb-3 rounded-circle mx-auto d-block img-fluid w-50 w-sm-75 w-md-100"
+                        />
+                        <p>JPG, JPEG o PNG no mayor a 5 MB</p>
+                        <input
+                            type="file"
+                            onChange={handleFileChange}
+                            accept=".jpg,.jpeg,.png"
+                            style={{ display: 'none' }} // Oculta el input
+                            ref={fileInputRef} // Referencia al input
+                        />
+                        <button className="btn btn-primary" onClick={handleButtonClick} disabled={isLoadingRequest || isFormEditing}>
+                            Cambiar foto
+                        </button>
+                    </>
+                }
+                profileForm={
+                    <>
+                        {formData ? (
+                            <form>
+                                <div className="form-row">
+                                    <FormSelect
+                                        label="Tipo de documento"
+                                        id="tipo_identificacion"
+                                        type="text"
+                                        options={initialFormSelectData.tipo_identificacion}
+                                        value={formData.tipo_identificacion}
+                                        error={formErrors.tipo_identificacion}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
+                                    />
+                                    <FormInput
+                                        label="Número de documento"
+                                        id="numero_identificacion"
+                                        type="number"
+                                        value={formData.numero_identificacion}
+                                        error={formErrors.numero_identificacion}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormInput
+                                        label="Nombres"
+                                        id="nombre"
+                                        type="text"
+                                        value={formData.nombre}
+                                        error={formErrors.nombre}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('nombre', e.target.value)}
+                                    />
+                                    <FormInput
+                                        label="Apellidos"
+                                        id="apellido"
+                                        type="text"
+                                        value={formData.apellido}
+                                        error={formErrors.apellido}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('apellido', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormInput
+                                        label="Fecha de Nacimiento"
+                                        id="fecha_nacimiento"
+                                        type="date"
+                                        value={formData.fecha_nacimiento}
+                                        error={formErrors.fecha_nacimiento}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
+                                    />
+                                    <FormSelect
+                                        label="Estado Civil"
+                                        id="estado_civil"
+                                        options={initialFormSelectData.estado_civil}
+                                        value={formData.estado_civil}
+                                        error={formErrors.estado_civil}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormSelect
+                                        label="Sexo"
+                                        id="sexo"
+                                        options={initialFormSelectData.sexo}
+                                        value={formData.sexo}
+                                        error={formErrors.sexo}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('sexo', e.target.value)}
+                                    />
+                                    <FormInput
+                                        label="Dirección"
+                                        id="direccion"
+                                        type="text"
+                                        value={formData.direccion}
+                                        error={formErrors.direccion}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('direccion', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormInput
+                                        label="Teléfono"
+                                        id="telefono"
+                                        type="number"
+                                        value={formData.telefono}
+                                        error={formErrors.telefono}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('telefono', e.target.value)}
+                                    />
+                                    <FormInput
+                                        label="Correo Electrónico"
+                                        id="correo_electronico"
+                                        type="email"
+                                        value={formData.correo_electronico}
+                                        error={formErrors.correo_electronico}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormInput
+                                        label="Salario"
+                                        id="salario"
+                                        type="number"
+                                        value={formData.salario}
+                                        error={formErrors.salario}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('salario', e.target.value)}
+                                    />
+                                    <FormSelect
+                                        label="Jerarquía"
+                                        id="jerarquia"
+                                        options={initialFormSelectData.jerarquia}
+                                        value={formData.jerarquia}
+                                        error={formErrors.jerarquia}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-row">
+                                    <FormInput
+                                        label="Fecha de ingreso"
+                                        id="fecha_ingreso"
+                                        type="date"
+                                        value={formData.fecha_ingreso}
+                                        error={formErrors.fecha_ingreso}
+                                        isFormEditing={isFormEditing}
+                                        onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
+                                    />
+                                    <FormSelect
+                                        label="Especialidad"
+                                        id="especialidad"
+                                        type="text"
+                                        options={initialFormSelectData.especialidad}
+                                        value={formData.especialidad}
+                                        error={formErrors.especialidad}
+                                        isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
+                                        onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
+                                    />
+                                </div>
 
-                        <div className="text-center mt-3">
-                            {isFormEditing || isLoadingRequest ? (
-                                <>
-                                    <button
-                                        type="button"
-                                        className="btn btn-success w-25 mr-3"
-                                        onClick={updateUser}
-                                        disabled={isLoadingRequest}
-                                    > {isLoadingRequest ? "Cargando..." : "Guardar"}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary w-25 mr-3"
-                                        onClick={() => setIsDiscardUpdateModalOpen(true)}
-                                        disabled={isLoadingRequest}
-                                    > Cancelar
-                                    </button>
-                                </>
-                            ) : (
-                                <button
-                                    type="button"
-                                    className="btn btn-primary w-25"
-                                    onClick={startEditing}
-                                    disabled={isLoadingRequest}
-                                > Editar
-                                </button>
-                            )}
-                        </div>
-                    </form>
-                ) : (
-                    <p>Cargando...</p>
-                )}
-            </ProfileCards>
+                                <div className="text-center mt-3">
+                                    {isFormEditing || isLoadingRequest ? (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-success w-25 mr-3"
+                                                onClick={updateUser}
+                                                disabled={isLoadingRequest}
+                                            > {isLoadingRequest ? "Cargando..." : "Guardar"}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary w-25 mr-3"
+                                                onClick={() => setIsDiscardUpdateModalOpen(true)}
+                                                disabled={isLoadingRequest}
+                                            > Cancelar
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary w-25"
+                                            onClick={startEditing}
+                                            disabled={isLoadingRequest}
+                                        > Editar
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
+                        ) : (
+                            <p>Cargando...</p>
+                        )}
+                    </>
+                }
+            />
 
             {/* Modal de error inesperado */}
 

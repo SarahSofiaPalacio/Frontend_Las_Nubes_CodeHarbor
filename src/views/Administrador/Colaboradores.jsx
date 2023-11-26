@@ -322,13 +322,15 @@ function Colaboradores() {
 
   return (
     <div>
-      <Header title="Gestión de colaboradores" />
-      <div className="d-sm-flex align-items-start justify-content-between mb-3">
-        <Header subTitle="Información personal de los colaboradores del centro médico" />
-        <button className="btn btn-sm btn-primary" onClick={openAddModal}>
-          <i className="fas fa-plus mr-3 text-white-50"></i> Añadir colaborador
-        </button>
-      </div>
+      <Header
+        title="Gestión de colaboradores"
+        subTitle="Información personal de los colaboradores del centro médico"
+        addButton={
+          <button className="btn btn-sm btn-primary" onClick={openAddModal}>
+            <i className="fas fa-plus mr-3 text-white-50"></i> Añadir colaborador
+          </button>
+        }
+      />
 
       {/* Tabla de colaboradores */}
 
