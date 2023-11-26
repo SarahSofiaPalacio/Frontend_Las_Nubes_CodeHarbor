@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/login';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import Cookies from 'js-cookie';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function Login() {
   const navigate = useNavigate();
   const { username, token, role } = useAuth();
+  const { setUsername, setRole, setToken } = useAuth();
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (username && role && token) {
       console.log("Usuario ya ha iniciado sesión. Redireccionando a dashboard...")
       navigate('/dashboard');
+    } else {
+      console.log("Usuario no ha iniciado sesión. Mostrando formulario de login...")
+      setIsLoadingContent(false);
     }
   }, [username, role, token, navigate]);
   
-  const { setUsername, setRole, setToken } = useAuth();
-  const [formData, setFormData] = useState({ username: '', password: '' });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  if (isLoadingContent) return <LoadingSpinner />;
 
   const validateForm = () => {
     if (!formData.username || !formData.username.trim()) {
@@ -43,7 +49,7 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      setIsLoading(true);
+      setIsLoadingForm(true);
       login(formData)
         .then(response => {
           console.log('Inicio de sesión exitoso: ', response);
@@ -54,13 +60,13 @@ function Login() {
           setRole(response.role);
           setToken(response.token);
           console.log("Datos de usuario guardados en cookies y contexto.");
-          setIsLoading(false);
+          setIsLoadingForm(false);
           navigate('/dashboard');
           console.log("Redireccionando a dashboard...")
         })
         .catch(err => {
           console.error('Error en el inicio de sesión: ', err);
-          setIsLoading(false);
+          setIsLoadingForm(false);
           setError('Error en el inicio de sesión. Por favor intenta de nuevo.');
         });
     } else {
@@ -98,7 +104,7 @@ function Login() {
                 className="form-control rounded-pill border-0 shadow-sm px-4 text-primary"
                 onChange={handleChange}
                 value={formData.username}
-                disabled={isLoading}
+                disabled={isLoadingForm}
               />
             </div>
             <div className="form-group mb-4">
@@ -110,16 +116,16 @@ function Login() {
                 className="form-control rounded-pill border-0 shadow-sm px-4 text-primary"
                 onChange={handleChange}
                 value={formData.password}
-                disabled={isLoading}
+                disabled={isLoadingForm}
               />
             </div>
             <div className="d-grid gap-2 mt-2">
               <button
                 type="submit"
                 className="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm"
-                disabled={isLoading}
+                disabled={isLoadingForm}
               >
-                {isLoading ? 'Cargando...' : 'Ingresar'}
+                {isLoadingForm ? 'Cargando...' : 'Ingresar'}
               </button>
             </div>
             <div className="text-center d-flex justify-content-between mt-4">

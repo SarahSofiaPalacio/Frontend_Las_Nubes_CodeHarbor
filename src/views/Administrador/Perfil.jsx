@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import Header from '../../components/Header';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
-import { useAuth } from '../../AuthContext';
+import { useAuth } from '../../auth/AuthContext.js';
 
 const initialFormData = {
     tipo_identificacion: '',
@@ -36,8 +37,10 @@ const initialFormSelectData = {
 }
 
 function UserProfile() {
+    const [isLoadingContent, setIsLoadingContent] = useState(true);
+
     const { username } = useAuth();
-    const fileInputRef = useRef(); // Referencia para el input de archivo
+    const fileInputRef = useRef();
 
     const [isLoadingForm, setLoadingForm] = useState(false);
     const [formData, setFormData] = useState({ initialFormData });
@@ -63,12 +66,15 @@ function UserProfile() {
             })
             .finally(() => {
                 setLoadingForm(false);
+                setIsLoadingContent(false);
             });
     }, [username]);
 
     useEffect(() => {
         loadUser();
     }, [loadUser]);
+
+    if (isLoadingContent) return <LoadingSpinner />;
 
     const validateForm = () => {
         const errors = {};

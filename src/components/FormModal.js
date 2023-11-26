@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import PropTypes from 'prop-types';
 
 const FormModal = ({ isOpen, title, children, footerButtons }) => {
   const hasBeenOpenedRef = useRef(false);
@@ -50,5 +51,12 @@ const FormModal = ({ isOpen, title, children, footerButtons }) => {
     </div>
   );
 }
+
+FormModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  children: PropTypes.object.isRequired,
+  footerButtons: PropTypes.object.isRequired,
+};
 
 export default FormModal;

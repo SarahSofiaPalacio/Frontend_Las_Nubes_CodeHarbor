@@ -19,9 +19,7 @@ const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
             }
             document.body.classList.remove('modal-open');
             const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                document.body.removeChild(backdrop);
-            }
+            if (backdrop) document.body.removeChild(backdrop);
         }
     }, [isOpen]);
 
@@ -59,7 +57,6 @@ ConfirmationModal.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     footerButtons: PropTypes.object.isRequired,
-    onCloseComplete: PropTypes.func,
 };
 
 ConfirmationModal.defaultProps = {

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
-import { validateToken } from "./services/login";
+import { validateToken } from "../services/login";
 
 const AuthContext = createContext(null);
 
@@ -10,9 +10,11 @@ export const AuthProvider = ({ children }) => {
     const [username, setUsername] = useState(null);
     const [role, setRole] = useState(null);
     const [token, setToken] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Función para validar el token y establecer el estado
     const validateAndSetToken = async () => {
+        setIsLoading(true);  // Comenzar carga
         const currentToken = Cookies.get("token");
         if (currentToken) {
             const isValid = await validateToken(currentToken);
@@ -30,6 +32,7 @@ export const AuthProvider = ({ children }) => {
                 setUsername(null);
             }
         }
+        setIsLoading(false);  // Finalizar carga
     };
 
     useEffect(() => {
@@ -37,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ username, setUsername, role, setRole, token, setToken }}>
+        <AuthContext.Provider value={{ username, setUsername, role, setRole, token, setToken, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

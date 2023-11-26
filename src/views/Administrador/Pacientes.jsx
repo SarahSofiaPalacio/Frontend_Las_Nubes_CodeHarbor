@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import Header from '../../components/Header';
 import Table from '../../components/Table';
 import FormModal from '../../components/FormModal';
@@ -31,6 +32,8 @@ const initialFormSelectData = {
 const initialFormErrors = {};
 
 function Pacientes() {
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
+
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -66,12 +69,15 @@ function Pacientes() {
       })
       .finally(() => {
         setLoadingTable(false);
+        setIsLoadingContent(false);
       });
   };
 
   useEffect(() => {
     loadUsers();
   }, []);
+
+  if (isLoadingContent) return <LoadingSpinner />;
 
   // Validar formulario de paciente
 

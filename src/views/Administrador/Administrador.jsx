@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+
 import Sidebar from '../../components/sidebar/Sidebar';
 import NavItem from '../../components/sidebar/NavItem';
 import Divider from '../../components/sidebar/Divider';
 import Heading from '../../components/sidebar/Heading';
 import Topbar from '../../components/topbar/Topbar';
+
 import Home from '../../components/Home';
 import Perfil from './Perfil';
 import Colaboradores from './Colaboradores';
