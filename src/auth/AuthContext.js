@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
-import { validateToken } from "../services/login";
+import { verifyToken } from "../services/login";
 
 const AuthContext = createContext(null);
 
@@ -14,16 +14,22 @@ export const AuthProvider = ({ children }) => {
 
     // Función para validar el token y establecer el estado
     const validateAndSetToken = async () => {
-        setIsLoading(true);  // Comenzar carga
+        setIsLoading(true);
         const currentToken = Cookies.get("token");
         if (currentToken) {
-            const isValid = await validateToken(currentToken);
-            console.log("Is token valid: ", isValid);
-            if (isValid) {
-                setToken(currentToken);
-                setRole(Cookies.get("role"));
-                setUsername(Cookies.get("username"));
-            } else {
+            console.log('(AuthContext) Token actual:', currentToken);
+            try {
+                const response = await verifyToken(currentToken);
+                if (response.msg === 'Token is valid') {
+                    console.log('(AuthContext) Token válido');
+                    setToken(currentToken);
+                    setRole(Cookies.get("role"));
+                    setUsername(Cookies.get("username"));
+                } else {
+                    throw new Error('Invalid token');
+                }
+            } catch (error) {
+                console.error('(AuthContext) Error durante la validación del token:', error);
                 Cookies.remove("token");
                 Cookies.remove("role");
                 Cookies.remove("username");
@@ -32,7 +38,7 @@ export const AuthProvider = ({ children }) => {
                 setUsername(null);
             }
         }
-        setIsLoading(false);  // Finalizar carga
+        setIsLoading(false);
     };
 
     useEffect(() => {

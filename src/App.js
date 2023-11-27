@@ -17,7 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard/*" element={
           <PrivateRoute>
-            {role === 'administrador' ? <Administrador /> : <Navigate to="/login" replace />}
+            {role === 'Administrador' ? <Administrador /> : <Navigate to="/login" replace />}
           </PrivateRoute>
         } />
       </Routes>
