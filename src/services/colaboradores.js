@@ -4,7 +4,7 @@ import { colaboradoresMock } from '../mocks/colaboradores';
 const URL_BASE = process.env.REACT_APP_URL_BASE;
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === "true";
 
-export const getColaboradores = () => {
+export const getColaboradores = (token) => {
   if (USE_MOCK) {
     // Retornar una promesa que simula una llamada al servidor
     return new Promise((resolve) => {
@@ -14,12 +14,17 @@ export const getColaboradores = () => {
     });
   } else {
     // Realizar la llamada al backend
-    return axios.get(`${URL_BASE}/colaboradores`)
-      .then(response => response.data);
+    return axios({
+      method: 'GET',
+      url: `${URL_BASE}/admin/colaboradores`,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(response => response.data);
   }
 };
 
-export const getColaborador = (numero_identificacion) => {
+export const getColaborador = (token, numero_identificacion) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -28,8 +33,13 @@ export const getColaborador = (numero_identificacion) => {
       }, 1000);
     });
   } else {
-    return axios.get(`${URL_BASE}/colaboradores/${numero_identificacion}`)
-      .then(response => response.data);
+    return axios({
+      method: 'GET',
+      url: `${URL_BASE}/admin/colaboradores`,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then(response => response.data);
   }
 }
 

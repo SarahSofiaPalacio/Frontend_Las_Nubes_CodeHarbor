@@ -11,19 +11,32 @@ const mockResponse = {
     }
 };
 
-export const validateToken = (token) => {
+export const verifyToken = async (token) => {
     if (USE_MOCK) {
-        // Retornar una promesa que simula una llamada al servidor
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(true);
             }, 1000);
         });
     } else {
-        // Realizar la llamada al backend
-        return axios.get(`${URL_BASE}/auth/validate-token`, token)
-            .then(response => response.data);
-    }
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+            const response = await axios.get(`${URL_BASE}/auth/verify-token`, config);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                return error.response.data;
+            } else if (error.request) {
+                return { msg: 'No response from server', status: error.request.status };
+            } else {
+                return { msg: 'Error setting up request', status: 500 };
+            }
+        }
+    };
 }
 
 export const login = (credentials) => {
