@@ -35,23 +35,24 @@ function UserInfo() {
         setIsLogoutModalOpen(false);
     };
 
-    const handleLogout = () => {
-        logout()
-            .then(response => {
-                console.log("Sesión cerrada exitosamente:", response);
-                Cookies.remove('username');
-                Cookies.remove('token');
-                Cookies.remove('role');
-                setUsername(null);
-                setRole(null);
-                setToken(null);
-                console.log("Datos de usuario eliminados de cookies y contexto.");
-            })
-            .catch(error => {
-                console.error("Error al cerrar sesión:", error);
-            });
-        setIsLogoutModalOpen(false);
-    };
+    const handleLogout = async () => {
+        try {
+            const token = Cookies.get('token');
+            const response = await logout(token);
+            console.log("Sesión cerrada exitosamente:", response);
+            Cookies.remove('username');
+            Cookies.remove('token');
+            Cookies.remove('role');
+            setUsername(null);
+            setRole(null);
+            setToken(null);
+            console.log("Datos de usuario eliminados de cookies y contexto.");
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        } finally {
+            setIsLogoutModalOpen(false);
+        }
+    };    
 
     return (
         <li className="nav-item dropdown no-arrow">

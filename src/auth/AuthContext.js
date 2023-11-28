@@ -25,9 +25,7 @@ export const AuthProvider = ({ children }) => {
                     setToken(currentToken);
                     setRole(Cookies.get("role"));
                     setUsername(Cookies.get("username"));
-                } else {
-                    throw new Error('Invalid token');
-                }
+                } else throw new Error('Invalid token');
             } catch (error) {
                 console.error('(AuthContext) Error durante la validación del token:', error);
                 Cookies.remove("token");

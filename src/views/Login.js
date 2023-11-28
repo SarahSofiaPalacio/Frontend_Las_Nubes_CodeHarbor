@@ -16,10 +16,9 @@ function Login() {
 
   useEffect(() => {
     if (username && role && token) {
-      console.log("Usuario ya ha iniciado sesión. Redireccionando a dashboard...")
+      console.log("(Login) Usuario ya ha iniciado sesión. Redireccionando a dashboard...")
       navigate('/dashboard');
     } else {
-      console.log("Usuario no ha iniciado sesión. Mostrando formulario de login...")
       setIsLoadingContent(false);
     }
   }, [username, role, token, navigate]);
@@ -46,33 +45,37 @@ function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsLoadingForm(true);
-      login(formData)
-        .then(response => {
-          console.log('Inicio de sesión exitoso: ', response);
-          Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
-          Cookies.set('token', response.token, { expires: 1, secure: false, sameSite: 'Lax' });
-          Cookies.set('role', response.role, { expires: 1, secure: false, sameSite: 'Lax' });
-          setUsername(formData.username);
-          setRole(response.role);
-          setToken(response.token);
-          console.log("Datos de usuario guardados en cookies y contexto.");
-          setIsLoadingForm(false);
-          navigate('/dashboard');
-          console.log("Redireccionando a dashboard...")
-        })
-        .catch(err => {
-          console.error('Error en el inicio de sesión: ', err);
-          setIsLoadingForm(false);
+      try {
+        const response = await login(formData);
+        console.log('(Login) Inicio de sesión exitoso: ', response);
+        Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
+        Cookies.set('token', response.token, { expires: 1, secure: false, sameSite: 'Lax' });
+        Cookies.set('role', response.role, { expires: 1, secure: false, sameSite: 'Lax' });
+        setUsername(formData.username);
+        setRole(response.role);
+        setToken(response.token);
+        console.log("(Login) Datos de usuario guardados en cookies y contexto.");
+        setIsLoadingForm(false);
+        navigate('/dashboard');
+        console.log("(Login) Redireccionando a dashboard...");
+      } catch (error) {
+        console.error('(Login) Error en el inicio de sesión: ', error);
+        if (error.response && error.response.status === 400) {
+          setError('Credenciales inválidas. Por favor intenta de nuevo.');
+        } else {
           setError('Error en el inicio de sesión. Por favor intenta de nuevo.');
-        });
+        }
+      } finally {
+        setIsLoadingForm(false);
+      }
     } else {
       setError('Por favor valida los datos ingresados.');
     }
-  };
+  };  
 
   return (
     <div

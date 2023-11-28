@@ -29,41 +29,63 @@ export const verifyToken = async (token) => {
             return response.data;
         } catch (error) {
             if (error.response) {
-                return error.response.data;
+                throw new Error(error.response.data.msg || 'Error desconocido');
             } else if (error.request) {
-                return { msg: 'No response from server', status: error.request.status };
+                throw new Error('No hay respuesta del servidor');
             } else {
-                return { msg: 'Error setting up request', status: 500 };
+                throw new Error('Error al configurar la petición');
             }
         }
     };
 }
 
-export const login = (credentials) => {
+export const login = async (credentials) => {
     if (USE_MOCK) {
-        // Retornar una promesa que simula una llamada al servidor
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(mockResponse.data);
             }, 1000);
         });
     } else {
-        // Realizar la llamada al backend
-        return axios.post(`${URL_BASE}/auth/login`, credentials)
-            .then(response => response.data);
+        try {
+            const response = await axios.post(`${URL_BASE}/auth/login`, credentials);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                throw new Error(error.response.data.msg || 'Error desconocido');
+            } else if (error.request) {
+                throw new Error('No hay respuesta del servidor');
+            } else {
+                throw new Error('Error al configurar la petición');
+            }
+        }
     }
 };
 
-export const logout = () => {
+export const logout = async (token) => {
     if (USE_MOCK) {
-        // Retornar una promesa que simula una llamada al servidor
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve();
             }, 1000);
         });
     } else {
-        // Realizar la llamada al backend
-        return axios.post(`${URL_BASE}/auth/logout`);
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            };
+            const response = await axios.post(`${URL_BASE}/auth/logout`, null, config);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                throw new Error(error.response.data.msg || 'Error desconocido');
+            } else if (error.request) {
+                throw new Error('No hay respuesta del servidor');
+            } else {
+                throw new Error('Error al configurar la petición');
+            }
+        }
     }
-}
+};
