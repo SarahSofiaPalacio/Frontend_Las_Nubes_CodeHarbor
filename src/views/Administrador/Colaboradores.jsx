@@ -31,8 +31,10 @@ function Colaboradores() {
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [isDesactivateModalOpen, setIsDesactivateModalOpen] = useState(false);
+  const [isConfirmDesactivateModalOpen, setIsConfirmDesactivateModalOpen] = useState(false);
+  const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
+  const [isConfirmActivateModalOpen, setIsConfirmActivateModalOpen] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   // Cargar lista de usuarios al cargar la página
@@ -154,7 +156,8 @@ function Colaboradores() {
     setIsErrorModalOpen(false);
     setIsAddModalOpen(false);
     setIsUpdateModalOpen(false);
-    setIsDeleteModalOpen(false);
+    setIsDesactivateModalOpen(false);
+    setIsActivateModalOpen(false);
     setIsLoadingAdd(false);
     setIsLoadingUpdate(false);
     setIsLoadingDelete(false);
@@ -229,6 +232,7 @@ function Colaboradores() {
 
   const handleEditFormChange = (name, value) => {
     if (isFormEditing) {
+      /*
       setSelectedUser(prevState => {
         const newValues = { ...prevState, [name]: value };
         if (name === 'jerarquia' && value !== 'Médico') {
@@ -236,6 +240,7 @@ function Colaboradores() {
         }
         return newValues;
       });
+      */
       setFormData(prevData => {
         const newValues = { ...prevData, [name]: value };
         if (name === 'jerarquia' && value !== 'Médico') {
@@ -255,7 +260,7 @@ function Colaboradores() {
           acc[key] = formData[key] ?? colaboradorInitialFormData[key];
           return acc;
         }, {});
-        const response = await updateColaborador(token, newData.numero_identificacion, newData);
+        const response = await updateColaborador(token, selectedUser.numero_identificacion, newData);
         console.log('(Colaboradores) Usuario actualizado: ', response);
         setIsConfirmUpdateModalOpen(true);
       } catch (error) {
@@ -289,29 +294,61 @@ function Colaboradores() {
     setIsFormEditing(false);
   };
 
-  const OpenDeleteModal = () => {
-    setIsDeleteModalOpen(true);
+  const OpenDesactivateModal = () => {
+    setIsDesactivateModalOpen(true);
   };
 
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
+  const closeDesactivateModal = () => {
+    setIsDesactivateModalOpen(false);
   };
 
-  const deleteUser = async () => {
+  const OpenActivateModal = () => {
+    setIsActivateModalOpen(true);
+  };
+
+  const closeActivateModal = () => {
+    setIsActivateModalOpen(false);
+  };
+
+  const desactivateUser = async () => {
     setIsLoadingDelete(true);
     try {
       const response = await deleteColaborador(token, selectedUser.numero_identificacion);
-      console.log('(Colaboradores) Usuario eliminado: ', response);
-      setIsConfirmDeleteModalOpen(true);
+      console.log('(Colaboradores) Usuario desactivado: ', response);
+      setIsConfirmDesactivateModalOpen(true);
     } catch (error) {
-      console.error('(Colaboradores) Hubo un error al eliminar el usuario: ', error);
+      console.error('(Colaboradores) Hubo un error al desactivar el usuario: ', error);
       setIsErrorModalOpen(true);
     }
   };
 
-  const closeConfirmDeleteModal = () => {
-    setIsConfirmDeleteModalOpen(false);
-    setIsDeleteModalOpen(false);
+  const activateUser = async () => {
+    setIsLoadingDelete(true);
+    try {
+      const response = await updateColaborador(token, selectedUser.numero_identificacion, { is_deleted: false });
+      console.log('(Colaboradores) Usuario activado: ', response);
+      setIsConfirmActivateModalOpen(true);
+    } catch (error) {
+      console.error('(Colaboradores) Hubo un error al activar el usuario: ', error);
+      setIsErrorModalOpen(true);
+    }
+  };
+
+  const closeConfirmDesactivateModal = () => {
+    setIsConfirmDesactivateModalOpen(false);
+    setIsDesactivateModalOpen(false);
+    setIsUpdateModalOpen(false);
+    setSelectedUser(null);
+    resetForm();
+    setIsFormEditing(false);
+    setIsLoadingDelete(false);
+    loadUsers();
+  }
+
+  const closeConfirmActivateModal = () => {
+    setIsConfirmActivateModalOpen(false);
+    setIsActivateModalOpen(false);
+    setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
@@ -521,41 +558,60 @@ function Colaboradores() {
         isOpen={isUpdateModalOpen}
         title="Más información del colaborador"
         footerButtons={
-          <>
-            {isFormEditing || isLoadingUpdate ? (
+          selectedUser ? (
+            <>
+              {isFormEditing || isLoadingUpdate ? (
+                <button
+                  type="button"
+                  className="btn btn-success w-25"
+                  onClick={updateUser}
+                  disabled={isLoadingUpdate || isLoadingDelete}
+                >
+                  {isLoadingUpdate ? "Cargando..." : "Guardar"}
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-primary w-25"
+                    onClick={startEditing}
+                    disabled={isLoadingUpdate || isLoadingDelete}
+                  >
+                    Editar
+                  </button>
+                  {selectedUser.is_deleted ? (
+                    <button
+                      type="button"
+                      className="btn btn-warning w-25"
+                      onClick={OpenActivateModal}
+                      disabled={isLoadingUpdate || isLoadingDelete}
+                    >
+                      {isLoadingDelete ? "Cargando..." : "Activar"}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-danger w-25"
+                      onClick={OpenDesactivateModal}
+                      disabled={isLoadingUpdate || isLoadingDelete}
+                    >
+                      {isLoadingDelete ? "Cargando..." : "Desactivar"}
+                    </button>
+                  )}
+                </>
+              )}
               <button
                 type="button"
-                className="btn btn-success w-25"
-                onClick={updateUser}
+                className="btn btn-secondary w-25"
+                onClick={closeEditModal}
                 disabled={isLoadingUpdate || isLoadingDelete}
-              > {isLoadingUpdate ? "Cargando..." : "Guardar"}
+              >
+                Cancelar
               </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-primary w-25"
-                  onClick={startEditing}
-                  disabled={isLoadingUpdate || isLoadingDelete}
-                > Editar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger w-25"
-                  onClick={OpenDeleteModal}
-                  disabled={isLoadingUpdate || isLoadingDelete}
-                > {isLoadingDelete ? "Cargando..." : "Eliminar"}
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              className="btn btn-secondary w-25"
-              onClick={closeEditModal}
-              disabled={isLoadingUpdate || isLoadingDelete}
-            > Cancelar
-            </button>
-          </>
+            </>
+          ) : (
+            <p>Cargando...</p>
+          )
         }
       >
         {selectedUser ? (
@@ -566,7 +622,7 @@ function Colaboradores() {
                 id="tipo_identificacion"
                 type="text"
                 options={colaboradorFormSelectOptions.tipo_identificacion}
-                value={formData.tipo_identificacion  || ''}
+                value={formData.tipo_identificacion || ''}
                 error={formErrors.tipo_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
@@ -575,7 +631,7 @@ function Colaboradores() {
                 label="Número de documento"
                 id="numero_identificacion"
                 type="number"
-                value={formData.numero_identificacion  || ''}
+                value={formData.numero_identificacion || ''}
                 error={formErrors.numero_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
@@ -586,7 +642,7 @@ function Colaboradores() {
                 label="Nombres"
                 id="nombre"
                 type="text"
-                value={formData.nombre  || ''}
+                value={formData.nombre || ''}
                 error={formErrors.nombre}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
@@ -595,7 +651,7 @@ function Colaboradores() {
                 label="Apellidos"
                 id="apellido"
                 type="text"
-                value={formData.apellido  || ''}
+                value={formData.apellido || ''}
                 error={formErrors.apellido}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
@@ -606,7 +662,7 @@ function Colaboradores() {
                 label="Fecha de Nacimiento"
                 id="fecha_nacimiento"
                 type="date"
-                value={convertISOToSimpleDate(formData.fecha_nacimiento)  || ''}
+                value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
                 error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
@@ -615,7 +671,7 @@ function Colaboradores() {
                 label="Estado Civil"
                 id="estado_civil"
                 options={colaboradorFormSelectOptions.estado_civil}
-                value={formData.estado_civil  || ''}
+                value={formData.estado_civil || ''}
                 error={formErrors.estado_civil}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
@@ -626,7 +682,7 @@ function Colaboradores() {
                 label="Sexo"
                 id="sexo"
                 options={colaboradorFormSelectOptions.sexo}
-                value={formData.sexo  || ''}
+                value={formData.sexo || ''}
                 error={formErrors.sexo}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
@@ -635,7 +691,7 @@ function Colaboradores() {
                 label="Dirección"
                 id="direccion"
                 type="text"
-                value={formData.direccion  || ''}
+                value={formData.direccion || ''}
                 error={formErrors.direccion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
@@ -646,7 +702,7 @@ function Colaboradores() {
                 label="Teléfono"
                 id="telefono"
                 type="number"
-                value={formData.telefono  || ''}
+                value={formData.telefono || ''}
                 error={formErrors.telefono}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
@@ -655,7 +711,7 @@ function Colaboradores() {
                 label="Correo Electrónico"
                 id="correo_electronico"
                 type="email"
-                value={formData.correo_electronico  || ''}
+                value={formData.correo_electronico || ''}
                 error={formErrors.correo_electronico}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
@@ -666,7 +722,7 @@ function Colaboradores() {
                 label="Salario"
                 id="salario"
                 type="number"
-                value={formData.salario  || ''}
+                value={formData.salario || ''}
                 error={formErrors.salario}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('salario', e.target.value)}
@@ -675,7 +731,7 @@ function Colaboradores() {
                 label="Jerarquía"
                 id="jerarquia"
                 options={colaboradorFormSelectOptions.jerarquia}
-                value={formData.jerarquia  || ''}
+                value={formData.jerarquia || ''}
                 error={formErrors.jerarquia}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
@@ -686,7 +742,7 @@ function Colaboradores() {
                 label="Fecha de ingreso"
                 id="fecha_ingreso"
                 type="date"
-                value={convertISOToSimpleDate(formData.fecha_ingreso)  || ''}
+                value={convertISOToSimpleDate(formData.fecha_ingreso) || ''}
                 error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
@@ -706,7 +762,6 @@ function Colaboradores() {
         ) : (
           <p>Cargando...</p>
         )}
-
       </FormModal>
 
       {/* Modal añadido correctamente */}
@@ -749,29 +804,56 @@ function Colaboradores() {
         }
       />
 
-      {/* Modal confirmar eliminar */}
+      {/* Modal confirmar desactivar */}
 
       <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        title="Eliminar colaborador"
-        message="Esta acción no se puede deshacer. ¿Está seguro de que quiere eliminar este colaborador?"
+        isOpen={isDesactivateModalOpen}
+        title="Desactivar colaborador"
+        message="¿Está seguro de que desea desactivar este colaborador?"
         footerButtons={
           <>
-            <button type="button" className="btn btn-danger w-25" onClick={deleteUser}>Eliminar</button>
-            <button type="button" className="btn btn-secondary w-25" onClick={closeDeleteModal}>Cancelar</button>
+            <button type="button" className="btn btn-danger w-25" onClick={desactivateUser}>Desactivar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDesactivateModal}>Cancelar</button>
           </>
         }
       />
 
-      {/* Modal eliminado correctamente */}
+      {/* Modal desactivado correctamente */}
 
       <ConfirmationModal
-        isOpen={isConfirmDeleteModalOpen}
-        title="Colaborador eliminado"
-        message="El colaborador ha sido eliminado correctamente."
+        isOpen={isConfirmDesactivateModalOpen}
+        title="Colaborador desactivado"
+        message="El colaborador ha sido desactivado correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-success w-25" onClick={closeConfirmDeleteModal}>Aceptar</button>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmDesactivateModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      {/* Modal confirmar activar */}
+
+      <ConfirmationModal
+        isOpen={isActivateModalOpen}
+        title="Activar colaborador"
+        message="Está seguro de que desea activar este colaborador?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-warning w-25" onClick={activateUser}>Activar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeActivateModal}>Cancelar</button>
+          </>
+        }
+      />
+
+      {/* Modal activado correctamente */}
+
+      <ConfirmationModal
+        isOpen={isConfirmActivateModalOpen}
+        title="Colaborador activado"
+        message="El colaborador ha sido activado correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmActivateModal}>Aceptar</button>
           </>
         }
       />
@@ -788,7 +870,7 @@ function Colaboradores() {
               type="button"
               className="btn btn-danger w-25"
               onClick={closeErrorModal}
-              >Aceptar
+            >Aceptar
             </button>
           </>
         }
