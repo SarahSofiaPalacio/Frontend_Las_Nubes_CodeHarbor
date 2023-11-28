@@ -11,7 +11,7 @@ import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSel
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
 function Colaboradores() {
-  const { token } = useAuth();
+  const { token, username } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -593,7 +593,7 @@ function Colaboradores() {
                       type="button"
                       className="btn btn-danger w-25"
                       onClick={OpenDesactivateModal}
-                      disabled={isLoadingUpdate || isLoadingDelete}
+                      disabled={isLoadingUpdate || isLoadingDelete || selectedUser.numero_identificacion === parseInt(username)}
                     >
                       {isLoadingDelete ? "Cargando..." : "Desactivar"}
                     </button>
