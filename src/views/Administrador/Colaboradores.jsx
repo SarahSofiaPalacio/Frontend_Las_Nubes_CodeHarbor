@@ -41,10 +41,10 @@ function Colaboradores() {
     setLoadingTable(true);
     try {
       const response = await getColaboradores(token);
-      console.log('(Colaboradores) Colaboradores cargados: ', response);
+      console.log('(Colaboradores) Usuarios cargados: ', response);
       setUsers(response);
     } catch (error) {
-      console.error('(Colaboradores) Error al cargar los colaboradores: ', error);
+      console.error('(Colaboradores) Error al cargar los usuarios: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
@@ -168,21 +168,19 @@ function Colaboradores() {
     });
   };
 
-  const createUser = () => {
+  const createUser = async () => {
     if (validateForm()) {
-      console.log('Datos válidos, añadiendo colaborador...');
       setIsLoadingAdd(true);
-      createColaborador(formData)
-        .then(response => {
-          console.log("Colaborador añadido: ", response.message);
-          setIsConfimAddModalOpen(true);
-        })
-        .catch(error => {
-          console.error('Hubo un error al añadir el colaborador: ', error);
-          setIsErrorModalOpen(true);
-        });
+      try {
+        const response = await createColaborador(token, formData);
+        console.log('(Colaboradores) Usuario creado: ', response);
+        setIsConfimAddModalOpen(true);
+      } catch (error) {
+        console.error('(Colaboradores) Hubo un error al crear el usuario: ', error);
+        setIsErrorModalOpen(true);
+      }
     } else {
-      console.log('Datos inválidos.');
+      console.error('(Colaboradores) Datos inválidos.');
     }
   };
 
@@ -388,7 +386,7 @@ function Colaboradores() {
               id="tipo_identificacion"
               type="text"
               options={colaboradorFormSelectOptions.tipo_identificacion}
-              value={formData.tipo_identificacion}
+              value={formData.tipo_identificacion || ''}
               error={formErrors.tipo_identificacion}
               onChange={(e) => handleAddFormChange('tipo_identificacion', e.target.value)}
             />
@@ -396,7 +394,7 @@ function Colaboradores() {
               label="Número de documento"
               id="numero_identificacion"
               type="number"
-              value={formData.numero_identificacion}
+              value={formData.numero_identificacion || ''}
               error={formErrors.numero_identificacion}
               onChange={(e) => handleAddFormChange('numero_identificacion', e.target.value)}
             />
@@ -406,7 +404,7 @@ function Colaboradores() {
               label="Nombres"
               id="nombre"
               type="text"
-              value={formData.nombre}
+              value={formData.nombre || ''}
               error={formErrors.nombre}
               onChange={(e) => handleAddFormChange('nombre', e.target.value)}
             />
@@ -414,7 +412,7 @@ function Colaboradores() {
               label="Apellidos"
               id="apellido"
               type="text"
-              value={formData.apellido}
+              value={formData.apellido || ''}
               error={formErrors.apellido}
               onChange={(e) => handleAddFormChange('apellido', e.target.value)}
             />
@@ -424,8 +422,8 @@ function Colaboradores() {
               label="Fecha de Nacimiento"
               id="fecha_nacimiento"
               type="date"
-              value={convertISOToSimpleDate(formData.fecha_nacimiento)}
-              error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
+              value={formData.fecha_nacimiento || ''}
+              error={formErrors.fecha_nacimiento}
               onChange={(e) => handleAddFormChange('fecha_nacimiento', e.target.value)}
             />
             <FormSelect
@@ -433,7 +431,7 @@ function Colaboradores() {
               id="estado_civil"
               type="text"
               options={colaboradorFormSelectOptions.estado_civil}
-              value={formData.estado_civil}
+              value={formData.estado_civil || ''}
               error={formErrors.estado_civil}
               onChange={(e) => handleAddFormChange('estado_civil', e.target.value)}
             />
@@ -444,7 +442,7 @@ function Colaboradores() {
               id="sexo"
               type="text"
               options={colaboradorFormSelectOptions.sexo}
-              value={formData.sexo}
+              value={formData.sexo || ''}
               error={formErrors.sexo}
               onChange={(e) => handleAddFormChange('sexo', e.target.value)}
             />
@@ -452,7 +450,7 @@ function Colaboradores() {
               label="Dirección"
               id="direccion"
               type="text"
-              value={formData.direccion}
+              value={formData.direccion || ''}
               error={formErrors.direccion}
               onChange={(e) => handleAddFormChange('direccion', e.target.value)}
             />
@@ -462,7 +460,7 @@ function Colaboradores() {
               label="Teléfono"
               id="telefono"
               type="number"
-              value={formData.telefono}
+              value={formData.telefono || ''}
               error={formErrors.telefono}
               onChange={(e) => handleAddFormChange('telefono', e.target.value)}
             />
@@ -470,7 +468,7 @@ function Colaboradores() {
               label="Correo Electrónico"
               id="correo_electronico"
               type="email"
-              value={formData.correo_electronico}
+              value={formData.correo_electronico || ''}
               error={formErrors.correo_electronico}
               onChange={(e) => handleAddFormChange('correo_electronico', e.target.value)}
             />
@@ -480,7 +478,7 @@ function Colaboradores() {
               label="Salario"
               id="salario"
               type="number"
-              value={formData.salario}
+              value={formData.salario || ''}
               error={formErrors.salario}
               onChange={(e) => handleAddFormChange('salario', e.target.value)}
             />
@@ -489,7 +487,7 @@ function Colaboradores() {
               id="jerarquia"
               type="text"
               options={colaboradorFormSelectOptions.jerarquia}
-              value={formData.jerarquia}
+              value={formData.jerarquia || ''}
               error={formErrors.jerarquia}
               onChange={(e) => handleAddFormChange('jerarquia', e.target.value)}
             />
@@ -499,8 +497,8 @@ function Colaboradores() {
               label="Fecha de ingreso"
               id="fecha_ingreso"
               type="date"
-              value={convertISOToSimpleDate(formData.fecha_ingreso)}
-              error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
+              value={formData.fecha_ingreso || ''}
+              error={formErrors.fecha_ingreso}
               onChange={(e) => handleAddFormChange('fecha_ingreso', e.target.value)}
             />
             <FormSelect
@@ -508,7 +506,7 @@ function Colaboradores() {
               id="especialidad"
               type="text"
               options={colaboradorFormSelectOptions.especialidad}
-              value={formData.especialidad}
+              value={formData.especialidad || ''}
               error={formErrors.especialidad}
               onChange={(e) => handleAddFormChange('especialidad', e.target.value)}
               isFormEditing={formData.jerarquia === 'Médico'}
@@ -581,7 +579,7 @@ function Colaboradores() {
                 id="tipo_identificacion"
                 type="text"
                 options={colaboradorFormSelectOptions.tipo_identificacion}
-                value={formData.tipo_identificacion}
+                value={formData.tipo_identificacion  || ''}
                 error={formErrors.tipo_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
@@ -590,7 +588,7 @@ function Colaboradores() {
                 label="Número de documento"
                 id="numero_identificacion"
                 type="number"
-                value={formData.numero_identificacion}
+                value={formData.numero_identificacion  || ''}
                 error={formErrors.numero_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
@@ -601,7 +599,7 @@ function Colaboradores() {
                 label="Nombres"
                 id="nombre"
                 type="text"
-                value={formData.nombre}
+                value={formData.nombre  || ''}
                 error={formErrors.nombre}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
@@ -610,7 +608,7 @@ function Colaboradores() {
                 label="Apellidos"
                 id="apellido"
                 type="text"
-                value={formData.apellido}
+                value={formData.apellido  || ''}
                 error={formErrors.apellido}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
@@ -621,7 +619,7 @@ function Colaboradores() {
                 label="Fecha de Nacimiento"
                 id="fecha_nacimiento"
                 type="date"
-                value={convertISOToSimpleDate(formData.fecha_nacimiento)}
+                value={convertISOToSimpleDate(formData.fecha_nacimiento)  || ''}
                 error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
@@ -630,7 +628,7 @@ function Colaboradores() {
                 label="Estado Civil"
                 id="estado_civil"
                 options={colaboradorFormSelectOptions.estado_civil}
-                value={formData.estado_civil}
+                value={formData.estado_civil  || ''}
                 error={formErrors.estado_civil}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
@@ -641,7 +639,7 @@ function Colaboradores() {
                 label="Sexo"
                 id="sexo"
                 options={colaboradorFormSelectOptions.sexo}
-                value={formData.sexo}
+                value={formData.sexo  || ''}
                 error={formErrors.sexo}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
@@ -650,7 +648,7 @@ function Colaboradores() {
                 label="Dirección"
                 id="direccion"
                 type="text"
-                value={formData.direccion}
+                value={formData.direccion  || ''}
                 error={formErrors.direccion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
@@ -661,7 +659,7 @@ function Colaboradores() {
                 label="Teléfono"
                 id="telefono"
                 type="number"
-                value={formData.telefono}
+                value={formData.telefono  || ''}
                 error={formErrors.telefono}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
@@ -670,7 +668,7 @@ function Colaboradores() {
                 label="Correo Electrónico"
                 id="correo_electronico"
                 type="email"
-                value={formData.correo_electronico}
+                value={formData.correo_electronico  || ''}
                 error={formErrors.correo_electronico}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
@@ -681,7 +679,7 @@ function Colaboradores() {
                 label="Salario"
                 id="salario"
                 type="number"
-                value={formData.salario}
+                value={formData.salario  || ''}
                 error={formErrors.salario}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('salario', e.target.value)}
@@ -690,7 +688,7 @@ function Colaboradores() {
                 label="Jerarquía"
                 id="jerarquia"
                 options={colaboradorFormSelectOptions.jerarquia}
-                value={formData.jerarquia}
+                value={formData.jerarquia  || ''}
                 error={formErrors.jerarquia}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
@@ -701,7 +699,7 @@ function Colaboradores() {
                 label="Fecha de ingreso"
                 id="fecha_ingreso"
                 type="date"
-                value={convertISOToSimpleDate(formData.fecha_ingreso)}
+                value={convertISOToSimpleDate(formData.fecha_ingreso)  || ''}
                 error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
@@ -711,7 +709,7 @@ function Colaboradores() {
                 id="especialidad"
                 type="text"
                 options={colaboradorFormSelectOptions.especialidad}
-                value={formData.especialidad}
+                value={formData.especialidad || ''}
                 error={formErrors.especialidad}
                 isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
                 onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
