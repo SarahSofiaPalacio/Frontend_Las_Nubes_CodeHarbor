@@ -22,12 +22,12 @@ function Colaboradores() {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
+  const [isConfirmAddModalOpen, setIsConfirmAddModalOpen] = useState(false);
   const [isLoadingAdd, setIsLoadingAdd] = useState(false);
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isFormEditing, setIsFormEditing] = useState(false);
-  const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
@@ -152,9 +152,13 @@ function Colaboradores() {
 
   const closeErrorModal = () => {
     setIsErrorModalOpen(false);
+    setIsAddModalOpen(false);
+    setIsUpdateModalOpen(false);
+    setIsDeleteModalOpen(false);
     setIsLoadingAdd(false);
     setIsLoadingUpdate(false);
     setIsLoadingDelete(false);
+    loadUsers();
   };
 
   // Funciones para el modal añadir
@@ -184,7 +188,7 @@ function Colaboradores() {
       try {
         const response = await createColaborador(token, formData);
         console.log('(Colaboradores) Usuario creado: ', response);
-        setIsConfimAddModalOpen(true);
+        setIsConfirmAddModalOpen(true);
       } catch (error) {
         console.error('(Colaboradores) Hubo un error al crear el usuario: ', error);
         setIsErrorModalOpen(true);
@@ -195,7 +199,7 @@ function Colaboradores() {
   };
 
   const closeConfirmAddModal = () => {
-    setIsConfimAddModalOpen(false);
+    setIsConfirmAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoadingAdd(false);
     loadUsers();
@@ -253,7 +257,7 @@ function Colaboradores() {
         }, {});
         const response = await updateColaborador(token, newData.numero_identificacion, newData);
         console.log('(Colaboradores) Usuario actualizado: ', response);
-        setIsConfimUpdateModalOpen(true);
+        setIsConfirmUpdateModalOpen(true);
       } catch (error) {
         console.error('(Colaboradores) Hubo un error al actualizar el usuario: ', error);
         setIsErrorModalOpen(true);
@@ -264,7 +268,7 @@ function Colaboradores() {
   };
 
   const closeConfirmUpdateModal = () => {
-    setIsConfimUpdateModalOpen(false);
+    setIsConfirmUpdateModalOpen(false);
     setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
@@ -293,24 +297,21 @@ function Colaboradores() {
     setIsDeleteModalOpen(false);
   };
 
-  const deleteUser = () => {
-    console.log('Eliminando colaborador...');
+  const deleteUser = async () => {
     setIsLoadingDelete(true);
-    setIsDeleteModalOpen(false);
-    deleteColaborador(selectedUser.numero_identificacion, formData)
-      .then(response => {
-        console.log("Colaborador eliminado: ", response.message);
-        setIsConfirmDeleteModalOpen(true);
-      })
-      .catch(error => {
-        console.error('Hubo un error al eliminar el colaborador:', error);
-        setIsErrorModalOpen(true);
-      });
+    try {
+      const response = await deleteColaborador(token, selectedUser.numero_identificacion);
+      console.log('(Colaboradores) Usuario eliminado: ', response);
+      setIsConfirmDeleteModalOpen(true);
+    } catch (error) {
+      console.error('(Colaboradores) Hubo un error al eliminar el usuario: ', error);
+      setIsErrorModalOpen(true);
+    }
   };
 
   const closeConfirmDeleteModal = () => {
     setIsConfirmDeleteModalOpen(false);
-    setIsUpdateModalOpen(false);
+    setIsDeleteModalOpen(false);
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
@@ -353,19 +354,6 @@ function Colaboradores() {
           </tr>
         ))}
       </Table>
-
-      {/* Modal de error inesperado */}
-
-      <ConfirmationModal
-        isOpen={isErrorModalOpen}
-        title="Error insperado"
-        message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
-        footerButtons={
-          <>
-            <button type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar</button>
-          </>
-        }
-      />
 
       {/* Modal añadir */}
 
@@ -526,19 +514,6 @@ function Colaboradores() {
           </div>
         </form>
       </FormModal>
-
-      {/* Modal añadido correctamente */}
-
-      <ConfirmationModal
-        isOpen={isConfimAddModalOpen}
-        title="Colaborador añadido"
-        message="El colaborador ha sido añadido correctamente."
-        footerButtons={
-          <>
-            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
-          </>
-        }
-      />
 
       {/* Modal editar */}
 
@@ -734,10 +709,23 @@ function Colaboradores() {
 
       </FormModal>
 
+      {/* Modal añadido correctamente */}
+
+      <ConfirmationModal
+        isOpen={isConfirmAddModalOpen}
+        title="Colaborador añadido"
+        message="El colaborador ha sido añadido correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
+          </>
+        }
+      />
+
       {/* Modal actualizado correctamente */}
 
       <ConfirmationModal
-        isOpen={isConfimUpdateModalOpen}
+        isOpen={isConfirmUpdateModalOpen}
         title="Colaborador actualizado"
         message="El colaborador ha sido actualizado correctamente."
         footerButtons={
@@ -784,6 +772,24 @@ function Colaboradores() {
         footerButtons={
           <>
             <button type="button" className="btn btn-success w-25" onClick={closeConfirmDeleteModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      {/* Modal de error inesperado */}
+
+      <ConfirmationModal
+        isOpen={isErrorModalOpen}
+        title="Error insperado"
+        message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
+        footerButtons={
+          <>
+            <button
+              type="button"
+              className="btn btn-danger w-25"
+              onClick={closeErrorModal}
+              >Aceptar
+            </button>
           </>
         }
       />

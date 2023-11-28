@@ -116,16 +116,30 @@ export const updateColaborador = async (token, numero_identificacion, colaborado
   }
 };
 
-export const deleteColaborador = (numero_identificacion) => {
+export const deleteColaborador = async (token, numero_identificacion) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Simula una respuesta exitosa; podrías querer actualizar tu mock data aquí.
         resolve({ message: 'Colaborador eliminado exitosamente' });
       }, 1000);
     });
   } else {
-    return axios.delete(`${URL_BASE}/colaboradores/${numero_identificacion}`)
-      .then(response => response.data);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.delete(`${URL_BASE}/admin/colaboradores/${numero_identificacion}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
   }
 }
