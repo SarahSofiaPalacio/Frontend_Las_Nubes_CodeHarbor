@@ -15,7 +15,7 @@ export const colaboradorInitialFormData = {
   jerarquia: '',
   fecha_ingreso: '',
   especialidad: '',
-  foto: '',
+  foto_url: '',
 }
 
 export const colaboradorFormSelectOptions = {
@@ -39,7 +39,7 @@ export const pacienteInitialFormData = {
   direccion: '',
   telefono: '',
   correo_electronico: '',
-  foto: '',
+  foto_url: '',
 }
 
 export const pacienteFormSelectOptions = {

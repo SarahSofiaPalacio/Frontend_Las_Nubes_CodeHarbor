@@ -71,10 +71,12 @@ function Colaboradores() {
     const errors = {};
     if (!formData.tipo_identificacion || formData.tipo_identificacion === "Seleccione...") {
       errors.tipo_identificacion = "Tipo de documento es requerido";
+    } else if (!colaboradorFormSelectOptions.tipo_identificacion.includes(formData.tipo_identificacion)) {
+      errors.tipo_identificacion = "Tipo de identificación seleccionado no es válido";
     }
-    if (!formData.numero_identificacion || !formData.numero_identificacion.trim()) {
+    if (!formData.numero_identificacion) {
       errors.numero_identificacion = "Número de documento es requerido";
-    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion.trim())) {
+    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion)) {
       errors.numero_identificacion = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.nombre || !formData.nombre.trim()) {
@@ -94,16 +96,20 @@ function Colaboradores() {
     }
     if (!formData.estado_civil || formData.estado_civil === "Seleccione...") {
       errors.estado_civil = "Estado civil es requerido";
+    } else if (!colaboradorFormSelectOptions.estado_civil.includes(formData.estado_civil)) {
+      errors.estado_civil = "Estado civil seleccionado no es válido";
     }
     if (!formData.sexo || formData.sexo === "Seleccione...") {
       errors.sexo = "Sexo es requerido";
+    } else if (!colaboradorFormSelectOptions.sexo.includes(formData.sexo)) {
+      errors.sexo = "Sexo seleccionado no es válido";
     }
     if (!formData.direccion || !formData.direccion.trim()) {
       errors.direccion = "Dirección es requerida";
     }
-    if (!formData.telefono || !formData.telefono.trim()) {
+    if (!formData.telefono) {
       errors.telefono = "Teléfono es requerido";
-    } else if (!/^\d{7,10}$/.test(formData.telefono.trim())) {
+    } else if (!/^\d{7,10}$/.test(formData.telefono)) {
       errors.telefono = "Teléfono inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.correo_electronico || !formData.correo_electronico.trim()) {
@@ -111,13 +117,15 @@ function Colaboradores() {
     } else if (!/^\S+@\S+\.\S+$/.test(formData.correo_electronico.trim())) {
       errors.correo_electronico = "Correo Electrónico inválido";
     }
-    if (!formData.salario || !formData.salario.trim()) {
+    if (!formData.salario) {
       errors.salario = "Salario es requerido";
-    } else if (!/^\d+$/.test(formData.salario.trim())) {
+    } else if (!/^\d+$/.test(formData.salario)) {
       errors.salario = "Salario inválido, solo se permiten números";
     }
     if (!formData.jerarquia || formData.jerarquia === "Seleccione...") {
       errors.jerarquia = "Jerarquía es requerida";
+    } else if (!colaboradorFormSelectOptions.jerarquia.includes(formData.jerarquia)) {
+      errors.jerarquia = "Jerarquía seleccionada no es válida";
     }
     if (!formData.fecha_ingreso) {
       errors.fecha_ingreso = "Fecha de ingreso es requerida";
@@ -126,6 +134,8 @@ function Colaboradores() {
     }
     if (formData.jerarquia === 'Médico' && (!formData.especialidad || formData.especialidad === "Seleccione...")) {
       errors.especialidad = "Especialidad es requerida";
+    } else if (!colaboradorFormSelectOptions.especialidad.includes(formData.especialidad)) {
+      errors.especialidad = "Especialidad seleccionada no es válida";
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -232,22 +242,24 @@ function Colaboradores() {
     }
   };
 
-  const updateUser = () => {
+  const updateUser = async () => {
     if (validateForm()) {
-      console.log('Datos válidos, editando colaborador...');
       setIsLoadingUpdate(true);
       setIsFormEditing(false);
-      updateColaborador(selectedUser.numero_identificacion, formData)
-        .then(response => {
-          console.log("Colaborador editado: ", response.message);
-          setIsConfimUpdateModalOpen(true);
-        })
-        .catch(error => {
-          console.error('Hubo un error al editar el colaborador: ', error);
-          setIsErrorModalOpen(true);
-        });
+      try {
+        const newData = Object.keys(colaboradorInitialFormData).reduce((acc, key) => {
+          acc[key] = formData[key] ?? colaboradorInitialFormData[key];
+          return acc;
+        }, {});
+        const response = await updateColaborador(token, newData.numero_identificacion, newData);
+        console.log('(Colaboradores) Usuario actualizado: ', response);
+        setIsConfimUpdateModalOpen(true);
+      } catch (error) {
+        console.error('(Colaboradores) Hubo un error al actualizar el usuario: ', error);
+        setIsErrorModalOpen(true);
+      }
     } else {
-      console.log('Datos inválidos.');
+      console.error('(Colaboradores) Datos inválidos.');
     }
   };
 
