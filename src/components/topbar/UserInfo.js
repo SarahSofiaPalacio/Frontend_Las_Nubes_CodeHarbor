@@ -7,25 +7,24 @@ import { getColaborador } from '../../services/colaboradores';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
-    const { username, setUsername, setRole, setToken } = useAuth();
+    const { username, token, setUsername, setRole, setToken } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [userName, setUserName] = useState('Usuario');
     const [userImage, setUserImage] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
 
     useEffect(() => {
-        if (username) {
-            console.log("Cargando datos del usuario (Topbar)...");
-            getColaborador(username)
-                .then(data => {
-                    console.log("Datos del usuario cargados (Topbar): ", data);
-                    if (data.nombre) setUserName(data.nombre);
-                    if (data.foto) setUserImage(data.foto);
-                })
-                .catch(error => {
-                    console.error("Error al cargar datos del usuario (Topbar): ", error);
-                });
-        }
-    }, [username]);
+        const handleObtenerColaborador = async () => {
+            try {
+              const data = await getColaborador(token, username);
+              console.log("(Topbar) Datos del usuario cargados: ", data);
+              if (data.nombre) setUserName(data.nombre);
+              if (data.foto_url) setUserImage(data.foto_url);
+            } catch (error) {
+                console.error("(Topbar) Error al cargar datos del usuario: ", error);
+            }
+          };
+        handleObtenerColaborador();
+    }, [token, username]);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
@@ -39,16 +38,16 @@ function UserInfo() {
         try {
             const token = Cookies.get('token');
             const response = await logout(token);
-            console.log("Sesión cerrada exitosamente:", response);
+            console.log("(Logout) Sesión cerrada exitosamente:", response);
             Cookies.remove('username');
             Cookies.remove('token');
             Cookies.remove('role');
             setUsername(null);
             setRole(null);
             setToken(null);
-            console.log("Datos de usuario eliminados de cookies y contexto.");
+            console.log("(Logout) Datos de usuario eliminados de cookies y contexto.");
         } catch (error) {
-            console.error("Error al cerrar sesión:", error);
+            console.error("(Logout) Error al cerrar sesión:", error);
         } finally {
             setIsLogoutModalOpen(false);
         }

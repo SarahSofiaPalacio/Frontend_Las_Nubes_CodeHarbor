@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Header from '../../components/Header';
 import Table from '../../components/Table';
@@ -6,11 +6,12 @@ import FormModal from '../../components/FormModal';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
-
+import { useAuth } from '../../auth/AuthContext';
 import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/AdministradorData.js';
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
 function Colaboradores() {
+  const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -36,29 +37,33 @@ function Colaboradores() {
 
   // Cargar lista de usuarios al cargar la página
 
-  const loadUsers = () => {
-    console.log('Cargando colaboradores...');
+  const loadUsers = useCallback(async () => {
     setLoadingTable(true);
-    getColaboradores()
-      .then(response => {
-        console.log('Colaboradores cargados: ', response);
-        setUsers(response);
-      })
-      .catch(error => {
-        console.error('Error cargando colaboradores: ', error);
-        setIsErrorModalOpen(true);
-      })
-      .finally(() => {
-        setLoadingTable(false);
-        setIsLoadingContent(false);
-      });
-  };
+    try {
+      const response = await getColaboradores(token);
+      console.log('(Colaboradores) Colaboradores cargados: ', response);
+      setUsers(response);
+    } catch (error) {
+      console.error('(Colaboradores) Error al cargar los colaboradores: ', error);
+    } finally {
+      setLoadingTable(false);
+      setIsLoadingContent(false);
+    }
+  }, [token]);
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [loadUsers]);
 
   if (isLoadingContent) return <LoadingSpinner />;
+
+  // Funciones auxiliares
+
+  const convertISOToSimpleDate = (isoDateString) => {
+    if (!isoDateString) return;
+    const date = new Date(isoDateString);
+    return date.toISOString().split('T')[0];
+  };
 
   // Validar formulario de colaborador
 
@@ -324,7 +329,7 @@ function Colaboradores() {
             <td>{colaborador.nombre}</td>
             <td>{colaborador.apellido}</td>
             <td>{colaborador.jerarquia}</td>
-            <td>{colaborador.fecha_nacimiento}</td>
+            <td>{convertISOToSimpleDate(colaborador.fecha_nacimiento)}</td>
             <td>{colaborador.telefono}</td>
             <td className="d-flex justify-content-center align-items-center">
               <button
@@ -419,8 +424,8 @@ function Colaboradores() {
               label="Fecha de Nacimiento"
               id="fecha_nacimiento"
               type="date"
-              value={formData.fecha_nacimiento}
-              error={formErrors.fecha_nacimiento}
+              value={convertISOToSimpleDate(formData.fecha_nacimiento)}
+              error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
               onChange={(e) => handleAddFormChange('fecha_nacimiento', e.target.value)}
             />
             <FormSelect
@@ -494,8 +499,8 @@ function Colaboradores() {
               label="Fecha de ingreso"
               id="fecha_ingreso"
               type="date"
-              value={formData.fecha_ingreso}
-              error={formErrors.fecha_ingreso}
+              value={convertISOToSimpleDate(formData.fecha_ingreso)}
+              error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
               onChange={(e) => handleAddFormChange('fecha_ingreso', e.target.value)}
             />
             <FormSelect
@@ -616,8 +621,8 @@ function Colaboradores() {
                 label="Fecha de Nacimiento"
                 id="fecha_nacimiento"
                 type="date"
-                value={formData.fecha_nacimiento}
-                error={formErrors.fecha_nacimiento}
+                value={convertISOToSimpleDate(formData.fecha_nacimiento)}
+                error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
@@ -696,8 +701,8 @@ function Colaboradores() {
                 label="Fecha de ingreso"
                 id="fecha_ingreso"
                 type="date"
-                value={formData.fecha_ingreso}
-                error={formErrors.fecha_ingreso}
+                value={convertISOToSimpleDate(formData.fecha_ingreso)}
+                error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
               />
