@@ -15,14 +15,14 @@ function UserInfo() {
     useEffect(() => {
         const handleObtenerColaborador = async () => {
             try {
-              const data = await getColaborador(token, username);
-              console.log("(Topbar) Datos del usuario cargados: ", data);
-              if (data.nombre) setUserName(data.nombre);
-              if (data.foto_url) setUserImage(data.foto_url);
+                const data = await getColaborador(token, username);
+                console.log("(Topbar) Datos del usuario cargados: ", data);
+                if (data.nombre) setUserName(data.nombre);
+                if (data.foto_url) setUserImage(data.foto_url);
             } catch (error) {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
             }
-          };
+        };
         handleObtenerColaborador();
     }, [token, username]);
 
@@ -51,7 +51,7 @@ function UserInfo() {
         } finally {
             setIsLogoutModalOpen(false);
         }
-    };    
+    };
 
     return (
         <li className="nav-item dropdown no-arrow">

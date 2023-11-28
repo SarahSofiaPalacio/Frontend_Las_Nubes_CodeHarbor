@@ -340,7 +340,6 @@ function Colaboradores() {
     setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsFormEditing(false);
     setIsLoadingDelete(false);
     loadUsers();
   }
@@ -351,7 +350,6 @@ function Colaboradores() {
     setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsFormEditing(false);
     setIsLoadingDelete(false);
     loadUsers();
   }

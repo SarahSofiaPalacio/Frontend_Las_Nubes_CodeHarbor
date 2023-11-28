@@ -1,27 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const ConfirmationModal = ({ isOpen, title, message, footerButtons }) => {
-    const hasBeenOpenedRef = useRef(false);
-
     useEffect(() => {
-        if (isOpen) {
-            if (!hasBeenOpenedRef.current && document.querySelector('.modal-backdrop')) {
-                hasBeenOpenedRef.current = true;
-                return;
+        const toggleBackdrop = (shouldAdd) => {
+            if (shouldAdd) {
+                document.body.classList.add('modal-open');
+                if (!document.querySelector('.modal-backdrop')) {
+                    document.body.insertAdjacentHTML('beforeend', '<div class="modal-backdrop fade show"></div>');
+                }
+            } else {
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) document.body.removeChild(backdrop);
             }
-            document.body.classList.add('modal-open');
-            document.body.insertAdjacentHTML('beforeend', '<div class="modal-backdrop fade show"></div>');
-        } else {
-            if (hasBeenOpenedRef.current) {
-                hasBeenOpenedRef.current = false;
-                return;
-            }
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) document.body.removeChild(backdrop);
-        }
+        };
+    
+        toggleBackdrop(isOpen);
+    
+        // Limpieza cuando el componente se desmonte o cambie su estado
+        return () => toggleBackdrop(false);
     }, [isOpen]);
+    
 
     if (!isOpen) return null;
 
