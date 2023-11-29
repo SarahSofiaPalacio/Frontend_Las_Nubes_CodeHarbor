@@ -1,4 +1,4 @@
-export const secretarioTableColumns = [
+export const citasTableColumns = [
   { title: 'Identificación', key: 'tipo_identificacion' },
   { title: 'Nombre', key: 'nombre' },
   { title: 'Tipo de Cita', key: 'especialidad' },
@@ -16,9 +16,23 @@ export const citaInitialFormData = {
 }
 
 export const colaboradorInitialFormData = {
+  tipo_identificacion: '',
+  numero_identificacion: '',
   nombre: '',
+  apellido: '',
+  fecha_nacimiento: '',
+  estado_civil: '',
+  sexo: '',
+  direccion: '',
+  telefono: '',
+  correo_electronico: '',
+  salario: '',
+  jerarquia: '',
+  fecha_ingreso: '',
   especialidad: '',
+  foto_url: '',
 }
+
 export const pacienteInitialFormData = {
   tipo_identificacion: '',
   numero_identificacion: '',
@@ -29,6 +43,6 @@ export const pacienteInitialFormData = {
   correo_electronico: '',
 }
 
-export const secretarioFormSelectOptions = {
+export const citaFormSelectOptions = {
   estado: ['Seleccione...', 'Activa', 'Confirmada', 'Cancelada', 'Ausente', 'Realizada', 'En cita'],
 }

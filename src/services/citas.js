@@ -19,7 +19,7 @@ export const getCitas = () => {
   }
 };
 
-export const updateCitas = (numeroDocumento, citaData) => {
+export const updateCita = (numeroDocumento, citaData) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
