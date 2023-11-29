@@ -8,7 +8,7 @@ import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext';
 
-import { pacienteTableColumns, pacienteInitialFormData, pacienteFormSelectOptions } from '../../assets/AdministradorData.js';
+import { pacienteTableColumns, pacienteInitialFormData, pacienteFormSelectOptions } from '../../assets/PacienteData.js';
 import { getPacientes, createPaciente, updatePaciente, deletePaciente } from '../../services/pacientes.js';
 
 function Pacientes() {
@@ -589,7 +589,7 @@ function Pacientes() {
                 id="fecha_nacimiento"
                 type="date"
                 value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
-                error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
+                error={formErrors.fecha_nacimiento}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />

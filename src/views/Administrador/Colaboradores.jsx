@@ -7,7 +7,7 @@ import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext';
-import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/AdministradorData.js';
+import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/ColaboradorData.js';
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
 
 function Colaboradores() {
@@ -652,7 +652,7 @@ function Colaboradores() {
                 id="fecha_nacimiento"
                 type="date"
                 value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
-                error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
+                error={formErrors.fecha_nacimiento}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
@@ -732,7 +732,7 @@ function Colaboradores() {
                 id="fecha_ingreso"
                 type="date"
                 value={convertISOToSimpleDate(formData.fecha_ingreso) || ''}
-                error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
+                error={formErrors.fecha_ingreso}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
               />

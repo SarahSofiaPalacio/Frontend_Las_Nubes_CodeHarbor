@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { citasMock } from '../mocks/citas';
+//import { citasMock } from '../mocks/citas';
 
 const URL_BASE = process.env.REACT_APP_URL_BASE;
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === "true";
@@ -9,7 +9,7 @@ export const getCitas = () => {
     // Retornar una promesa que simula una llamada al servidor
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(citasMock);
+        //resolve(citasMock);
       }, 1000);
     });
   } else {

@@ -7,7 +7,7 @@ import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useAuth } from '../../auth/AuthContext.js';
 
-import { colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/AdministradorData.js';
+import { colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/ColaboradorData.js';
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
 
 function UserProfile() {
@@ -53,7 +53,7 @@ function UserProfile() {
 
     // Validar formulario de colaborador
 
-    const validateForm = useCallback(async () => {
+    const validateForm = useCallback(() => {
         const errors = {};
         if (!formData.tipo_identificacion || formData.tipo_identificacion === "Seleccione...") {
             errors.tipo_identificacion = "Tipo de documento es requerido";
@@ -332,7 +332,7 @@ function UserProfile() {
                                         id="fecha_nacimiento"
                                         type="date"
                                         value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
-                                        error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
+                                        error={formErrors.fecha_nacimiento}
                                         isFormEditing={isFormEditing}
                                         onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
                                     />
@@ -412,7 +412,7 @@ function UserProfile() {
                                         id="fecha_ingreso"
                                         type="date"
                                         value={convertISOToSimpleDate(formData.fecha_ingreso) || ''}
-                                        error={convertISOToSimpleDate(formErrors.fecha_ingreso)}
+                                        error={formErrors.fecha_ingreso}
                                         isFormEditing={isFormEditing}
                                         onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
                                     />
