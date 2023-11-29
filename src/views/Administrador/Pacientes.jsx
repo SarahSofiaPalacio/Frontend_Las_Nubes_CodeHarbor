@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Header from '../../components/Header';
 import Table from '../../components/Table';
@@ -6,11 +6,13 @@ import FormModal from '../../components/FormModal';
 import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
+import { useAuth } from '../../auth/AuthContext';
 
 import { pacienteTableColumns, pacienteInitialFormData, pacienteFormSelectOptions } from '../../assets/AdministradorData.js';
 import { getPacientes, createPaciente, updatePaciente, deletePaciente } from '../../services/pacientes.js';
 
 function Pacientes() {
+  const { token, username } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -21,44 +23,50 @@ function Pacientes() {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isConfimAddModalOpen, setIsConfimAddModalOpen] = useState(false);
+  const [isConfirmAddModalOpen, setIsConfirmAddModalOpen] = useState(false);
   const [isLoadingAdd, setIsLoadingAdd] = useState(false);
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isFormEditing, setIsFormEditing] = useState(false);
-  const [isConfimUpdateModalOpen, setIsConfimUpdateModalOpen] = useState(false);
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [isDesactivateModalOpen, setIsDesactivateModalOpen] = useState(false);
+  const [isConfirmDesactivateModalOpen, setIsConfirmDesactivateModalOpen] = useState(false);
+  const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
+  const [isConfirmActivateModalOpen, setIsConfirmActivateModalOpen] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   // Cargar lista de usuarios al cargar la página
 
-  const loadUsers = () => {
-    console.log('Cargando pacientes...');
+  const loadUsers = useCallback(async () => {
     setLoadingTable(true);
-    getPacientes()
-      .then(response => {
-        console.log('Pacientes cargados: ', response);
-        setUsers(response);
-      })
-      .catch(error => {
-        console.error('Error cargando pacientes: ', error);
-        setIsErrorModalOpen(true);
-      })
-      .finally(() => {
-        setLoadingTable(false);
-        setIsLoadingContent(false);
-      });
-  };
+    try {
+      const response = await getPacientes(token);
+      console.log('(Pacientes) Usuarios cargados: ', response);
+      setUsers(response);
+    } catch (error) {
+      console.error('(Pacientes) Error al cargar los usuarios: ', error);
+    } finally {
+      setLoadingTable(false);
+      setIsLoadingContent(false);
+    }
+  }, [token]);
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [loadUsers]);
 
   if (isLoadingContent) return <LoadingSpinner />;
+
+  // Funciones auxiliares
+
+  const convertISOToSimpleDate = (isoDateString) => {
+    if (!isoDateString) return;
+    const date = new Date(isoDateString);
+    return date.toISOString().split('T')[0];
+  };
 
   // Validar formulario de paciente
 
@@ -66,10 +74,12 @@ function Pacientes() {
     const errors = {};
     if (!formData.tipo_identificacion || formData.tipo_identificacion === "Seleccione...") {
       errors.tipo_identificacion = "Tipo de documento es requerido";
+    } else if (!pacienteFormSelectOptions.tipo_identificacion.includes(formData.tipo_identificacion)) {
+      errors.tipo_identificacion = "Tipo de identificación seleccionado no es válido";
     }
-    if (!formData.numero_identificacion || !formData.numero_identificacion.trim()) {
+    if (!formData.numero_identificacion) {
       errors.numero_identificacion = "Número de documento es requerido";
-    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion.trim())) {
+    } else if (!/^\d{7,10}$/.test(formData.numero_identificacion)) {
       errors.numero_identificacion = "Número de documento inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.nombre || !formData.nombre.trim()) {
@@ -89,16 +99,20 @@ function Pacientes() {
     }
     if (!formData.estado_civil || formData.estado_civil === "Seleccione...") {
       errors.estado_civil = "Estado civil es requerido";
+    } else if (!pacienteFormSelectOptions.estado_civil.includes(formData.estado_civil)) {
+      errors.estado_civil = "Estado civil seleccionado no es válido";
     }
     if (!formData.sexo || formData.sexo === "Seleccione...") {
       errors.sexo = "Sexo es requerido";
+    } else if (!pacienteFormSelectOptions.sexo.includes(formData.sexo)) {
+      errors.sexo = "Sexo seleccionado no es válido";
     }
     if (!formData.direccion || !formData.direccion.trim()) {
       errors.direccion = "Dirección es requerida";
     }
-    if (!formData.telefono || !formData.telefono.trim()) {
+    if (!formData.telefono) {
       errors.telefono = "Teléfono es requerido";
-    } else if (!/^\d{7,10}$/.test(formData.telefono.trim())) {
+    } else if (!/^\d{7,10}$/.test(formData.telefono)) {
       errors.telefono = "Teléfono inválido, debe tener entre 7 y 10 dígitos";
     }
     if (!formData.correo_electronico || !formData.correo_electronico.trim()) {
@@ -121,9 +135,14 @@ function Pacientes() {
 
   const closeErrorModal = () => {
     setIsErrorModalOpen(false);
+    setIsAddModalOpen(false);
+    setIsUpdateModalOpen(false);
+    setIsDesactivateModalOpen(false);
+    setIsActivateModalOpen(false);
     setIsLoadingAdd(false);
     setIsLoadingUpdate(false);
     setIsLoadingDelete(false);
+    loadUsers();
   };
 
   // Funciones para el modal añadir
@@ -144,26 +163,24 @@ function Pacientes() {
     });
   };
 
-  const createUser = () => {
+  const createUser = async () => {
     if (validateForm()) {
-      console.log('Datos válidos, añadiendo paciente...');
       setIsLoadingAdd(true);
-      createPaciente(formData)
-        .then(response => {
-          console.log("Paciente añadido: ", response.message);
-          setIsConfimAddModalOpen(true);
-        })
-        .catch(error => {
-          console.error('Hubo un error al añadir el paciente: ', error);
-          setIsErrorModalOpen(true);
-        });
+      try {
+        const response = await createPaciente(token, formData);
+        console.log('(Pacientes) Usuario creado: ', response);
+        setIsConfirmAddModalOpen(true);
+      } catch (error) {
+        console.error('(Pacientes) Hubo un error al crear el usuario: ', error);
+        setIsErrorModalOpen(true);
+      }
     } else {
-      console.log('Datos inválidos.');
+      console.error('(Pacientes) Datos inválidos.');
     }
   };
 
   const closeConfirmAddModal = () => {
-    setIsConfimAddModalOpen(false);
+    setIsConfirmAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoadingAdd(false);
     loadUsers();
@@ -193,38 +210,38 @@ function Pacientes() {
 
   const handleEditFormChange = (name, value) => {
     if (isFormEditing) {
-      setSelectedUser(prevState => ({
-        ...prevState,
-        [name]: value,
-      }));
-      setFormData(prevData => ({
-        ...prevData,
-        [name]: value,
-      }));
+      setFormData(prevData => {
+        const newValues = { ...prevData, [name]: value };
+        return newValues;
+      });
     }
   };
 
-  const updateUser = () => {
+  const updateUser = async () => {
     if (validateForm()) {
-      console.log('Datos válidos, editando paciente...');
       setIsLoadingUpdate(true);
       setIsFormEditing(false);
-      updatePaciente(selectedUser.numero_identificacion, formData)
-        .then(response => {
-          console.log("Paciente editado: ", response.message);
-          setIsConfimUpdateModalOpen(true);
-        })
-        .catch(error => {
-          console.error('Hubo un error al editar el paciente: ', error);
-          setIsErrorModalOpen(true);
-        });
+      try {
+        const newData = Object.keys(pacienteInitialFormData).reduce((acc, key) => {
+          if (key !== 'foto_url') {
+            acc[key] = formData[key] ?? pacienteInitialFormData[key];
+          }
+          return acc;
+        }, {});
+        const response = await updatePaciente(token, selectedUser.numero_identificacion, newData);
+        console.log('(Pacientes) Usuario actualizado: ', response);
+        setIsConfirmUpdateModalOpen(true);
+      } catch (error) {
+        console.error('(Pacientes) Hubo un error al actualizar el usuario: ', error);
+        setIsErrorModalOpen(true);
+      }
     } else {
-      console.log('Datos inválidos.');
+      console.error('(Pacientes) Datos inválidos.');
     }
   };
 
   const closeConfirmUpdateModal = () => {
-    setIsConfimUpdateModalOpen(false);
+    setIsConfirmUpdateModalOpen(false);
     setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
@@ -243,37 +260,65 @@ function Pacientes() {
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
+    loadUsers();
   };
 
-  const OpenDeleteModal = () => {
-    setIsDeleteModalOpen(true);
+  const OpenDesactivateModal = () => {
+    setIsDesactivateModalOpen(true);
   };
 
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
+  const closeDesactivateModal = () => {
+    setIsDesactivateModalOpen(false);
   };
 
-  const deleteUser = () => {
-    console.log('Eliminando paciente...');
+  const OpenActivateModal = () => {
+    setIsActivateModalOpen(true);
+  };
+
+  const closeActivateModal = () => {
+    setIsActivateModalOpen(false);
+  };
+
+  const desactivateUser = async () => {
     setIsLoadingDelete(true);
-    setIsDeleteModalOpen(false);
-    deletePaciente(selectedUser.numero_identificacion, formData)
-      .then(response => {
-        console.log("Paciente eliminado: ", response.message);
-        setIsConfirmDeleteModalOpen(true);
-      })
-      .catch(error => {
-        console.error('Hubo un error al eliminar el paciente:', error);
-        setIsErrorModalOpen(true);
-      });
+    try {
+      const response = await deletePaciente(token, selectedUser.numero_identificacion);
+      console.log('(Pacientes) Usuario desactivado: ', response);
+      setIsConfirmDesactivateModalOpen(true);
+    } catch (error) {
+      console.error('(Pacientes) Hubo un error al desactivar el usuario: ', error);
+      setIsErrorModalOpen(true);
+    }
   };
 
-  const closeConfirmDeleteModal = () => {
-    setIsConfirmDeleteModalOpen(false);
+  const activateUser = async () => {
+    setIsLoadingDelete(true);
+    try {
+      const response = await updatePaciente(token, selectedUser.numero_identificacion, { is_deleted: false });
+      console.log('(Pacientes) Usuario activado: ', response);
+      setIsConfirmActivateModalOpen(true);
+    } catch (error) {
+      console.error('(Pacientes) Hubo un error al activar el usuario: ', error);
+      setIsErrorModalOpen(true);
+    }
+  };
+
+  const closeConfirmDesactivateModal = () => {
+    setIsConfirmDesactivateModalOpen(false);
+    setIsDesactivateModalOpen(false);
     setIsUpdateModalOpen(false);
     setSelectedUser(null);
     resetForm();
-    setIsFormEditing(false);
+    setIsLoadingDelete(false);
+    loadUsers();
+  }
+
+  const closeConfirmActivateModal = () => {
+    setIsConfirmActivateModalOpen(false);
+    setIsActivateModalOpen(false);
+    setIsUpdateModalOpen(false);
+    setSelectedUser(null);
+    resetForm();
     setIsLoadingDelete(false);
     loadUsers();
   }
@@ -299,7 +344,7 @@ function Pacientes() {
             <td>{paciente.nombre}</td>
             <td>{paciente.apellido}</td>
             <td>{paciente.estado_civil}</td>
-            <td>{paciente.fecha_nacimiento}</td>
+            <td>{convertISOToSimpleDate(paciente.fecha_nacimiento)}</td>
             <td>{paciente.telefono}</td>
             <td className="d-flex justify-content-center align-items-center">
               <button
@@ -313,19 +358,6 @@ function Pacientes() {
           </tr>
         ))}
       </Table>
-
-      {/* Modal de error inesperado */}
-
-      <ConfirmationModal
-        isOpen={isErrorModalOpen}
-        title="Error insperado"
-        message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
-        footerButtons={
-          <>
-            <button type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar</button>
-          </>
-        }
-      />
 
       {/* Modal añadir */}
 
@@ -358,7 +390,7 @@ function Pacientes() {
               id="tipo_identificacion"
               type="text"
               options={pacienteFormSelectOptions.tipo_identificacion}
-              value={formData.tipo_identificacion}
+              value={formData.tipo_identificacion || ''}
               error={formErrors.tipo_identificacion}
               onChange={(e) => handleAddFormChange('tipo_identificacion', e.target.value)}
             />
@@ -366,7 +398,7 @@ function Pacientes() {
               label="Número de documento"
               id="numero_identificacion"
               type="number"
-              value={formData.numero_identificacion}
+              value={formData.numero_identificacion || ''}
               error={formErrors.numero_identificacion}
               onChange={(e) => handleAddFormChange('numero_identificacion', e.target.value)}
             />
@@ -376,7 +408,7 @@ function Pacientes() {
               label="Nombres"
               id="nombre"
               type="text"
-              value={formData.nombre}
+              value={formData.nombre || ''}
               error={formErrors.nombre}
               onChange={(e) => handleAddFormChange('nombre', e.target.value)}
             />
@@ -384,7 +416,7 @@ function Pacientes() {
               label="Apellidos"
               id="apellido"
               type="text"
-              value={formData.apellido}
+              value={formData.apellido || ''}
               error={formErrors.apellido}
               onChange={(e) => handleAddFormChange('apellido', e.target.value)}
             />
@@ -394,7 +426,7 @@ function Pacientes() {
               label="Fecha de Nacimiento"
               id="fecha_nacimiento"
               type="date"
-              value={formData.fecha_nacimiento}
+              value={formData.fecha_nacimiento || ''}
               error={formErrors.fecha_nacimiento}
               onChange={(e) => handleAddFormChange('fecha_nacimiento', e.target.value)}
             />
@@ -403,7 +435,7 @@ function Pacientes() {
               id="estado_civil"
               type="text"
               options={pacienteFormSelectOptions.estado_civil}
-              value={formData.estado_civil}
+              value={formData.estado_civil || ''}
               error={formErrors.estado_civil}
               onChange={(e) => handleAddFormChange('estado_civil', e.target.value)}
             />
@@ -414,7 +446,7 @@ function Pacientes() {
               id="sexo"
               type="text"
               options={pacienteFormSelectOptions.sexo}
-              value={formData.sexo}
+              value={formData.sexo || ''}
               error={formErrors.sexo}
               onChange={(e) => handleAddFormChange('sexo', e.target.value)}
             />
@@ -422,7 +454,7 @@ function Pacientes() {
               label="Dirección"
               id="direccion"
               type="text"
-              value={formData.direccion}
+              value={formData.direccion || ''}
               error={formErrors.direccion}
               onChange={(e) => handleAddFormChange('direccion', e.target.value)}
             />
@@ -432,7 +464,7 @@ function Pacientes() {
               label="Teléfono"
               id="telefono"
               type="number"
-              value={formData.telefono}
+              value={formData.telefono || ''}
               error={formErrors.telefono}
               onChange={(e) => handleAddFormChange('telefono', e.target.value)}
             />
@@ -440,7 +472,7 @@ function Pacientes() {
               label="Correo Electrónico"
               id="correo_electronico"
               type="email"
-              value={formData.correo_electronico}
+              value={formData.correo_electronico || ''}
               error={formErrors.correo_electronico}
               onChange={(e) => handleAddFormChange('correo_electronico', e.target.value)}
             />
@@ -448,60 +480,61 @@ function Pacientes() {
         </form>
       </FormModal>
 
-      {/* Modal añadido correctamente */}
-
-      <ConfirmationModal
-        isOpen={isConfimAddModalOpen}
-        title="Paciente añadido"
-        message="El paciente ha sido añadido correctamente."
-        footerButtons={
-          <>
-            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
-          </>
-        }
-      />
-
       {/* Modal editar */}
 
       <FormModal
         isOpen={isUpdateModalOpen}
         title="Más información del paciente"
         footerButtons={
-          <>
-            {isFormEditing || isLoadingUpdate ? (
+          selectedUser ? (
+            <>
+              {isFormEditing || isLoadingUpdate ? (
+                <button
+                  type="button"
+                  className="btn btn-success w-25"
+                  onClick={updateUser}
+                  disabled={isLoadingUpdate || isLoadingDelete}
+                > {isLoadingUpdate ? "Cargando..." : "Guardar"}
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-primary w-25"
+                    onClick={startEditing}
+                    disabled={isLoadingUpdate || isLoadingDelete}
+                  > Editar
+                  </button>
+                  {selectedUser.is_deleted ? (
+                    <button
+                      type="button"
+                      className="btn btn-warning w-25"
+                      onClick={OpenActivateModal}
+                      disabled={isLoadingUpdate || isLoadingDelete}
+                    > {isLoadingDelete ? "Cargando..." : "Activar"}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-danger w-25"
+                      onClick={OpenDesactivateModal}
+                      disabled={isLoadingUpdate || isLoadingDelete || selectedUser.numero_identificacion === parseInt(username)}
+                    > {isLoadingDelete ? "Cargando..." : "Desactivar"}
+                    </button>
+                  )}
+                </>
+              )}
               <button
                 type="button"
-                className="btn btn-success w-25"
-                onClick={updateUser}
+                className="btn btn-secondary w-25"
+                onClick={closeEditModal}
                 disabled={isLoadingUpdate || isLoadingDelete}
-              > {isLoadingUpdate ? "Cargando..." : "Guardar"}
+              > Cancelar
               </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-primary w-25"
-                  onClick={startEditing}
-                  disabled={isLoadingUpdate || isLoadingDelete}
-                > Editar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger w-25"
-                  onClick={OpenDeleteModal}
-                  disabled={isLoadingUpdate || isLoadingDelete}
-                > {isLoadingDelete ? "Cargando..." : "Eliminar"}
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              className="btn btn-secondary w-25"
-              onClick={closeEditModal}
-              disabled={isLoadingUpdate || isLoadingDelete}
-            > Cancelar
-            </button>
-          </>
+            </>
+          ) : (
+            <p>Cargando...</p>
+          )
         }
       >
         {selectedUser ? (
@@ -512,7 +545,7 @@ function Pacientes() {
                 id="tipo_identificacion"
                 type="text"
                 options={pacienteFormSelectOptions.tipo_identificacion}
-                value={formData.tipo_identificacion}
+                value={formData.tipo_identificacion || ''}
                 error={formErrors.tipo_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
@@ -521,7 +554,7 @@ function Pacientes() {
                 label="Número de documento"
                 id="numero_identificacion"
                 type="number"
-                value={formData.numero_identificacion}
+                value={formData.numero_identificacion || ''}
                 error={formErrors.numero_identificacion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
@@ -532,7 +565,7 @@ function Pacientes() {
                 label="Nombres"
                 id="nombre"
                 type="text"
-                value={formData.nombre}
+                value={formData.nombre || ''}
                 error={formErrors.nombre}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
@@ -541,7 +574,7 @@ function Pacientes() {
                 label="Apellidos"
                 id="apellido"
                 type="text"
-                value={formData.apellido}
+                value={formData.apellido || ''}
                 error={formErrors.apellido}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('apellido', e.target.value)}
@@ -552,8 +585,8 @@ function Pacientes() {
                 label="Fecha de Nacimiento"
                 id="fecha_nacimiento"
                 type="date"
-                value={formData.fecha_nacimiento}
-                error={formErrors.fecha_nacimiento}
+                value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
+                error={convertISOToSimpleDate(formErrors.fecha_nacimiento)}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
               />
@@ -561,7 +594,7 @@ function Pacientes() {
                 label="Estado Civil"
                 id="estado_civil"
                 options={pacienteFormSelectOptions.estado_civil}
-                value={formData.estado_civil}
+                value={formData.estado_civil || ''}
                 error={formErrors.estado_civil}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
@@ -572,7 +605,7 @@ function Pacientes() {
                 label="Sexo"
                 id="sexo"
                 options={pacienteFormSelectOptions.sexo}
-                value={formData.sexo}
+                value={formData.sexo || ''}
                 error={formErrors.sexo}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('sexo', e.target.value)}
@@ -581,7 +614,7 @@ function Pacientes() {
                 label="Dirección"
                 id="direccion"
                 type="text"
-                value={formData.direccion}
+                value={formData.direccion || ''}
                 error={formErrors.direccion}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('direccion', e.target.value)}
@@ -592,7 +625,7 @@ function Pacientes() {
                 label="Teléfono"
                 id="telefono"
                 type="number"
-                value={formData.telefono}
+                value={formData.telefono || ''}
                 error={formErrors.telefono}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
@@ -601,7 +634,7 @@ function Pacientes() {
                 label="Correo Electrónico"
                 id="correo_electronico"
                 type="email"
-                value={formData.correo_electronico}
+                value={formData.correo_electronico || ''}
                 error={formErrors.correo_electronico}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
@@ -611,13 +644,25 @@ function Pacientes() {
         ) : (
           <p>Cargando...</p>
         )}
-
       </FormModal>
+
+      {/* Modal añadido correctamente */}
+
+      <ConfirmationModal
+        isOpen={isConfirmAddModalOpen}
+        title="Paciente añadido"
+        message="El paciente ha sido añadido correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmAddModal}>Aceptar</button>
+          </>
+        }
+      />
 
       {/* Modal actualizado correctamente */}
 
       <ConfirmationModal
-        isOpen={isConfimUpdateModalOpen}
+        isOpen={isConfirmUpdateModalOpen}
         title="Paciente actualizado"
         message="El paciente ha sido actualizado correctamente."
         footerButtons={
@@ -641,29 +686,71 @@ function Pacientes() {
         }
       />
 
-      {/* Modal confirmar eliminar */}
+      {/* Modal confirmar desactivar */}
 
       <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        title="Eliminar paciente"
-        message="Esta acción no se puede deshacer. ¿Está seguro de que quiere eliminar este paciente?"
+        isOpen={isDesactivateModalOpen}
+        title="Desactivar paciente"
+        message="¿Está seguro de que desea desactivar este paciente?"
         footerButtons={
           <>
-            <button type="button" className="btn btn-danger w-25" onClick={deleteUser}>Eliminar</button>
-            <button type="button" className="btn btn-secondary w-25" onClick={closeDeleteModal}>Cancelar</button>
+            <button type="button" className="btn btn-danger w-25" onClick={desactivateUser}>Desactivar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeDesactivateModal}>Cancelar</button>
           </>
         }
       />
 
-      {/* Modal eliminado correctamente */}
+      {/* Modal desactivado correctamente */}
 
       <ConfirmationModal
-        isOpen={isConfirmDeleteModalOpen}
-        title="Paciente eliminado"
-        message="El paciente ha sido eliminado correctamente."
+        isOpen={isConfirmDesactivateModalOpen}
+        title="Paciente desactivado"
+        message="El paciente ha sido desactivado correctamente."
         footerButtons={
           <>
-            <button type="button" className="btn btn-success w-25" onClick={closeConfirmDeleteModal}>Aceptar</button>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmDesactivateModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      {/* Modal confirmar activar */}
+
+      <ConfirmationModal
+        isOpen={isActivateModalOpen}
+        title="Activar paciente"
+        message="Está seguro de que desea activar este paciente?"
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-warning w-25" onClick={activateUser}>Activar</button>
+            <button type="button" className="btn btn-secondary w-25" onClick={closeActivateModal}>Cancelar</button>
+          </>
+        }
+      />
+
+      {/* Modal activado correctamente */}
+
+      <ConfirmationModal
+        isOpen={isConfirmActivateModalOpen}
+        title="Paciente activado"
+        message="El paciente ha sido activado correctamente."
+        footerButtons={
+          <>
+            <button type="button" className="btn btn-success w-25" onClick={closeConfirmActivateModal}>Aceptar</button>
+          </>
+        }
+      />
+
+      {/* Modal de error inesperado */}
+
+      <ConfirmationModal
+        isOpen={isErrorModalOpen}
+        title="Error insperado"
+        message="La solicitud no puedo ser efectuada debido a un error inesperado, por favor intente de nuevo."
+        footerButtons={
+          <>
+            <button
+              type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar
+            </button>
           </>
         }
       />
