@@ -232,15 +232,6 @@ function Colaboradores() {
 
   const handleEditFormChange = (name, value) => {
     if (isFormEditing) {
-      /*
-      setSelectedUser(prevState => {
-        const newValues = { ...prevState, [name]: value };
-        if (name === 'jerarquia' && value !== 'Médico') {
-          newValues.especialidad = 'Seleccione...';
-        }
-        return newValues;
-      });
-      */
       setFormData(prevData => {
         const newValues = { ...prevData, [name]: value };
         if (name === 'jerarquia' && value !== 'Médico') {

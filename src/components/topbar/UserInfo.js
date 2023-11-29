@@ -7,10 +7,8 @@ import { getColaborador } from '../../services/colaboradores';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
-    const { username, token, setUsername, setRole, setToken } = useAuth();
+    const { token, setToken, setRole, username, setUsername, name, setName, foto, setFoto } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-    const [userName, setUserName] = useState('Usuario');
-    const [userImage, setUserImage] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
 
     useEffect(() => {
         const handleObtenerColaborador = async () => {
@@ -18,14 +16,14 @@ function UserInfo() {
             try {
                 const data = await getColaborador(token, username);
                 console.log("(Topbar) Datos del usuario cargados: ", data);
-                if (data.nombre) setUserName(data.nombre);
-                if (data.foto_url) setUserImage(data.foto_url);
+                setName(`${data.nombre} ${data.apellido}`);
+                setFoto(data.foto_url);
             } catch (error) {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
             }
         };
         handleObtenerColaborador();
-    }, [token, username]);
+    }, [token, username, name, setName, foto, setFoto]);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
@@ -40,12 +38,14 @@ function UserInfo() {
             const token = Cookies.get('token');
             const response = await logout(token);
             console.log("(Logout) Sesión cerrada exitosamente:", response);
-            Cookies.remove('username');
             Cookies.remove('token');
             Cookies.remove('role');
-            setUsername(null);
-            setRole(null);
+            Cookies.remove('username');
             setToken(null);
+            setRole(null);
+            setUsername(null);
+            setName(null);
+            setFoto(null);
             console.log("(Logout) Datos de usuario eliminados de cookies y contexto.");
         } catch (error) {
             console.error("(Logout) Error al cerrar sesión:", error);
@@ -57,8 +57,8 @@ function UserInfo() {
     return (
         <li className="nav-item dropdown no-arrow">
             <button className="btn btn-link nav-link dropdown-toggle shadow-none" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span className="mr-2 d-none d-lg-inline text-gray-600 small">Bienvenido, {userName}</span>
-                <img className="img-profile mx-auto d-block" src={userImage} alt="Foto de perfil" />
+                <span className="mr-2 d-none d-lg-inline text-gray-600 small">Bienvenido, {name}</span>
+                <img className="img-profile mx-auto d-block" src={foto} alt="Foto de perfil" />
             </button>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">

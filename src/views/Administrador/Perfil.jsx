@@ -11,7 +11,7 @@ import { colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
 
 function UserProfile() {
-    const { token, username } = useAuth();
+    const { token, username, setName, setFoto } = useAuth();
 
     const fileInputRef = useRef();
     const [isPhotoUpdated, setIsPhotoUpdated] = useState(false);
@@ -35,6 +35,8 @@ function UserProfile() {
         try {
             const data = await getColaborador(token, username);
             console.log("(Perfil) Datos del usuario cargados: ", data);
+            setName(`${data.nombre} ${data.apellido}`);
+            setFoto(data.foto_url);
             setFormData(data);
         } catch (error) {
             console.error("(Perfil) Error al cargar datos del usuario: ", error);
@@ -43,7 +45,7 @@ function UserProfile() {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, username]);
+    }, [token, username, setName, setFoto]);
 
     useEffect(() => {
         loadUser();
@@ -211,7 +213,7 @@ function UserProfile() {
     };
 
     const handleButtonClick = () => {
-        fileInputRef.current.click(); // Activa el input oculto
+        fileInputRef.current.click();
     };
 
     const resetForm = () => {

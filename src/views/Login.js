@@ -7,21 +7,20 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 function Login() {
   const navigate = useNavigate();
-  const { username, token, role } = useAuth();
-  const { setUsername, setRole, setToken } = useAuth();
+  const { token, setToken, role, setRole, username, setUsername } = useAuth();
   const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (username && role && token) {
+    if (token && role && username) {
       console.log("(Login) Usuario ya ha iniciado sesión. Redireccionando a dashboard...")
       navigate('/dashboard');
     } else {
       setIsLoadingContent(false);
     }
-  }, [username, role, token, navigate]);
+  }, [token, role, username, navigate]);
   
   if (isLoadingContent) return <LoadingSpinner />;
 
@@ -52,12 +51,12 @@ function Login() {
       try {
         const response = await login(formData);
         console.log('(Login) Inicio de sesión exitoso: ', response);
-        Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
         Cookies.set('token', response.token, { expires: 1, secure: false, sameSite: 'Lax' });
         Cookies.set('role', response.role, { expires: 1, secure: false, sameSite: 'Lax' });
-        setUsername(formData.username);
-        setRole(response.role);
+        Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
         setToken(response.token);
+        setRole(response.role);
+        setUsername(formData.username);
         console.log("(Login) Datos de usuario guardados en cookies y contexto.");
         setIsLoadingForm(false);
         navigate('/dashboard');

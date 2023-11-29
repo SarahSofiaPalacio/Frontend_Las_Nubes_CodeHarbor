@@ -7,9 +7,11 @@ const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [username, setUsername] = useState(null);
-    const [role, setRole] = useState(null);
     const [token, setToken] = useState(null);
+    const [role, setRole] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [name, setName] = useState('Usuario');
+    const [foto, setFoto] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
     const [isLoading, setIsLoading] = useState(true);
 
     // Función para validar el token y establecer el estado
@@ -34,6 +36,8 @@ export const AuthProvider = ({ children }) => {
                 setToken(null);
                 setRole(null);
                 setUsername(null);
+                setName(null);
+                setFoto(null);
             }
         }
         setIsLoading(false);
@@ -44,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ username, setUsername, role, setRole, token, setToken, isLoading }}>
+        <AuthContext.Provider value={{token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto, isLoading}}>
             {children}
         </AuthContext.Provider>
     );
