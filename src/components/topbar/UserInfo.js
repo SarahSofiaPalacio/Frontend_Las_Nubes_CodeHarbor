@@ -14,6 +14,7 @@ function UserInfo() {
 
     useEffect(() => {
         const handleObtenerColaborador = async () => {
+            if (!token || !username) return;
             try {
                 const data = await getColaborador(token, username);
                 console.log("(Topbar) Datos del usuario cargados: ", data);
@@ -57,7 +58,7 @@ function UserInfo() {
         <li className="nav-item dropdown no-arrow">
             <button className="btn btn-link nav-link dropdown-toggle shadow-none" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span className="mr-2 d-none d-lg-inline text-gray-600 small">Bienvenido, {userName}</span>
-                <img className="img-profile rounded-circle mx-auto d-block" src={userImage} alt="Foto de perfil" />
+                <img className="img-profile mx-auto d-block" src={userImage} alt="Foto de perfil" />
             </button>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">

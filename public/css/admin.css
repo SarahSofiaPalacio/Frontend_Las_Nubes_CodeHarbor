@@ -11301,3 +11301,11 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+.img-profile {
+  width: 150px; /* Ancho fijo del cuadrado */
+  height: 150px; /* Altura fija del cuadrado */
+  border-radius: 20%; /* Para hacerla circular, si deseas */
+  object-fit: cover; /* Esto asegura que la imagen cubra completamente el área sin distorsionarse */
+  object-position: center; /* Centra la imagen dentro del cuadrado */
+}

@@ -257,7 +257,9 @@ function Colaboradores() {
       setIsFormEditing(false);
       try {
         const newData = Object.keys(colaboradorInitialFormData).reduce((acc, key) => {
-          acc[key] = formData[key] ?? colaboradorInitialFormData[key];
+          if (key !== 'foto_url') {
+            acc[key] = formData[key] ?? colaboradorInitialFormData[key];
+          }
           return acc;
         }, {});
         const response = await updateColaborador(token, selectedUser.numero_identificacion, newData);
@@ -292,6 +294,7 @@ function Colaboradores() {
     setSelectedUser(null);
     resetForm();
     setIsFormEditing(false);
+    loadUsers();
   };
 
   const OpenDesactivateModal = () => {
@@ -564,8 +567,7 @@ function Colaboradores() {
                   className="btn btn-success w-25"
                   onClick={updateUser}
                   disabled={isLoadingUpdate || isLoadingDelete}
-                >
-                  {isLoadingUpdate ? "Cargando..." : "Guardar"}
+                > {isLoadingUpdate ? "Cargando..." : "Guardar"}
                 </button>
               ) : (
                 <>
@@ -574,8 +576,7 @@ function Colaboradores() {
                     className="btn btn-primary w-25"
                     onClick={startEditing}
                     disabled={isLoadingUpdate || isLoadingDelete}
-                  >
-                    Editar
+                  > Editar
                   </button>
                   {selectedUser.is_deleted ? (
                     <button
@@ -583,8 +584,7 @@ function Colaboradores() {
                       className="btn btn-warning w-25"
                       onClick={OpenActivateModal}
                       disabled={isLoadingUpdate || isLoadingDelete}
-                    >
-                      {isLoadingDelete ? "Cargando..." : "Activar"}
+                    > {isLoadingDelete ? "Cargando..." : "Activar"}
                     </button>
                   ) : (
                     <button
@@ -592,8 +592,7 @@ function Colaboradores() {
                       className="btn btn-danger w-25"
                       onClick={OpenDesactivateModal}
                       disabled={isLoadingUpdate || isLoadingDelete || selectedUser.numero_identificacion === parseInt(username)}
-                    >
-                      {isLoadingDelete ? "Cargando..." : "Desactivar"}
+                    > {isLoadingDelete ? "Cargando..." : "Desactivar"}
                     </button>
                   )}
                 </>
@@ -603,8 +602,7 @@ function Colaboradores() {
                 className="btn btn-secondary w-25"
                 onClick={closeEditModal}
                 disabled={isLoadingUpdate || isLoadingDelete}
-              >
-                Cancelar
+              > Cancelar
               </button>
             </>
           ) : (
@@ -731,7 +729,7 @@ function Colaboradores() {
                 options={colaboradorFormSelectOptions.jerarquia}
                 value={formData.jerarquia || ''}
                 error={formErrors.jerarquia}
-                isFormEditing={isFormEditing}
+                isFormEditing={isFormEditing && formData.numero_identificacion !== parseInt(username)}
                 onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
               />
             </div>
@@ -865,10 +863,7 @@ function Colaboradores() {
         footerButtons={
           <>
             <button
-              type="button"
-              className="btn btn-danger w-25"
-              onClick={closeErrorModal}
-            >Aceptar
+              type="button" className="btn btn-danger w-25" onClick={closeErrorModal}>Aceptar
             </button>
           </>
         }
