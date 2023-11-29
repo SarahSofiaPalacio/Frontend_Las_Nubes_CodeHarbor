@@ -16,8 +16,8 @@ function UserInfo() {
             try {
                 const data = await getColaborador(token, username);
                 console.log("(Topbar) Datos del usuario cargados: ", data);
-                setName(`${data.nombre} ${data.apellido}`);
-                setFoto(data.foto_url);
+                if (data.nombre && data.apellido) setName(`${data.nombre} ${data.apellido}`);
+                if (data.foto_url) setFoto(data.foto_url);
             } catch (error) {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
             }
