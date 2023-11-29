@@ -1,4 +1,12 @@
-export const colaboradorTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
+export const colaboradorTableColumns = [
+  { title: 'Identificación', key: 'numero_identificacion' },
+  { title: 'Nombres', key: 'nombre' },
+  { title: 'Apellidos', key: 'apellido' },
+  { title: 'Jerarquía', key: 'jerarquia' },
+  { title: 'Fecha de nacimiento', key: 'fecha_nacimiento' },
+  { title: 'Teléfono', key: 'telefono' },
+  { title: 'Más', key: 'accion_mas'}
+];
 
 export const colaboradorInitialFormData = {
   tipo_identificacion: '',
@@ -26,7 +34,15 @@ export const colaboradorFormSelectOptions = {
   especialidad: ['Seleccione...', 'Medicina general', 'Odontología', 'Pediatría', 'Ginecología', 'Cardiología', 'Neurología', 'Oftalmología', 'Otorrinolaringología', 'Dermatología', 'Psiquiatría', 'Oncología', 'Traumatología', 'Urología', 'Endocrinología', 'Gastroenterología', 'Nefrología', 'Reumatología', 'Hematología', 'Infectología', 'Neumología', 'Geriatría'],
 }
 
-export const pacienteTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
+export const pacienteTableColumns = [
+  { title: 'Identificación', key: 'numero_identificacion' },
+  { title: 'Nombres', key: 'nombre' },
+  { title: 'Apellidos', key: 'apellido' },
+  { title: 'Estado civil', key: 'estado_civil' },
+  { title: 'Fecha de nacimiento', key: 'fecha_nacimiento' },
+  { title: 'Teléfono', key: 'telefono' },
+  { title: 'Más', key: 'accion_mas'}
+];
 
 export const pacienteInitialFormData = {
   tipo_identificacion: '',

@@ -337,27 +337,30 @@ function Pacientes() {
 
       {/* Tabla de pacientes */}
 
-      <Table label="Listado de pacientes" columns={pacienteTableColumns} data={users} loading={isLoadingTable}>
-        {users.map((paciente) => (
-          <tr key={paciente.numero_identificacion}>
-            <td>{paciente.numero_identificacion}</td>
-            <td>{paciente.nombre}</td>
-            <td>{paciente.apellido}</td>
-            <td>{paciente.estado_civil}</td>
-            <td>{convertISOToSimpleDate(paciente.fecha_nacimiento)}</td>
-            <td>{paciente.telefono}</td>
-            <td className="d-flex justify-content-center align-items-center">
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => openEditModal(paciente)}
-                aria-label="Más opciones">
-                <i className="fas fa-ellipsis-h"></i>
-              </button>
-            </td>
+      <Table label="Listado de pacientes" columns={pacienteTableColumns.map(column => column.title)} data={users} loading={isLoadingTable}>
+        {users.map((colaborador) => (
+          <tr key={colaborador.numero_identificacion}>
+            {pacienteTableColumns.map((column) => {
+              if (column.key !== 'accion_mas') {
+                return <td key={column.key}>{colaborador[column.key]}</td>;
+              } else {
+                return (
+                  <td key={column.key} className="d-flex justify-content-center align-items-center">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => openEditModal(colaborador)}
+                      aria-label="Más opciones">
+                      <i className="fas fa-ellipsis-h"></i>
+                    </button>
+                  </td>
+                );
+              }
+            })}
           </tr>
         ))}
       </Table>
+
 
       {/* Modal añadir */}
 
