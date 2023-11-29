@@ -16,7 +16,8 @@ export const getReport = async (token, reportType) => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        responseType: 'blob'
       };
       const response = await axios.get(`${URL_BASE}/users/informe/${reportType}`, config);
       return response.data;

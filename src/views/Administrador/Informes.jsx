@@ -10,9 +10,11 @@ function Informes() {
   const handleDownloadReport = async (reportType) => {
     setIsGenerating(true);
     try {
-      const pdfURL = await getReport(token, reportType);
+      const data = await getReport(token, reportType);
       console.log("(Informes) Informe de %s generado exitosamente", reportType);
-      window.open(pdfURL, '_blank');
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
     } catch (error) {
       console.log("(Informes) Error al generar informe de %s:", reportType, error);
     } finally {
