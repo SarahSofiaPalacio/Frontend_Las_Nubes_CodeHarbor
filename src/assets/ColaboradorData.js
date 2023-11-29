@@ -1,12 +1,4 @@
-export const colaboradorTableColumns = [
-  { title: 'Identificación', key: 'numero_identificacion', table: 'colaboradores' },
-  { title: 'Nombres', key: 'nombre', table: 'colaboradores' },
-  { title: 'Apellidos', key: 'apellido', table: 'colaboradores' },
-  { title: 'Jerarquía', key: 'jerarquia', table: 'colaboradores' },
-  { title: 'Fecha de nacimiento', key: 'fecha_nacimiento', table: 'colaboradores' },
-  { title: 'Teléfono', key: 'telefono', table: 'colaboradores' },
-  { title: 'Más', key: 'accion_mas'}
-];
+export const colaboradorTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 export const colaboradorInitialFormData = {
   tipo_identificacion: '',

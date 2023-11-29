@@ -1,12 +1,4 @@
-export const pacienteTableColumns = [
-  { title: 'Identificación', key: 'numero_identificacion', table: 'pacientes' },
-  { title: 'Nombres', key: 'nombre', table: 'pacientes' },
-  { title: 'Apellidos', key: 'apellido', table: 'pacientes' },
-  { title: 'Estado civil', key: 'estado_civil', table: 'pacientes' },
-  { title: 'Fecha de nacimiento', key: 'fecha_nacimiento', table: 'pacientes' },
-  { title: 'Teléfono', key: 'telefono', table: 'pacientes' },
-  { title: 'Más', key: 'accion_mas'}
-];
+export const pacienteTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 export const pacienteInitialFormData = {
   tipo_identificacion: '',

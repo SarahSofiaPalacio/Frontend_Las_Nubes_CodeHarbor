@@ -362,26 +362,24 @@ function Colaboradores() {
 
       {/* Tabla de colaboradores */}
 
-      <Table label="Listado de colaboradores" columns={colaboradorTableColumns.map(column => column.title)} data={users} loading={isLoadingTable}>
+      <Table label="Listado de colaboradores" columns={colaboradorTableColumns} data={users} loading={isLoadingTable}>
         {users.map((colaborador) => (
           <tr key={colaborador.numero_identificacion}>
-            {colaboradorTableColumns.map((column) => {
-              if (column.key !== 'accion_mas') {
-                return <td key={column.key}>{colaborador[column.key]}</td>;
-              } else {
-                return (
-                  <td key={column.key} className="d-flex justify-content-center align-items-center">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={() => openEditModal(colaborador)}
-                      aria-label="Más opciones">
-                      <i className="fas fa-ellipsis-h"></i>
-                    </button>
-                  </td>
-                );
-              }
-            })}
+            <td>{colaborador.numero_identificacion}</td>
+            <td>{colaborador.nombre}</td>
+            <td>{colaborador.apellido}</td>
+            <td>{colaborador.jerarquia}</td>
+            <td>{convertISOToSimpleDate(colaborador.fecha_nacimiento)}</td>
+            <td>{colaborador.telefono}</td>
+            <td className="d-flex justify-content-center align-items-center">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => openEditModal(colaborador)}
+                aria-label="Más opciones">
+                <i className="fas fa-ellipsis-h"></i>
+              </button>
+            </td>
           </tr>
         ))}
       </Table>
