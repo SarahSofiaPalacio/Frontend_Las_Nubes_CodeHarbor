@@ -25,8 +25,11 @@ function Regente() {
                     elements={
                         <>
                             <Divider />
-                            <Heading text="Gestión de..." />
-                            <NavItem to="" icon="fa-address-card" label="NO ENTRAR" />
+                            <Heading text="Gestión de medicamentos" />
+                            <NavItem to="medicamentos" icon="fa-address-card" label="Medicamentos" />
+                            <Divider />
+                            <Heading text="Solicitudes" />
+                            <NavItem to="solicitudes" icon="fa-address-card" label="Solicitudes" />
                             <Divider />
                         </>
                     }

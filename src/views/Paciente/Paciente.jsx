@@ -25,8 +25,12 @@ function Paciente() {
                     elements={
                         <>
                             <Divider />
-                            <Heading text="Gestión de..." />
-                            <NavItem to="" icon="fa-address-card" label="NO ENTRAR" />
+                            <Heading text="Gestión de fórmula médica" />
+                            <NavItem to="formulas" icon="fa-address-card" label="Fórmula Médica" />
+                            <Divider />
+                            <Heading text="Gestión de citas" />
+                            <NavItem to="citas" icon="fa-address-card" label="Ver citas" />
+                            <NavItem to="citas" icon="fa-address-card" label="Pedir citas" />
                             <Divider />
                         </>
                     }

@@ -2,6 +2,8 @@ export const citasSecretarioTableColumns = ['Identificación Paciente', 'Nombres
 
 export const citasEnfermeroTableColumns = ['Identificación Médico', 'Nombres Médico', 'Apellidos Médico', 'Teléfono Médico', 'Tipo de Cita', 'Hora', 'Fecha', 'Más'];
 
+export const citasPacienteTableColumns = ['Nombres del Médico', 'Hora de la cita', 'Fecha de la cita', 'Tipo de cita','EPS', 'Nombres Médico', 'Cancelar cita']
+
 export const citaInitialFormData = {
   id_cita: '',
   fecha: '',

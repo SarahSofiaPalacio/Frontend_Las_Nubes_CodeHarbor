@@ -25,8 +25,12 @@ function Medico() {
                     elements={
                         <>
                             <Divider />
-                            <Heading text="Gestión de..." />
-                            <NavItem to="" icon="fa-address-card" label="NO ENTRAR" />
+                            <Heading text="Programación Citas" />
+                            <NavItem to="citas" icon="fa-address-card" label="Citas Médicas" />
+                            <Divider />
+                            <Heading text="Cita en Curso" />
+                            <NavItem to="citas" icon="fa-address-card" label="Trámite" />
+                            <NavItem to="citas" icon="fa-address-card" label="Historia Clínica" />
                             <Divider />
                         </>
                     }
