@@ -1,6 +1,7 @@
 export const colaboradorTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Jerarquía', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 export const colaboradorInitialFormData = {
+  id: '',
   tipo_identificacion: '',
   numero_identificacion: '',
   nombre: '',
@@ -16,6 +17,10 @@ export const colaboradorInitialFormData = {
   fecha_ingreso: '',
   especialidad: '',
   foto_url: '',
+  usuario_id: '',
+  updated_at:'',
+  is_deleted: '',
+  deleted_at: '',
 }
 
 export const colaboradorFormSelectOptions = {

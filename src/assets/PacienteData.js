@@ -1,6 +1,7 @@
 export const pacienteTableColumns = ['Identificación', 'Nombres', 'Apellidos', 'Estado civil', 'Fecha de nacimiento', 'Telefono', 'Más'];
 
 export const pacienteInitialFormData = {
+  id: '',
   tipo_identificacion: '',
   numero_identificacion: '',
   nombre: '',
@@ -12,6 +13,10 @@ export const pacienteInitialFormData = {
   telefono: '',
   correo_electronico: '',
   foto_url: '',
+  usuario_id: '',
+  updated_at:'',
+  is_deleted: '',
+  deleted_at: '',
 }
 
 export const pacienteFormSelectOptions = {
