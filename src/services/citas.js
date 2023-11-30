@@ -167,4 +167,31 @@ export const getEnCitaPacientes= async (token, id_paciente) => {
       }
     }
   }
+};
+export const deleteCita = async (token, id_cita) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ message: 'cita eliminado exitosamente' });
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.delete(`${URL_BASE}/citas/cancelar/${id_cita}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
 }
