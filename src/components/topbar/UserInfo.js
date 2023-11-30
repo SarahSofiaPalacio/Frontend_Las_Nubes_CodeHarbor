@@ -16,8 +16,16 @@ function UserInfo() {
             try {
                 const data = await getColaborador(token, username);
                 console.log("(Topbar) Datos del usuario cargados: ", data);
-                if (data.nombre && data.apellido) setName(`${data.nombre} ${data.apellido}`);
-                if (data.foto_url) setFoto(data.foto_url);
+                if (data.nombre && data.apellido) {
+                    setName(`${data.nombre} ${data.apellido}`);
+                } else {
+                    setName('Usuario');
+                }
+                if (data.foto_url) {
+                    setFoto(data.foto_url);
+                } else {
+                    setFoto(`${process.env.PUBLIC_URL}/img/profile.svg`);
+                }
             } catch (error) {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
             }
@@ -35,7 +43,6 @@ function UserInfo() {
 
     const handleLogout = async () => {
         try {
-            const token = Cookies.get('token');
             const response = await logout(token);
             console.log("(Logout) Sesión cerrada exitosamente:", response);
             Cookies.remove('token');

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Header from '../../components/Header';
 import FormInput from '../../components/FormInput';
-import FormSelect from '../../components/FormSelect';
 import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useAuth } from '../../auth/AuthContext.js';
@@ -225,7 +224,7 @@ function UserProfile() {
                         {formData ? (
                             <form>
                                 <div className="form-row">
-                                    <FormSelect
+                                    <FormInput
                                         label="Tipo de documento"
                                         id="tipo_identificacion"
                                         type="text"
@@ -269,7 +268,7 @@ function UserProfile() {
                                         isFormEditing={false}
                                         onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
                                     />
-                                    <FormSelect
+                                    <FormInput
                                         label="Estado Civil"
                                         id="estado_civil"
                                         type="text"
@@ -279,7 +278,7 @@ function UserProfile() {
                                     />
                                 </div>
                                 <div className="form-row">
-                                    <FormSelect
+                                    <FormInput
                                         label="Sexo"
                                         id="sexo"
                                         type="text"
@@ -325,7 +324,7 @@ function UserProfile() {
                                         isFormEditing={false}
                                         onChange={(e) => handleEditFormChange('salario', e.target.value)}
                                     />
-                                    <FormSelect
+                                    <FormInput
                                         label="Jerarquía"
                                         id="jerarquia"
                                         type="text"
@@ -343,7 +342,7 @@ function UserProfile() {
                                         isFormEditing={false}
                                         onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
                                     />
-                                    <FormSelect
+                                    <FormInput
                                         label="Especialidad"
                                         id="especialidad"
                                         type="text"

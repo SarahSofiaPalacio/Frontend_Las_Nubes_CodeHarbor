@@ -20,7 +20,7 @@ function App() {
           <PrivateRoute>
             {role === 'Administrador' ? <Administrador /> :
               role === 'Secretario' ? <Secretario /> :
-                <Navigate to="/login" replace />}
+                <Navigate to="/" replace />}
           </PrivateRoute>
         } />
       </Routes>

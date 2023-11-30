@@ -8,10 +8,10 @@ import FormSelect from '../../components/FormSelect.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext.js';
 
-import { citasTableColumns, citaInitialFormData, citaFormSelectOptions } from '../../assets/CitaData.js';
+import { citasSecretarioTableColumns, citaInitialFormData, citaFormSelectOptions } from '../../assets/CitaData.js';
 //import { colaboradorInitialFormData } from '../../assets/ColaboradorData.js';
 //import { pacienteInitialFormData } from '../../assets/PacienteData.js';
-import { getCitas, updateCita } from '../../services/citas.js';
+import { getCitasSecretario, updateCita } from '../../services/citas.js';
 import { getPaciente } from '../../services/pacientes.js';
 import { getColaborador } from '../../services/colaboradores.js';
 
@@ -32,16 +32,16 @@ function Citas() {
   const [isDiscardUpdateModalOpen, setIsDiscardUpdateModalOpen] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
-  // Cargar lista de usuarios al cargar la página
+  // Cargar lista de citas al cargar la página
 
   const loadUsers = useCallback(async () => {
     setLoadingTable(true);
     try {
-      const response = await getCitas(token);
-      console.log('(Pacientes) Usuarios cargados: ', response);
+      const response = await getCitasSecretario(token);
+      console.log('(Pacientes) citas cargadas: ', response);
       setCitas(response);
     } catch (error) {
-      console.error('(Pacientes) Error al cargar los usuarios: ', error);
+      console.error('(Pacientes) Error al cargar las citas: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
@@ -177,7 +177,7 @@ function Citas() {
 
       {/* Tabla de pacientes */}
 
-      <Table label="Listado de pacientes citados" columns={citasTableColumns} data={citas} loading={isLoadingTable}>
+      <Table label="Listado de pacientes citados" columns={citasSecretarioTableColumns} data={citas} loading={isLoadingTable}>
         {citas.map((cita) => (
           <tr key={cita.numero_identificacion}>
             <td>{getPaciente(cita.id_paciente).numero_identificacion}</td>

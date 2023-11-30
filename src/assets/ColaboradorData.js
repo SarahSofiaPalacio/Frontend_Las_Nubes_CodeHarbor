@@ -16,11 +16,7 @@ export const colaboradorInitialFormData = {
   jerarquia: '',
   fecha_ingreso: '',
   especialidad: '',
-  foto_url: '',
-  usuario_id: '',
-  updated_at:'',
-  is_deleted: '',
-  deleted_at: '',
+  foto_url: ''
 }
 
 export const colaboradorFormSelectOptions = {

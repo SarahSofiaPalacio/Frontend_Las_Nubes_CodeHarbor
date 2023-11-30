@@ -12,11 +12,7 @@ export const pacienteInitialFormData = {
   direccion: '',
   telefono: '',
   correo_electronico: '',
-  foto_url: '',
-  usuario_id: '',
-  updated_at:'',
-  is_deleted: '',
-  deleted_at: '',
+  foto_url: ''
 }
 
 export const pacienteFormSelectOptions = {
