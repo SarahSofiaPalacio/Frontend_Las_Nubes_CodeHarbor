@@ -9,8 +9,6 @@ import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext.js';
 
 import { citasSecretarioTableColumns, citaInitialFormData, citaFormSelectOptions } from '../../assets/CitaData.js';
-//import { colaboradorInitialFormData } from '../../assets/ColaboradorData.js';
-//import { pacienteInitialFormData } from '../../assets/PacienteData.js';
 import { getCitasSecretario, updateCita } from '../../services/citas.js';
 import { getPaciente } from '../../services/pacientes.js';
 import { getColaborador } from '../../services/colaboradores.js';
@@ -22,7 +20,7 @@ function Citas() {
   const [isLoadingTable, setLoadingTable] = useState(false);
   const [isLoadingContent, setIsLoadingContent] = useState(true);
 
-  const [formData, setFormData] = useState({ citaInitialFormData });
+  const [formCitaData, setCitaFormData] = useState({ citaInitialFormData });
   const [formErrors, setFormErrors] = useState({});
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
@@ -37,11 +35,17 @@ function Citas() {
   const loadUsers = useCallback(async () => {
     setLoadingTable(true);
     try {
-      const response = await getCitasSecretario(token);
-      console.log('(Pacientes) citas cargadas: ', response);
-      setCitas(response);
+      const citas = await getCitasSecretario(token);
+      console.log('(Citas) citas cargadas: ', citas);
+      for (const cita of citas) {
+        const paciente = await getPaciente(token, cita.id_paciente);
+        const colaborador = await getColaborador(token, cita.id_medico);
+        cita.detallePaciente = paciente;
+        cita.detalleColaborador = colaborador;
+      }
+      setCitas(citas);
     } catch (error) {
-      console.error('(Pacientes) Error al cargar las citas: ', error);
+      console.error('(Citas) Error al cargar las citas: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
@@ -66,10 +70,10 @@ function Citas() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.estado || formData.estado === "Activa") {
-      errors.sexo = "Estado es requerido";
-    } else if (!citaFormSelectOptions.estado.includes(formData.estado)) {
-      errors.sexo = "Estado seleccionado no es válido";
+    if (!formCitaData.estado || formCitaData.estado === "Activa") {
+      errors.estado = "Estado es requerido";
+    } else if (!citaFormSelectOptions.estado.includes(formCitaData.estado)) {
+      errors.estado = "Estado seleccionado no es válido";
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -78,7 +82,7 @@ function Citas() {
   // Resetear formulario
 
   const resetForm = () => {
-    setFormData(citaInitialFormData);
+    setCitaFormData(citaInitialFormData);
     setFormErrors({});
   };
 
@@ -93,9 +97,9 @@ function Citas() {
 
   // Funciones para el modal editar
 
-  const openEditModal = (paciente) => {
-    setSelectedCita(paciente);
-    setFormData(paciente);
+  const openEditModal = (cita) => {
+    setSelectedCita(cita);
+    setCitaFormData(cita);
     setIsUpdateModalOpen(true);
   };
 
@@ -115,7 +119,7 @@ function Citas() {
 
   const handleEditFormChange = (name, value) => {
     if (isFormEditing) {
-      setFormData(prevData => {
+      setCitaFormData(prevData => {
         const newValues = { ...prevData, [name]: value };
         return newValues;
       });
@@ -129,7 +133,7 @@ function Citas() {
       try {
         const newData = Object.keys(citaInitialFormData).reduce((acc, key) => {
           if (key !== 'foto_url') {
-            acc[key] = formData[key] ?? citaInitialFormData[key];
+            acc[key] = formCitaData[key] ?? citaInitialFormData[key];
           }
           return acc;
         }, {});
@@ -179,11 +183,11 @@ function Citas() {
 
       <Table label="Listado de pacientes citados" columns={citasSecretarioTableColumns} data={citas} loading={isLoadingTable}>
         {citas.map((cita) => (
-          <tr key={cita.numero_identificacion}>
-            <td>{getPaciente(cita.id_paciente).numero_identificacion}</td>
-            <td>{getPaciente(cita.id_paciente).nombre}</td>
-            <td>{getPaciente(cita.id_paciente).apellido}</td>
-            <td>{getColaborador(cita.id_medico).especialidad}</td>
+          <tr key={cita.id_cita}>
+            <td>{cita.detallePaciente.numero_identificacion}</td>
+            <td>{cita.detallePaciente.nombre}</td>
+            <td>{cita.detallePaciente.apellido}</td>
+            <td>{cita.detalleColaborador.especialidad}</td>
             <td>{cita.hora}</td>
             <td>{convertISOToSimpleDate(cita.fecha)}</td>
             <td className="d-flex justify-content-center align-items-center">
@@ -203,7 +207,7 @@ function Citas() {
 
       <FormModal
         isOpen={isUpdateModalOpen}
-        title="Más información del paciente"
+        title="Más información de la cita"
         footerButtons={
           selectedCita ? (
             <>
@@ -242,55 +246,37 @@ function Citas() {
         {selectedCita ? (
           <form>
             <div className="form-row">
-              <FormSelect
-                label="Tipo de documento"
-                id="tipo_identificacion"
+              <FormInput
+                label="Documento del paciente"
+                id="identificacion"
                 type="text"
-                value={formData.tipo_identificacion || ''}
+                value={(formCitaData.detallePaciente.tipo_identificacion + " " + formCitaData.detallePaciente.numero_identificacion) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
+                onChange={(e) => handleEditFormChange('identificacion', e.target.value)}
               />
               <FormInput
-                label="Número de documento"
-                id="numero_identificacion"
-                type="number"
-                value={formData.numero_identificacion || ''}
+                label="Nombre del paciente"
+                id="nombre_paciente"
+                type="text"
+                value={(formCitaData.detallePaciente.nombre + " " + formCitaData.detallePaciente.apellido) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
+                onChange={(e) => handleEditFormChange('nombre_paciente', e.target.value)}
               />
             </div>
             <div className="form-row">
               <FormInput
-                label="Nombres"
-                id="nombre"
-                type="text"
-                value={formData.nombre || ''}
-                isFormEditing={false}
-                onChange={(e) => handleEditFormChange('nombre', e.target.value)}
-              />
-              <FormInput
-                label="Apellidos"
-                id="apellido"
-                type="text"
-                value={formData.apellido || ''}
-                isFormEditing={false}
-                onChange={(e) => handleEditFormChange('apellido', e.target.value)}
-              />
-            </div>
-            <div className="form-row">
-              <FormInput
-                label="Teléfono"
+                label="Teléfono del paciente"
                 id="telefono"
                 type="number"
-                value={formData.telefono || ''}
+                value={formCitaData.detallePaciente.telefono || ''}
                 isFormEditing={false}
                 onChange={(e) => handleEditFormChange('telefono', e.target.value)}
               />
               <FormInput
-                label="Correo Electrónico"
+                label="Correo Electrónico del paciente"
                 id="correo_electronico"
                 type="email"
-                value={formData.correo_electronico || ''}
+                value={formCitaData.detallePaciente.correo_electronico || ''}
                 isFormEditing={false}
                 onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
               />
@@ -300,43 +286,43 @@ function Citas() {
                 label="Fecha de la cita"
                 id="fecha"
                 type="date"
-                value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
+                value={convertISOToSimpleDate(formCitaData.fecha) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
+                onChange={(e) => handleEditFormChange('fecha', e.target.value)}
               />
-              <FormSelect
+              <FormInput
                 label="Hora de la cita"
                 id="hora"
-                value={formData.estado_civil || ''}
+                value={formCitaData.hora || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
+                onChange={(e) => handleEditFormChange('hora', e.target.value)}
               />
             </div>
             <div className="form-row">
               <FormInput
-                label="Nombres"
-                id="nombre"
+                label="Nombre del médico"
+                id="nombre_medico"
                 type="text"
-                value={formData.nombre || ''}
+                value={(formCitaData.detalleColaborador.nombre + " " + formCitaData.detalleColaborador.apellido) || ''}
                 isFormEditing={false}
                 onChange={(e) => handleEditFormChange('nombre', e.target.value)}
               />
-              <FormSelect
-                label="Especialidad"
+              <FormInput
+                label="Tipo de cita"
                 id="especialidad"
                 type="text"
-                value={formData.especialidad || ''}
+                value={formCitaData.detalleColaborador.especialidad || ''}
                 isFormEditing={false}
                 onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
               />
             </div>
-            <div className="form-row">
+            <div className="form-row d-flex justify-content-center text-center">
               <FormSelect
                 label="Estado de la cita"
                 id="estado"
                 type="text"
                 options={citaFormSelectOptions.estado}
-                value={formData.estado || ''}
+                value={formCitaData.estado || ''}
                 error={formErrors.estado}
                 isFormEditing={isFormEditing}
                 onChange={(e) => handleEditFormChange('estado', e.target.value)}

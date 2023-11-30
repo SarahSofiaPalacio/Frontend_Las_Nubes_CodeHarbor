@@ -4,14 +4,14 @@ import axios from 'axios';
 const URL_BASE = process.env.REACT_APP_URL_BASE;
 const USE_MOCK = process.env.REACT_APP_USE_MOCK === "true";
 
-export const getCitasSecretario= async (token) => {
+export const getCitasSecretario = async (token) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
         //resolve(citasMock);
       }, 1000);
     });
-  }  else {
+  } else {
     try {
       const config = {
         headers: {
@@ -59,14 +59,14 @@ export const updateCita = async (token, id_cita, citaData) => {
     }
   }
 };
-export const getCitasEnfermero= async (token, id_enfermero) => {
+export const getCitasEnfermero = async (token, id_enfermero) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
         //resolve(citasMock);
       }, 1000);
     });
-  }  else {
+  } else {
     try {
       const config = {
         headers: {
@@ -86,14 +86,14 @@ export const getCitasEnfermero= async (token, id_enfermero) => {
     }
   }
 };
-export const getCitasSinAsignar= async (token) => {
+export const getCitasSinAsignar = async (token) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
         //resolve(citasMock);
       }, 1000);
     });
-  }  else {
+  } else {
     try {
       const config = {
         headers: {
@@ -113,14 +113,14 @@ export const getCitasSinAsignar= async (token) => {
     }
   }
 };
-export const getCitasPacienteActivas= async (token, id_paciente) => {
+export const getCitasPacienteActivas = async (token, id_paciente) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
         //resolve(citasMock);
       }, 1000);
     });
-  }  else {
+  } else {
     try {
       const config = {
         headers: {
@@ -141,14 +141,14 @@ export const getCitasPacienteActivas= async (token, id_paciente) => {
   }
 };
 
-export const getEnCitaPacientes= async (token, id_paciente) => {
+export const getEnCitaPacientes = async (token, id_paciente) => {
   if (USE_MOCK) {
     return new Promise((resolve) => {
       setTimeout(() => {
         //resolve(citasMock);
       }, 1000);
     });
-  }  else {
+  } else {
     try {
       const config = {
         headers: {
