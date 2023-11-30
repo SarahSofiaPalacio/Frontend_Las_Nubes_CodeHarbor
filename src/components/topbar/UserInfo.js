@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { useAuth } from '../../auth/AuthContext';
 import { logout } from '../../services/login';
 import { getColaborador } from '../../services/colaboradores';
+import { getPaciente } from '../../services/pacientes';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
@@ -36,7 +37,7 @@ function UserInfo() {
             }
         };
         handleGetUser();
-    }, [token, username, name, setName, foto, setFoto]);
+    }, [token, role, username, name, setName, foto, setFoto]);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
