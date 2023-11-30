@@ -7,14 +7,19 @@ import { getColaborador } from '../../services/colaboradores';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
-    const { token, setToken, setRole, username, setUsername, name, setName, foto, setFoto } = useAuth();
+    const { token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     useEffect(() => {
-        const handleObtenerColaborador = async () => {
+        const handleGetUser = async () => {
             if (!token || !username) return;
             try {
-                const data = await getColaborador(token, username);
+                let data;
+                if (role === 'Paciente') {
+                    data = await getPaciente(token, username);
+                } else {
+                    data = await getColaborador(token, username);
+                }
                 console.log("(Topbar) Datos del usuario cargados: ", data);
                 if (data.nombre && data.apellido) {
                     setName(`${data.nombre} ${data.apellido}`);
@@ -30,7 +35,7 @@ function UserInfo() {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
             }
         };
-        handleObtenerColaborador();
+        handleGetUser();
     }, [token, username, name, setName, foto, setFoto]);
 
     const openLogoutModal = () => {

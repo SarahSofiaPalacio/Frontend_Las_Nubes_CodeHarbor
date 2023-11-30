@@ -108,20 +108,10 @@ function UserProfile() {
         } else if (!/^\d+$/.test(formData.salario)) {
             errors.salario = "Salario inválido, solo se permiten números";
         }
-        if (!formData.jerarquia || formData.jerarquia === "Seleccione...") {
-            errors.jerarquia = "Jerarquía es requerida";
-        } else if (!colaboradorFormSelectOptions.jerarquia.includes(formData.jerarquia)) {
-            errors.jerarquia = "Jerarquía seleccionada no es válida";
-        }
         if (!formData.fecha_ingreso) {
             errors.fecha_ingreso = "Fecha de ingreso es requerida";
         } else if (new Date(formData.fecha_ingreso) > new Date()) {
             errors.fecha_ingreso = "Fecha de ingreso no puede ser una fecha futura";
-        }
-        if (formData.jerarquia === 'Médico' && (!formData.especialidad || formData.especialidad === "Seleccione...")) {
-            errors.especialidad = "Especialidad es requerida";
-        } else if (!colaboradorFormSelectOptions.especialidad.includes(formData.especialidad)) {
-            errors.especialidad = "Especialidad seleccionada no es válida";
         }
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -190,9 +180,6 @@ function UserProfile() {
         if (isFormEditing) {
             setFormData(prevData => {
                 const newValues = { ...prevData, [name]: value };
-                if (name === 'jerarquia' && value !== 'Médico') {
-                    newValues.especialidad = 'Seleccione...';
-                }
                 return newValues;
             });
         }
@@ -403,7 +390,6 @@ function UserProfile() {
                                         value={formData.jerarquia || ''}
                                         error={formErrors.jerarquia}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -423,8 +409,7 @@ function UserProfile() {
                                         options={colaboradorFormSelectOptions.especialidad}
                                         value={formData.especialidad || ''}
                                         error={formErrors.especialidad}
-                                        isFormEditing={isFormEditing && formData.jerarquia === 'Médico'}
-                                        onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
+                                        isFormEditing={false}
                                     />
                                 </div>
                                 <div className="text-center mt-3">

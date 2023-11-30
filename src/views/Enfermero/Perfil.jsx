@@ -230,7 +230,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.tipo_identificacion || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('tipo_identificacion', e.target.value)}
                                     />
                                     <FormInput
                                         label="Número de documento"
@@ -238,7 +237,6 @@ function UserProfile() {
                                         type="number"
                                         value={formData.numero_identificacion || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('numero_identificacion', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -248,7 +246,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.nombre || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('nombre', e.target.value)}
                                     />
                                     <FormInput
                                         label="Apellidos"
@@ -256,7 +253,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.apellido || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('apellido', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -266,7 +262,6 @@ function UserProfile() {
                                         type="date"
                                         value={convertISOToSimpleDate(formData.fecha_nacimiento) || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('fecha_nacimiento', e.target.value)}
                                     />
                                     <FormInput
                                         label="Estado Civil"
@@ -274,7 +269,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.estado_civil || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('estado_civil', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -284,7 +278,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.sexo || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('sexo', e.target.value)}
                                     />
                                     <FormInput
                                         label="Dirección"
@@ -292,7 +285,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.direccion || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('direccion', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -322,7 +314,6 @@ function UserProfile() {
                                         type="number"
                                         value={formData.salario || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('salario', e.target.value)}
                                     />
                                     <FormInput
                                         label="Jerarquía"
@@ -330,7 +321,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.jerarquia || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('jerarquia', e.target.value)}
                                     />
                                 </div>
                                 <div className="form-row">
@@ -340,7 +330,6 @@ function UserProfile() {
                                         type="date"
                                         value={convertISOToSimpleDate(formData.fecha_ingreso) || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('fecha_ingreso', e.target.value)}
                                     />
                                     <FormInput
                                         label="Especialidad"
@@ -348,7 +337,6 @@ function UserProfile() {
                                         type="text"
                                         value={formData.especialidad || ''}
                                         isFormEditing={false}
-                                        onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
                                     />
                                 </div>
                                 <div className="text-center mt-3">

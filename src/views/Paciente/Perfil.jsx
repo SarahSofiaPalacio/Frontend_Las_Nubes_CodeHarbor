@@ -7,7 +7,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { useAuth } from '../../auth/AuthContext.js';
 
 import { colaboradorInitialFormData } from '../../assets/ColaboradorData.js';
-import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
+import { getPaciente, updatePaciente } from '../../services/pacientes.js';
 
 function UserProfile() {
     const { token, username, setName, setFoto } = useAuth();
@@ -32,7 +32,7 @@ function UserProfile() {
     const loadUser = useCallback(async () => {
         setLoadingForm(true);
         try {
-            const data = await getColaborador(token, username);
+            const data = await getPaciente(token, username);
             console.log("(Perfil) Datos del usuario cargados: ", data);
             setName(`${data.nombre} ${data.apellido}`);
             setFoto(data.foto_url);
@@ -74,7 +74,7 @@ function UserProfile() {
             try {
                 const formDataObj = new FormData();
                 formDataObj.append('foto_url', formData.foto_url, formData.foto_url.name);
-                const response = await updateColaborador(token, username, formDataObj);
+                const response = await updatePaciente(token, username, formDataObj);
                 console.log('(Perfil) Foto del usuario actualizada: ', response);
                 setIsConfirmUpdateModalOpen(true);
             } catch (error) {
@@ -95,7 +95,7 @@ function UserProfile() {
                     }
                     return acc;
                 }, {});
-                const response = await updateColaborador(token, username, newData);
+                const response = await updatePaciente(token, username, newData);
                 console.log('(Perfil) Datos del usuario actualizados: ', response);
                 setIsConfirmUpdateModalOpen(true);
             } catch (error) {
@@ -192,10 +192,10 @@ function UserProfile() {
         <div>
             <Header
                 title="Configuración de perfil"
-                subTitle="Información personal del secretario del centro médico"
+                subTitle="Información personal del paciente del centro médico"
             />
 
-            {/* Perfil de secretario */}
+            {/* Perfil de paciente */}
 
             <ProfileCards
                 loading={isLoadingForm}
@@ -307,38 +307,6 @@ function UserProfile() {
                                         onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
                                     />
                                 </div>
-                                <div className="form-row">
-                                    <FormInput
-                                        label="Salario"
-                                        id="salario"
-                                        type="number"
-                                        value={formData.salario || ''}
-                                        isFormEditing={false}
-                                    />
-                                    <FormInput
-                                        label="Jerarquía"
-                                        id="jerarquia"
-                                        type="text"
-                                        value={formData.jerarquia || ''}
-                                        isFormEditing={false}
-                                    />
-                                </div>
-                                <div className="form-row">
-                                    <FormInput
-                                        label="Fecha de ingreso"
-                                        id="fecha_ingreso"
-                                        type="date"
-                                        value={convertISOToSimpleDate(formData.fecha_ingreso) || ''}
-                                        isFormEditing={false}
-                                    />
-                                    <FormInput
-                                        label="Especialidad"
-                                        id="especialidad"
-                                        type="text"
-                                        value={formData.especialidad || ''}
-                                        isFormEditing={false}
-                                    />
-                                </div>
                                 <div className="text-center mt-3">
                                     {isFormEditing || isLoadingUpdate ? (
                                         <>
@@ -379,8 +347,8 @@ function UserProfile() {
 
             <ConfirmationModal
                 isOpen={isConfimUpdateModalOpen}
-                title="Secretario actualizado"
-                message="El secretario ha sido actualizado correctamente."
+                title="Paciente actualizado"
+                message="El paciente ha sido actualizado correctamente."
                 footerButtons={
                     <>
                         <button type="button" className="btn btn-success w-25" onClick={closeConfirmUpdateModal}>Aceptar</button>

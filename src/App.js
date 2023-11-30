@@ -8,10 +8,12 @@ import Login from './views/Login';
 import Administrador from './views/Administrador/Administrador';
 import Secretario from './views/Secretario/Secretario';
 import Enfermero from './views/Enfermero/Enfermero';
+import Paciente from './views/Paciente/Paciente';
+import Medico from './views/Medico/Medico';
+import Regente from './views/Regente/Regente';
 
 function App() {
   const { role } = useAuth();
-
   return (
     <Router>
       <Routes>
@@ -22,7 +24,10 @@ function App() {
             {role === 'Administrador' ? <Administrador /> :
               role === 'Secretario' ? <Secretario /> :
                 role === 'Enfermero' ? <Enfermero /> :
-                  <Navigate to="/" replace />}
+                  role === 'Paciente' ? <Paciente /> :
+                    role === 'Médico' ? <Medico /> :
+                      role === 'Regente de farmacia' ? <Regente /> :
+                      <Navigate to="/" replace />}
           </PrivateRoute>
         } />
       </Routes>
