@@ -6,7 +6,7 @@ import ProfileCards from '../../components/ProfileCards';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useAuth } from '../../auth/AuthContext.js';
 
-import { colaboradorInitialFormData } from '../../assets/ColaboradorData.js';
+import { pacienteInitialFormData } from '../../assets/PacienteData.js';
 import { getPaciente, updatePaciente } from '../../services/pacientes.js';
 
 function UserProfile() {
@@ -25,7 +25,7 @@ function UserProfile() {
 
     const [isFormEditing, setIsFormEditing] = useState(false);
     const [formErrors, setFormErrors] = useState({});
-    const [formData, setFormData] = useState({ colaboradorInitialFormData });
+    const [formData, setFormData] = useState({ pacienteInitialFormData });
 
     // Cargar datos del colaborador
 
@@ -89,9 +89,9 @@ function UserProfile() {
             setIsLoadingUpdate(true);
             setIsFormEditing(false);
             try {
-                const newData = Object.keys(colaboradorInitialFormData).reduce((acc, key) => {
+                const newData = Object.keys(pacienteInitialFormData).reduce((acc, key) => {
                     if (key !== 'foto_url') {
-                        acc[key] = formData[key] ?? colaboradorInitialFormData[key];
+                        acc[key] = formData[key] ?? pacienteInitialFormData[key];
                     }
                     return acc;
                 }, {});
@@ -155,7 +155,7 @@ function UserProfile() {
     };
 
     const resetForm = () => {
-        setFormData(colaboradorInitialFormData);
+        setFormData(pacienteInitialFormData);
         setFormErrors({});
     };
 
