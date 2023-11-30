@@ -254,10 +254,10 @@ function UserProfile() {
         <div>
             <Header
                 title="Configuración de perfil"
-                subTitle="Información personal del colaborador del centro médico"
+                subTitle="Información personal del administrador del centro médico"
             />
 
-            {/* Perfil de colaborador */}
+            {/* Perfil de administrador */}
 
             <ProfileCards
                 loading={isLoadingForm}
@@ -467,8 +467,8 @@ function UserProfile() {
 
             <ConfirmationModal
                 isOpen={isConfimUpdateModalOpen}
-                title="Colaborador actualizado"
-                message="El colaborador ha sido actualizado correctamente."
+                title="Administador actualizado"
+                message="El administrador ha sido actualizado correctamente."
                 footerButtons={
                     <>
                         <button type="button" className="btn btn-success w-25" onClick={closeConfirmUpdateModal}>Aceptar</button>

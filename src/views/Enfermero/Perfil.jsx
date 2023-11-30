@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import Header from '../../components/Header';
-import FormInput from '../../components/FormInput';
-import ProfileCards from '../../components/ProfileCards';
-import ConfirmationModal from '../../components/ConfirmationModal';
+import LoadingSpinner from '../../components/LoadingSpinner.js';
+import Header from '../../components/Header.js';
+import FormInput from '../../components/FormInput.js';
+import ProfileCards from '../../components/ProfileCards.js';
+import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext.js';
 
 import { colaboradorInitialFormData } from '../../assets/ColaboradorData.js';
@@ -192,10 +192,10 @@ function UserProfile() {
         <div>
             <Header
                 title="Configuración de perfil"
-                subTitle="Información personal del secretario del centro médico"
+                subTitle="Información personal del enfermero del centro médico"
             />
 
-            {/* Perfil de secretario */}
+            {/* Perfil de enfermero */}
 
             <ProfileCards
                 loading={isLoadingForm}
@@ -391,8 +391,8 @@ function UserProfile() {
 
             <ConfirmationModal
                 isOpen={isConfimUpdateModalOpen}
-                title="Secretario actualizado"
-                message="El secretario ha sido actualizado correctamente."
+                title="Enfermero actualizado"
+                message="El enfermero ha sido actualizado correctamente."
                 footerButtons={
                     <>
                         <button type="button" className="btn btn-success w-25" onClick={closeConfirmUpdateModal}>Aceptar</button>

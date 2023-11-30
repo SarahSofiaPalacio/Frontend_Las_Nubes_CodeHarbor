@@ -32,7 +32,7 @@ function Citas() {
 
   // Cargar lista de citas al cargar la página
 
-  const loadUsers = useCallback(async () => {
+  const loadCitas = useCallback(async () => {
     setLoadingTable(true);
     try {
       const citas = await getCitasSecretario(token);
@@ -53,8 +53,8 @@ function Citas() {
   }, [token]);
 
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+    loadCitas();
+  }, [loadCitas]);
 
   if (isLoadingContent) return <LoadingSpinner />;
 
@@ -92,7 +92,7 @@ function Citas() {
     setIsErrorModalOpen(false);
     setIsUpdateModalOpen(false);
     setIsLoadingUpdate(false);
-    loadUsers();
+    loadCitas();
   };
 
   // Funciones para el modal editar
@@ -137,15 +137,15 @@ function Citas() {
           }
           return acc;
         }, {});
-        const response = await updateCita(token, selectedCita.numero_identificacion, newData);
-        console.log('(Pacientes) Usuario actualizado: ', response);
+        const response = await updateCita(token, selectedCita.id_cita, newData);
+        console.log('(Citas) Cita actualizado: ', response);
         setIsConfirmUpdateModalOpen(true);
       } catch (error) {
-        console.error('(Pacientes) Hubo un error al actualizar el usuario: ', error);
+        console.error('(Citas) Hubo un error al actualizar la cita: ', error);
         setIsErrorModalOpen(true);
       }
     } else {
-      console.error('(Pacientes) Datos inválidos.');
+      console.error('(Citas) Datos inválidos.');
     }
   };
 
@@ -156,7 +156,7 @@ function Citas() {
     resetForm();
     setIsFormEditing(false);
     setIsLoadingUpdate(false);
-    loadUsers();
+    loadCitas();
   };
 
   const closeDiscardUpdateModal = () => {
@@ -169,19 +169,19 @@ function Citas() {
     setSelectedCita(null);
     resetForm();
     setIsFormEditing(false);
-    loadUsers();
+    loadCitas();
   };
 
   return (
     <div>
       <Header
-        title="Gestión de pacientes"
-        subTitle="Información personal de los pacientes del centro médico"
+        title="Gestión de citas"
+        subTitle="Información sobre las citas programadas para hoy en el centro médico"
       />
 
       {/* Tabla de pacientes */}
 
-      <Table label="Listado de pacientes citados" columns={citasSecretarioTableColumns} data={citas} loading={isLoadingTable}>
+      <Table label="Listado de citas activas" columns={citasSecretarioTableColumns} data={citas} loading={isLoadingTable}>
         {citas.map((cita) => (
           <tr key={cita.id_cita}>
             <td>{cita.detallePaciente.numero_identificacion}</td>
@@ -248,11 +248,10 @@ function Citas() {
             <div className="form-row">
               <FormInput
                 label="Documento del paciente"
-                id="identificacion"
+                id="identificacion_paciente"
                 type="text"
                 value={(formCitaData.detallePaciente.tipo_identificacion + " " + formCitaData.detallePaciente.numero_identificacion) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('identificacion', e.target.value)}
               />
               <FormInput
                 label="Nombre del paciente"
@@ -260,25 +259,22 @@ function Citas() {
                 type="text"
                 value={(formCitaData.detallePaciente.nombre + " " + formCitaData.detallePaciente.apellido) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('nombre_paciente', e.target.value)}
               />
             </div>
             <div className="form-row">
               <FormInput
                 label="Teléfono del paciente"
-                id="telefono"
+                id="telefono_paciente"
                 type="number"
                 value={formCitaData.detallePaciente.telefono || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('telefono', e.target.value)}
               />
               <FormInput
                 label="Correo Electrónico del paciente"
-                id="correo_electronico"
+                id="correo_electronico_paciente"
                 type="email"
                 value={formCitaData.detallePaciente.correo_electronico || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('correo_electronico', e.target.value)}
               />
             </div>
             <div className="form-row">
@@ -288,14 +284,12 @@ function Citas() {
                 type="date"
                 value={convertISOToSimpleDate(formCitaData.fecha) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('fecha', e.target.value)}
               />
               <FormInput
                 label="Hora de la cita"
                 id="hora"
                 value={formCitaData.hora || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('hora', e.target.value)}
               />
             </div>
             <div className="form-row">
@@ -305,15 +299,13 @@ function Citas() {
                 type="text"
                 value={(formCitaData.detalleColaborador.nombre + " " + formCitaData.detalleColaborador.apellido) || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('nombre', e.target.value)}
               />
               <FormInput
                 label="Tipo de cita"
-                id="especialidad"
+                id="especialidad_medico"
                 type="text"
                 value={formCitaData.detalleColaborador.especialidad || ''}
                 isFormEditing={false}
-                onChange={(e) => handleEditFormChange('especialidad', e.target.value)}
               />
             </div>
             <div className="form-row d-flex justify-content-center text-center">
@@ -338,8 +330,8 @@ function Citas() {
 
       <ConfirmationModal
         isOpen={isConfirmUpdateModalOpen}
-        title="Paciente actualizado"
-        message="El paciente ha sido actualizado correctamente."
+        title="Cita actualizada"
+        message="El estado de la cita ha sido actualizada correctamente."
         footerButtons={
           <>
             <button type="button" className="btn btn-success w-25" onClick={closeConfirmUpdateModal}>Aceptar</button>

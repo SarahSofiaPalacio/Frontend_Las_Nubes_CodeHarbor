@@ -7,6 +7,7 @@ import Index from './views/Index';
 import Login from './views/Login';
 import Administrador from './views/Administrador/Administrador';
 import Secretario from './views/Secretario/Secretario';
+import Enfermero from './views/Enfermero/Enfermero';
 
 function App() {
   const { role } = useAuth();
@@ -20,7 +21,8 @@ function App() {
           <PrivateRoute>
             {role === 'Administrador' ? <Administrador /> :
               role === 'Secretario' ? <Secretario /> :
-                <Navigate to="/" replace />}
+                role === 'Enfermero' ? <Enfermero /> :
+                  <Navigate to="/" replace />}
           </PrivateRoute>
         } />
       </Routes>
