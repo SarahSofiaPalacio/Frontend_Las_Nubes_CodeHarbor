@@ -275,4 +275,58 @@ export const geCitaMedico = async (token, id_medico) => {
       }
     }
   }
+};
+export const geCitaMedicoFecha = async (token, id_medico) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        //resolve(citasMock);
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`${URL_BASE}/citas/fechas/${id_medico}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
+};
+export const geCitaMedicoHora = async (token, id_medico, fecha) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        //resolve(citasMock);
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`${URL_BASE}/citas/horas/${id_medico}/${fecha}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
 }
