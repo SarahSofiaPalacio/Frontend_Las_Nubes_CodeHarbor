@@ -18,7 +18,7 @@ export const getFormulaMedica = async (token, id_paciente) => {
             Authorization: `Bearer ${token}`
           }
         };
-        const response = await axios.get(`${URL_BASE}//${id_paciente}`, config);
+        const response = await axios.get(`${URL_BASE}/formulas-medicas/paciente/${id_paciente}`, config);
         return response.data;
       } catch (error) {
         if (error.response) {

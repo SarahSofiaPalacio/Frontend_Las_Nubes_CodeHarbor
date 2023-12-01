@@ -194,4 +194,85 @@ export const deleteCita = async (token, id_cita) => {
       }
     }
   }
+};
+export const geCitaEspecialidad = async (token) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        //resolve(citasMock);
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`${URL_BASE}/citas/especialidades`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
+};
+export const geCitasMedicos = async (token, especialidad) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        //resolve(citasMock);
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`${URL_BASE}/citas/medicos/${especialidad}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
+};
+export const geCitaMedico = async (token, id_medico) => {
+  if (USE_MOCK) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        //resolve(citasMock);
+      }, 1000);
+    });
+  } else {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+      const response = await axios.get(`${URL_BASE}/citas/medico/${id_medico}`, config);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || 'Error desconocido');
+      } else if (error.request) {
+        throw new Error('No hay respuesta del servidor');
+      } else {
+        throw new Error('Error al configurar la petición');
+      }
+    }
+  }
 }
