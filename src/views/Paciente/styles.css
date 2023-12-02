@@ -1,0 +1,45 @@
+.react-datepicker__day--highlighted {
+    background-color: #4e73df; /* Elige el color que prefieras para las fechas disponibles */
+    color: white;
+}
+
+.react-datepicker__day--highlighted:hover {
+    background-color: #224abe; /* Un color que contraste con el azul y el fondo */
+    color: #fff; /* Texto blanco para que sea legible sobre el fondo más oscuro */
+}
+
+/* Estilos adicionales para cuando el día está seleccionado */
+.react-datepicker__day--highlighted.react-datepicker__day--selected,
+.react-datepicker__day--highlighted.react-datepicker__day--selecting-range-start,
+.react-datepicker__day--highlighted.react-datepicker__day--selecting-range-end {
+    background-color: darkblue; /* Un color más oscuro para indicar la selección */
+    color: white;
+}
+
+/* Personalizar el contenedor principal del datepicker */
+.react-datepicker {
+    border: 1px solid #dbd6d6; /* Un borde más suave */
+    border-radius: 0.3rem; /* Bordes redondeados */
+    font-family: 'Arial', sans-serif; /* Cambiar la fuente si es necesario */
+}
+
+/* Personalizar la cabecera del datepicker */
+.react-datepicker__header {
+    background-color: #f3f8fd; /* Un color de fondo suave para la cabecera */
+    border-bottom: 1px solid #dbd6d6; /* Borde suave para separar la cabecera */
+}
+
+/* Personalizar los botones de navegación del datepicker */
+.react-datepicker__navigation {
+    top: 20px; /* Ajustar la posición si es necesario */
+}
+
+/* Personalizar los nombres de los días de la semana */
+.react-datepicker__day-name {
+    color: #444444; /* Color de los nombres de los días */
+}
+
+/* Personalizar el mes y el año */
+.react-datepicker__current-month {
+    color: #224abe; /* Color del mes y el año */
+}

@@ -2,7 +2,7 @@ export const citasSecretarioTableColumns = ['Identificación Paciente', 'Nombres
 
 export const citasEnfermeroTableColumns = ['Identificación Médico', 'Nombres Médico', 'Apellidos Médico', 'Teléfono Médico', 'Tipo de Cita', 'Hora', 'Fecha', 'Más'];
 
-export const citasPacienteTableColumns = ['Nombres del Médico', 'Hora de la cita', 'Fecha de la cita', 'Tipo de cita','EPS', 'Nombres Médico', 'Cancelar cita']
+export const citasPacienteTableColumns = ['Nombres del Médico', 'Tipo de cita', 'Hora de la cita', 'Fecha de la cita','EPS', 'Cancelar cita'];
 
 export const citaInitialFormData = {
   id_cita: '',
@@ -15,8 +15,8 @@ export const citaInitialFormData = {
   motivo_consulta: '',
   diagnostico_consulta: '',
   tratamiento_consulta: '',
-}
+};
 
 export const citaFormSelectOptions = {
   estado: [ 'Activa', 'Confirmada', 'Cancelada' ],
-}
+};

@@ -9,6 +9,9 @@ import Topbar from '../../components/topbar/Topbar';
 
 import Home from '../../components/Home';
 import Perfil from './Perfil';
+//import Formulas from './Formulas';
+import VerCitas from './VerCitas';
+import PedirCitas from './PedirCitas';
 
 function Paciente() {
     const [sidebarToggled, setSidebarToggled] = useState(false);
@@ -25,12 +28,12 @@ function Paciente() {
                     elements={
                         <>
                             <Divider />
-                            <Heading text="Gestión de fórmula médica" />
-                            <NavItem to="formulas" icon="fa-address-card" label="Fórmula Médica" />
+                            <Heading text="Gestión de fórmulas médicas" />
+                            <NavItem to="formulas" icon="fa-address-card" label="Fórmulas médicas" />
                             <Divider />
                             <Heading text="Gestión de citas" />
-                            <NavItem to="citas" icon="fa-address-card" label="Ver citas" />
-                            <NavItem to="citas" icon="fa-address-card" label="Pedir citas" />
+                            <NavItem to="pedir_citas" icon="fa-address-card" label="Pedir citas" />
+                            <NavItem to="ver_citas" icon="fa-address-card" label="Ver citas" />
                             <Divider />
                         </>
                     }
@@ -41,7 +44,10 @@ function Paciente() {
                         <Routes>
                             <Route index element={<Home />} />
                             <Route path="perfil" element={<Perfil />} />
-                            <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
+                            {/*<Route path="formulas" element={<Formulas />} />*/}
+                            <Route path="ver_citas" element={<VerCitas />} />
+                            <Route path="pedir_citas" element={<PedirCitas />} />
+                            <Route path="*" element={<Navigate to="/dashboard" replace />} />
                         </Routes>
                     </div>
                 </div>

@@ -18,9 +18,11 @@ function Table({ label, columns, data, children, loading }) {
 
   return (
     <div className="card shadow mb-4">
+      {label && label.length > 0 ? (
       <div className="card-header text-center py-3">
         <h6 className="m-0 font-weight-bold text-primary">{label}</h6>
       </div>
+      ) : null}
       <div className="card-body">
         <div className="table-responsive">
           <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
