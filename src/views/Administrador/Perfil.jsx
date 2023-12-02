@@ -9,9 +9,11 @@ import { useAuth } from '../../auth/AuthContext.js';
 
 import { colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/ColaboradorData.js';
 import { getColaborador, updateColaborador } from '../../services/colaboradores.js';
+import { useNavigate } from 'react-router-dom';
 
 function UserProfile() {
-    const { token, username, setName, setFoto } = useAuth();
+    const navigate = useNavigate();
+    const { token, username, setName, setFoto, handleLogout } = useAuth();
 
     const fileInputRef = useRef();
     const [isPhotoUpdated, setIsPhotoUpdated] = useState(false);
@@ -39,13 +41,17 @@ function UserProfile() {
             setFoto(data.foto_url);
             setFormData(data);
         } catch (error) {
-            console.error("(Perfil) Error al cargar datos del usuario: ", error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Perfil) Error al cargar datos del usuario: ", error);
         } finally {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, username, setName, setFoto]);
+    }, [token, username, setName, setFoto, handleLogout, navigate]);
 
     useEffect(() => {
         loadUser();
@@ -127,11 +133,15 @@ function UserProfile() {
                 console.log('(Perfil) Foto del usuario actualizada: ', response);
                 setIsConfirmUpdateModalOpen(true);
             } catch (error) {
-                console.error('(Perfil) Error al actualizar la foto: ', error);
                 setIsErrorModalOpen(true);
+                if (error.response === 'Sesión expirada') {
+                    console.log("(Error) Token inválido. Cerrando sesión...");
+                    await handleLogout();
+                    navigate('/login');
+                } else console.error('(Perfil) Error al actualizar la foto: ', error);
             }
         }
-    }, [token, username, formData.foto_url]);
+    }, [token, username, formData.foto_url, handleLogout, navigate]);
 
     const updateUserDetails = async () => {
         if (validateForm()) {
@@ -148,8 +158,12 @@ function UserProfile() {
                 console.log('(Perfil) Datos del usuario actualizados: ', response);
                 setIsConfirmUpdateModalOpen(true);
             } catch (error) {
-                console.error('(Perfil) Error al actualizar datos del usuario: ', error);
                 setIsErrorModalOpen(true);
+                if (error.response === 'Sesión expirada') {
+                    console.log("(Error) Token inválido. Cerrando sesión...");
+                    await handleLogout();
+                    navigate('/login');
+                } else console.error('(Perfil) Error al actualizar datos del usuario: ', error);
             }
         } else {
             console.error('(Perfil) Datos inválidos.');

@@ -14,9 +14,11 @@ import "./styles.css"; // Tu archivo CSS personalizado
 import { pacienteInitialFormData } from '../../assets/PacienteData.js';
 import { getCitaEspecialidad, getCitasMedicos, getCitaMedicoFecha, getCitaMedicoHora, asignCita } from '../../services/citas.js';
 import { getPaciente } from '../../services/pacientes.js';
+import { useNavigate } from 'react-router-dom';
 
 function PedirCitas() {
-    const { token, username } = useAuth();
+    const navigate = useNavigate();
+    const { token, username, handleLogout } = useAuth();
 
     const [pacienteData, setPacienteData] = useState({ pacienteInitialFormData });
 
@@ -53,13 +55,17 @@ function PedirCitas() {
             setPacienteData(paciente);
             console.log("(Pedir) Datos del paciente cargados: ", paciente);
         } catch (error) {
-            console.error("(Pedir) Error al cargar los datos del paciente: ", error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Pedir) Error al cargar los datos del paciente: ", error);
         } finally {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, username]);
+    }, [token, username, handleLogout, navigate]);
 
     // Cargar los tipos de citas disponibles
 
@@ -73,13 +79,17 @@ function PedirCitas() {
             setTypesDates(opcionesCitas);
             console.log("(Pedir) Tipos de citas disponibles filtrados: ", opcionesCitas);
         } catch (error) {
-            console.error("(Pedir) Error al cargar los tipos de citas sin asignar: ", error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Pedir) Error al cargar los tipos de citas sin asignar: ", error);
         } finally {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token]);
+    }, [token, handleLogout, navigate]);
 
     // Cargar los medicos disponibles para el tipo de cita
 
@@ -97,13 +107,17 @@ function PedirCitas() {
             setNamesMedicos(opcionesMedicos);
             console.log("(Pedir) Medicos disponibles cargados: ", opcionesMedicos);
         } catch (error) {
-            console.error("(Pedir) Error al cargar los medicos disponibles: ", error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Pedir) Error al cargar los medicos disponibles: ", error);
         } finally {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, selectedTypeDate]);
+    }, [token, selectedTypeDate, handleLogout, navigate]);
 
     // Cargar las fechas disponibles para el medico
 
@@ -117,13 +131,17 @@ function PedirCitas() {
             setDates(fechasResaltadas);
             console.log("(Pedir) Días disponibles cargados: ", fechasResaltadas);
         } catch (error) {
-            console.error("(Pedir) Error al cargar los días disponibles: ", error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Pedir) Error al cargar los días disponibles: ", error);
         } finally {
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, selectedMedico]);
+    }, [token, selectedMedico, handleLogout, navigate]);
 
     // Cargar las horas disponibles para la fecha y el médico
 
@@ -134,13 +152,17 @@ function PedirCitas() {
             setHours(hours);
             console.log("(Pedir) Horas disponibles cargadas: ", hours);
         } catch (error) {
-            console.error("(Pedir) Error al cargar las horas disponibles: ", error);
             setIsErrorModalOpen(true);
-        } finally {
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Pedir) Error al cargar las horas disponibles: ", error);
+        } finally { 
             setLoadingForm(false);
             setIsLoadingContent(false);
         }
-    }, [token, selectedMedico, selectedDate]);
+    }, [token, selectedMedico, selectedDate, handleLogout, navigate]);
 
     // Cargar datos de las citas
 
@@ -176,8 +198,12 @@ function PedirCitas() {
             console.log('(Pedir) Cita asignada: ', response);
             setIsAsignedModalOpen(true);
         } catch (error) {
-            console.error('(Pedir) Error al asignar la cita: ', error);
             setIsErrorModalOpen(true);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error('(Pedir) Error al asignar la cita: ', error);
         } finally {
             setIsLoadingUpdate(false);
             setIsConfirmUpdateModalOpen(false);

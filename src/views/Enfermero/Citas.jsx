@@ -10,9 +10,11 @@ import { useAuth } from '../../auth/AuthContext.js';
 import { citasEnfermeroTableColumns, citaInitialFormData } from '../../assets/CitaData.js';
 import { getCitasEnfermero } from '../../services/citas.js';
 import { getColaborador } from '../../services/colaboradores.js';
+import { useNavigate } from 'react-router-dom';
 
 function Citas() {
-  const { token, username } = useAuth();
+  const navigate = useNavigate();
+  const { token, username, handleLogout } = useAuth();
   const [citas, setCitas] = useState([]);
   const [selectedCita, setSelectedCita] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -37,12 +39,16 @@ function Citas() {
       }
       setCitas(citas);
     } catch (error) {
-      console.error('(Citas) Error al cargar las citas: ', error);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Citas) Error al cargar las citas: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
     }
-  }, [token, username]);
+  }, [token, username, handleLogout, navigate]);
 
   useEffect(() => {
     loadUsers();

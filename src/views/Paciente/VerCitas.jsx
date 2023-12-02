@@ -8,9 +8,11 @@ import { useAuth } from '../../auth/AuthContext.js';
 import { citasPacienteTableColumns, citaInitialFormData } from '../../assets/CitaData.js';
 import { getCitasPacienteActivas, deleteCita } from '../../services/citas.js';
 import { getColaborador } from '../../services/colaboradores.js';
+import { useNavigate } from 'react-router-dom';
 
 function VerCitas() {
-  const { token, username } = useAuth();
+  const navigate = useNavigate();
+  const { token, username, handleLogout } = useAuth();
 
   const [citas, setCitas] = useState([]);
   const [selectedCita, setSelectedCita] = useState({ citaInitialFormData });
@@ -36,12 +38,16 @@ function VerCitas() {
       }
       setCitas(citas);
     } catch (error) {
-      console.error('(Citas) Error al cargar las citas: ', error);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Citas) Error al cargar las citas: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
     }
-  }, [token, username]);
+  }, [token, username, handleLogout, navigate]);
 
   useEffect(() => {
     loadDates();
@@ -98,9 +104,13 @@ function VerCitas() {
       setIsDeleteDateModalOpen(false);
       setIsConfirmDeleteDateModalOpen(true);
     } catch (error) {
-      console.error('(Citas) Error al cancelar la cita: ', error);
       setIsDeleteDateModalOpen(false);
       setIsErrorModalOpen(true);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Citas) Error al cancelar la cita: ', error);
     } finally {
       setIsLoadingDelete(false);
     }
@@ -129,7 +139,7 @@ function VerCitas() {
                 className="btn btn-primary btn-sm"
                 onClick={() => openDeleteDateModal(cita)}
                 aria-label="Cancelar cita"
-                ><i className="fas fa-trash"></i>
+              ><i className="fas fa-trash"></i>
               </button>
             </td>
           </tr>

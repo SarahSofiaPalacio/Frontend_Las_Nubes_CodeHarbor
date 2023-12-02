@@ -7,12 +7,14 @@ import FormInput from '../../components/FormInput';
 import FormSelect from '../../components/FormSelect';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 import { pacienteTableColumns, pacienteInitialFormData, pacienteFormSelectOptions } from '../../assets/PacienteData.js';
 import { getPacientes, createPaciente, updatePaciente, deletePaciente } from '../../services/pacientes.js';
 
 function Pacientes() {
-  const { token, username } = useAuth();
+  const navigate = useNavigate();
+  const { token, username, handleLogout } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -47,12 +49,16 @@ function Pacientes() {
       console.log('(Pacientes) Usuarios cargados: ', response);
       setUsers(response);
     } catch (error) {
-      console.error('(Pacientes) Error al cargar los usuarios: ', error);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Pacientes) Error al cargar los usuarios: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
     }
-  }, [token]);
+  }, [token, handleLogout, navigate]);
 
   useEffect(() => {
     loadUsers();
@@ -171,8 +177,12 @@ function Pacientes() {
         console.log('(Pacientes) Usuario creado: ', response);
         setIsConfirmAddModalOpen(true);
       } catch (error) {
-        console.error('(Pacientes) Hubo un error al crear el usuario: ', error);
         setIsErrorModalOpen(true);
+        if (error.response === 'Sesión expirada') {
+          console.log("(Error) Token inválido. Cerrando sesión...");
+          await handleLogout();
+          navigate('/login');
+        } else console.error('(Pacientes) Hubo un error al crear el usuario: ', error);
       }
     } else {
       console.error('(Pacientes) Datos inválidos.');
@@ -233,8 +243,12 @@ function Pacientes() {
         console.log('(Pacientes) Usuario actualizado: ', response);
         setIsConfirmUpdateModalOpen(true);
       } catch (error) {
-        console.error('(Pacientes) Hubo un error al actualizar el usuario: ', error);
         setIsErrorModalOpen(true);
+        if (error.response === 'Sesión expirada') {
+          console.log("(Error) Token inválido. Cerrando sesión...");
+          await handleLogout();
+          navigate('/login');
+        } else console.error('(Pacientes) Hubo un error al actualizar el usuario: ', error);
       }
     } else {
       console.error('(Pacientes) Datos inválidos.');
@@ -287,8 +301,12 @@ function Pacientes() {
       console.log('(Pacientes) Usuario desactivado: ', response);
       setIsConfirmDesactivateModalOpen(true);
     } catch (error) {
-      console.error('(Pacientes) Hubo un error al desactivar el usuario: ', error);
       setIsErrorModalOpen(true);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Pacientes) Hubo un error al desactivar el usuario: ', error);
     }
   };
 
@@ -299,8 +317,12 @@ function Pacientes() {
       console.log('(Pacientes) Usuario activado: ', response);
       setIsConfirmActivateModalOpen(true);
     } catch (error) {
-      console.error('(Pacientes) Hubo un error al activar el usuario: ', error);
       setIsErrorModalOpen(true);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Pacientes) Hubo un error al activar el usuario: ', error);
     }
   };
 

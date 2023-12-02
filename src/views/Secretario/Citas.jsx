@@ -12,9 +12,11 @@ import { citasSecretarioTableColumns, citaInitialFormData, citaFormSelectOptions
 import { getCitasSecretario, updateCita } from '../../services/citas.js';
 import { getPaciente } from '../../services/pacientes.js';
 import { getColaborador } from '../../services/colaboradores.js';
+import { useNavigate } from 'react-router-dom';
 
 function Citas() {
-  const { token } = useAuth();
+  const navigate = useNavigate();
+  const { token, handleLogout } = useAuth();
   const [citas, setCitas] = useState([]);
   const [selectedCita, setSelectedCita] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -45,12 +47,16 @@ function Citas() {
       }
       setCitas(citas);
     } catch (error) {
-      console.error('(Citas) Error al cargar las citas: ', error);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Citas) Error al cargar las citas: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
     }
-  }, [token]);
+  }, [token, handleLogout, navigate]);
 
   useEffect(() => {
     loadCitas();
@@ -141,8 +147,12 @@ function Citas() {
         console.log('(Citas) Cita actualizado: ', response);
         setIsConfirmUpdateModalOpen(true);
       } catch (error) {
-        console.error('(Citas) Hubo un error al actualizar la cita: ', error);
         setIsErrorModalOpen(true);
+        if (error.response === 'Sesión expirada') {
+          console.log("(Error) Token inválido. Cerrando sesión...");
+          await handleLogout();
+          navigate('/login');
+        } else console.error('(Citas) Hubo un error al actualizar la cita: ', error);
       }
     } else {
       console.error('(Citas) Datos inválidos.');

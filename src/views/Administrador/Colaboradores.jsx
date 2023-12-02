@@ -9,9 +9,11 @@ import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { useAuth } from '../../auth/AuthContext';
 import { colaboradorTableColumns, colaboradorInitialFormData, colaboradorFormSelectOptions } from '../../assets/ColaboradorData.js';
 import { getColaboradores, createColaborador, updateColaborador, deleteColaborador } from '../../services/colaboradores.js';
+import { useNavigate } from 'react-router-dom';
 
 function Colaboradores() {
-  const { token, username } = useAuth();
+  const navigate = useNavigate();
+  const { token, username, handleLogout } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoadingTable, setLoadingTable] = useState(false);
@@ -46,12 +48,16 @@ function Colaboradores() {
       console.log('(Colaboradores) Usuarios cargados: ', response);
       setUsers(response);
     } catch (error) {
-      console.error('(Colaboradores) Error al cargar los usuarios: ', error);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Colaboradores) Error al cargar los usuarios: ', error);
     } finally {
       setLoadingTable(false);
       setIsLoadingContent(false);
     }
-  }, [token]);
+  }, [token, handleLogout, navigate]);
 
   useEffect(() => {
     loadUsers();
@@ -193,8 +199,12 @@ function Colaboradores() {
         console.log('(Colaboradores) Usuario creado: ', response);
         setIsConfirmAddModalOpen(true);
       } catch (error) {
-        console.error('(Colaboradores) Hubo un error al crear el usuario: ', error);
         setIsErrorModalOpen(true);
+        if (error.response === 'Sesión expirada') {
+          console.log("(Error) Token inválido. Cerrando sesión...");
+          await handleLogout();
+          navigate('/login');
+        } else console.error('(Colaboradores) Hubo un error al crear el usuario: ', error);
       }
     } else {
       console.error('(Colaboradores) Datos inválidos.');
@@ -258,8 +268,12 @@ function Colaboradores() {
         console.log('(Colaboradores) Usuario actualizado: ', response);
         setIsConfirmUpdateModalOpen(true);
       } catch (error) {
-        console.error('(Colaboradores) Hubo un error al actualizar el usuario: ', error);
         setIsErrorModalOpen(true);
+        if (error.response === 'Sesión expirada') {
+          console.log("(Error) Token inválido. Cerrando sesión...");
+          await handleLogout();
+          navigate('/login');
+        } else console.error('(Colaboradores) Hubo un error al actualizar el usuario: ', error);
       }
     } else {
       console.error('(Colaboradores) Datos inválidos.');
@@ -312,8 +326,12 @@ function Colaboradores() {
       console.log('(Colaboradores) Usuario desactivado: ', response);
       setIsConfirmDesactivateModalOpen(true);
     } catch (error) {
-      console.error('(Colaboradores) Hubo un error al desactivar el usuario: ', error);
       setIsErrorModalOpen(true);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Colaboradores) Hubo un error al desactivar el usuario: ', error);      
     }
   };
 
@@ -324,8 +342,12 @@ function Colaboradores() {
       console.log('(Colaboradores) Usuario activado: ', response);
       setIsConfirmActivateModalOpen(true);
     } catch (error) {
-      console.error('(Colaboradores) Hubo un error al activar el usuario: ', error);
       setIsErrorModalOpen(true);
+      if (error.response === 'Sesión expirada') {
+        console.log("(Error) Token inválido. Cerrando sesión...");
+        await handleLogout();
+        navigate('/login');
+      } else console.error('(Colaboradores) Hubo un error al activar el usuario: ', error);
     }
   };
 
