@@ -11,12 +11,10 @@ function UserInfo() {
     const { token, role, username, name, setName, foto, setFoto, handleLogout } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
-    const [isLoadingUser, setIsLoadingUser] = useState(false);
 
     useEffect(() => {
         const handleGetUser = async () => {
             if (!token || !username) return;
-            setIsLoadingUser(true);
             try {
                 let data;
                 if (role === 'Paciente') data = await getPaciente(token, username);
@@ -32,8 +30,6 @@ function UserInfo() {
                     await handleLogout();
                     navigate('/login');
                 } else console.error("(Error) Error en la solicitud: ", error);
-            } finally {
-                setIsLoadingUser(false);
             }
         };
         handleGetUser();
@@ -65,19 +61,6 @@ function UserInfo() {
             setIsLogoutModalOpen(false);
         }
     };
-
-    if (isLoadingUser) {
-        return (
-            <li className="nav-item dropdown no-arrow">
-                <button className="btn btn-link nav-link dropdown-toggle shadow-none" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span className="mr-2 d-none d-lg-inline text-gray-600 small">Cargando...</span>
-                    <div className="spinner-border spinner-border-sm text-gray-600" role="status">
-                        <span className="sr-only">Cargando...</span>
-                    </div>
-                </button>
-            </li>
-        );
-    }
 
     return (
         <li className="nav-item dropdown no-arrow">

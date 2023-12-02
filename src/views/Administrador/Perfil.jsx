@@ -264,11 +264,19 @@ function UserProfile() {
                 loading={isLoadingForm}
                 profilePicture={
                     <>
-                        <img
-                            src={formData.foto_url ? formData.foto_url : `${process.env.PUBLIC_URL}/img/profile.svg`}
-                            alt="Foto de perfil"
-                            className="img-profile mx-auto d-block mb-3"
-                        />
+                        {!isLoadingUpdate ? (
+                            <img
+                                src={formData.foto_url ? formData.foto_url : `${process.env.PUBLIC_URL}/img/profile.svg`}
+                                alt=""
+                                className="img-profile mx-auto d-block mb-3"
+                            />
+                        ) : (
+                            <img
+                                src={`${process.env.PUBLIC_URL}/img/profile.svg`}
+                                alt=""
+                                className="img-profile mx-auto d-block mb-3"
+                            />
+                        )}
                         <p>JPG, JPEG o PNG no mayor a 5 MB</p>
                         <input
                             type="file"
