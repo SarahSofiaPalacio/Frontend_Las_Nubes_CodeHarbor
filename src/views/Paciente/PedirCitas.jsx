@@ -452,8 +452,8 @@ function PedirCitas() {
                 message="¿Está seguro de que desea asignar la cita?"
                 footerButtons={
                     <>
-                        <button type="button" className="btn btn-primary w-25" onClick={asignDate}>Confirmar</button>
-                        <button type="button" className="btn btn-secondary w-25" onClick={closeConfirmUpdateModal}>Cancelar</button>
+                        <button type="button" className="btn btn-primary w-25" onClick={asignDate} disabled={isLoadingUpdate}>{isLoadingUpdate ? "Asignando cita..." : "Asignar cita"}</button>
+                        <button type="button" className="btn btn-secondary w-25" onClick={closeConfirmUpdateModal} disabled={isLoadingUpdate}>Cancelar</button>
                     </>
                 }
             />
