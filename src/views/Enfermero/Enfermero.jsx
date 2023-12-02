@@ -27,7 +27,7 @@ function Enfermero() {
                         <>
                             <Divider />
                             <Heading text="Gestión de citas" />
-                            <NavItem to="citas" icon="fa-address-card" label="Citas" />
+                            <NavItem to="/dashboard/citas" icon="fa-address-card" label="Citas" />
                             <Divider />
                         </>
                     }
@@ -37,8 +37,8 @@ function Enfermero() {
                     <div className="container-fluid">
                         <Routes>
                             <Route index element={<Home />} />
-                            <Route path="perfil" element={<Perfil />} />
-                            <Route path="citas" element={<Citas />} />
+                            <Route path="/perfil" element={<Perfil />} />
+                            <Route path="/citas" element={<Citas />} />
                             <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
                         </Routes>
                     </div>

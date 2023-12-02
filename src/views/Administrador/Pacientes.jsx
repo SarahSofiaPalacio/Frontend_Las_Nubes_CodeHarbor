@@ -183,6 +183,7 @@ function Pacientes() {
     setIsConfirmAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoadingAdd(false);
+    resetForm();
     loadUsers();
   };
 

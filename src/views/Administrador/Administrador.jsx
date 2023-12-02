@@ -29,11 +29,11 @@ function Administrador() {
                         <>
                             <Divider />
                             <Heading text="Gestión de usuarios" />
-                            <NavItem to="colaboradores" icon="fa-address-card" label="Colaboradores" />
-                            <NavItem to="pacientes" icon="fa-address-card" label="Pacientes" />
+                            <NavItem to="/dashboard/colaboradores" icon="fa-address-card" label="Colaboradores" />
+                            <NavItem to="/dashboard/pacientes" icon="fa-address-card" label="Pacientes" />
                             <Divider />
                             <Heading text="Informes" />
-                            <NavItem to="informes" icon="fa-address-card" label="Generar informes" />
+                            <NavItem to="/dashboard/informes" icon="fa-address-card" label="Generar informes" />
                             <Divider />
                         </>
                     }
@@ -43,10 +43,10 @@ function Administrador() {
                     <div className="container-fluid">
                         <Routes>
                             <Route index element={<Home />} />
-                            <Route path="perfil" element={<Perfil />} />
-                            <Route path="colaboradores" element={<Colaboradores />} />
-                            <Route path="pacientes" element={<Pacientes />} />
-                            <Route path="informes" element={<Informes />} />
+                            <Route path="/perfil" element={<Perfil />} />
+                            <Route path="/colaboradores" element={<Colaboradores />} />
+                            <Route path="/pacientes" element={<Pacientes />} />
+                            <Route path="/informes" element={<Informes />} />
                             <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
                         </Routes>
                     </div>

@@ -10,10 +10,13 @@ import ConfirmationModal from '../ConfirmationModal';
 function UserInfo() {
     const { token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isLoadingLogout, setIsLoadingLogout] = useState(false);
+    const [isLoadingUser, setIsLoadingUser] = useState(false);
 
     useEffect(() => {
         const handleGetUser = async () => {
             if (!token || !username) return;
+            setIsLoadingUser(true);
             try {
                 let data;
                 if (role === 'Paciente') {
@@ -34,6 +37,8 @@ function UserInfo() {
                 }
             } catch (error) {
                 console.error("(Topbar) Error al cargar datos del usuario: ", error);
+            } finally {
+                setIsLoadingUser(false);
             }
         };
         handleGetUser();
@@ -48,6 +53,7 @@ function UserInfo() {
     };
 
     const handleLogout = async () => {
+        setIsLoadingLogout(true);
         try {
             const response = await logout(token);
             console.log("(Logout) Sesión cerrada exitosamente:", response);
@@ -63,9 +69,23 @@ function UserInfo() {
         } catch (error) {
             console.error("(Logout) Error al cerrar sesión:", error);
         } finally {
+            setIsLoadingLogout(false);
             setIsLogoutModalOpen(false);
         }
     };
+
+    if (isLoadingUser) {
+        return (
+            <li className="nav-item dropdown no-arrow">
+                <button className="btn btn-link nav-link dropdown-toggle shadow-none" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span className="mr-2 d-none d-lg-inline text-gray-600 small">Cargando...</span>
+                    <div className="spinner-border spinner-border-sm text-gray-600" role="status">
+                        <span className="sr-only">Cargando...</span>
+                    </div>
+                </button>
+            </li>
+        );
+    }
 
     return (
         <li className="nav-item dropdown no-arrow">
@@ -75,7 +95,7 @@ function UserInfo() {
             </button>
             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
-                <NavLink className="dropdown-item" to="perfil">
+                <NavLink className="dropdown-item" to="/dashboard/perfil">
                     <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Mi perfil
                 </NavLink>
@@ -94,12 +114,14 @@ function UserInfo() {
                             type="button"
                             className="btn btn-primary"
                             onClick={handleLogout}
-                        >Cerrar sesión
+                            disabled={isLoadingLogout}
+                        >{isLoadingLogout ? "Cerrando sesión..." : "Cerrar sesión"}
                         </button>
                         <button
                             type="button"
                             className="btn btn-secondary w-25"
                             onClick={closeLogoutModal}
+                            disabled={isLoadingLogout}
                         >Cancelar
                         </button>
                     </>

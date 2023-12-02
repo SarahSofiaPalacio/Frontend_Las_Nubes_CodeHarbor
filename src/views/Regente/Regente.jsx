@@ -26,10 +26,10 @@ function Regente() {
                         <>
                             <Divider />
                             <Heading text="Gestión de medicamentos" />
-                            <NavItem to="medicamentos" icon="fa-address-card" label="Medicamentos" />
+                            <NavItem to="/dashboard/medicamentos" icon="fa-address-card" label="Medicamentos" />
                             <Divider />
                             <Heading text="Solicitudes" />
-                            <NavItem to="solicitudes" icon="fa-address-card" label="Solicitudes" />
+                            <NavItem to="/dashboard/solicitudes" icon="fa-address-card" label="Solicitudes" />
                             <Divider />
                         </>
                     }
@@ -39,7 +39,7 @@ function Regente() {
                     <div className="container-fluid">
                         <Routes>
                             <Route index element={<Home />} />
-                            <Route path="perfil" element={<Perfil />} />
+                            <Route path="/perfil" element={<Perfil />} />
                             <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
                         </Routes>
                     </div>

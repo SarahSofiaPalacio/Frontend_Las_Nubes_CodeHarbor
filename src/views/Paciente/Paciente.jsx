@@ -32,8 +32,8 @@ function Paciente() {
                             <NavItem to="formulas" icon="fa-address-card" label="Fórmulas médicas" />
                             <Divider />
                             <Heading text="Gestión de citas" />
-                            <NavItem to="pedir_citas" icon="fa-address-card" label="Pedir citas" />
-                            <NavItem to="ver_citas" icon="fa-address-card" label="Ver citas" />
+                            <NavItem to="/dashboard/pedir_citas" icon="fa-address-card" label="Pedir citas" />
+                            <NavItem to="/dashboard/ver_citas" icon="fa-address-card" label="Ver citas" />
                             <Divider />
                         </>
                     }
@@ -43,10 +43,10 @@ function Paciente() {
                     <div className="container-fluid">
                         <Routes>
                             <Route index element={<Home />} />
-                            <Route path="perfil" element={<Perfil />} />
-                            {/*<Route path="formulas" element={<Formulas />} />*/}
-                            <Route path="ver_citas" element={<VerCitas />} />
-                            <Route path="pedir_citas" element={<PedirCitas />} />
+                            <Route path="/perfil" element={<Perfil />} />
+                            {/*<Route path="/formulas" element={<Formulas />} />*/}
+                            <Route path="/ver_citas" element={<VerCitas />} />
+                            <Route path="/pedir_citas" element={<PedirCitas />} />
                             <Route path="*" element={<Navigate to="/dashboard" replace />} />
                         </Routes>
                     </div>

@@ -205,6 +205,7 @@ function Colaboradores() {
     setIsConfirmAddModalOpen(false);
     setIsAddModalOpen(false);
     setIsLoadingAdd(false);
+    resetForm();
     loadUsers();
   };
 

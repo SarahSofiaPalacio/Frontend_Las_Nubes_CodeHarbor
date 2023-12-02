@@ -26,11 +26,11 @@ function Medico() {
                         <>
                             <Divider />
                             <Heading text="Programación Citas" />
-                            <NavItem to="citas" icon="fa-address-card" label="Citas Médicas" />
+                            <NavItem to="/dashboard/citas" icon="fa-address-card" label="Citas Médicas" />
                             <Divider />
                             <Heading text="Cita en Curso" />
-                            <NavItem to="citas" icon="fa-address-card" label="Trámite" />
-                            <NavItem to="citas" icon="fa-address-card" label="Historia Clínica" />
+                            <NavItem to="/dashboard/tramite" icon="fa-address-card" label="Trámite" />
+                            <NavItem to="/dashboard/historia" icon="fa-address-card" label="Historia Clínica" />
                             <Divider />
                         </>
                     }
@@ -40,7 +40,7 @@ function Medico() {
                     <div className="container-fluid">
                         <Routes>
                             <Route index element={<Home />} />
-                            <Route path="perfil" element={<Perfil />} />
+                            <Route path="/perfil" element={<Perfil />} />
                             <Route path="*" element={<Navigate to="/dashboard" replace />} /> 
                         </Routes>
                     </div>
