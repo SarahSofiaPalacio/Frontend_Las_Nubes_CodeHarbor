@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { logout } from '../../services/login';
 import { getColaborador } from '../../services/colaboradores';
@@ -8,7 +7,8 @@ import { getPaciente } from '../../services/pacientes';
 import ConfirmationModal from '../ConfirmationModal';
 
 function UserInfo() {
-    const { token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto } = useAuth();
+    const navigate = useNavigate();
+    const { token, role, username, name, setName, foto, setFoto, handleLogout } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
     const [isLoadingUser, setIsLoadingUser] = useState(false);
@@ -19,30 +19,25 @@ function UserInfo() {
             setIsLoadingUser(true);
             try {
                 let data;
-                if (role === 'Paciente') {
-                    data = await getPaciente(token, username);
-                } else {
-                    data = await getColaborador(token, username);
-                }
+                if (role === 'Paciente') data = await getPaciente(token, username);
+                else data = await getColaborador(token, username);
                 console.log("(Topbar) Datos del usuario cargados: ", data);
-                if (data.nombre && data.apellido) {
-                    setName(`${data.nombre} ${data.apellido}`);
-                } else {
-                    setName('Usuario');
-                }
-                if (data.foto_url) {
-                    setFoto(data.foto_url);
-                } else {
-                    setFoto(`${process.env.PUBLIC_URL}/img/profile.svg`);
-                }
+                if (data.nombre && data.apellido) setName(`${data.nombre} ${data.apellido}`);
+                else setName('Usuario');
+                if (data.foto_url) setFoto(data.foto_url);
+                else setFoto(`${process.env.PUBLIC_URL}/img/profile.svg`);
             } catch (error) {
-                console.error("(Topbar) Error al cargar datos del usuario: ", error);
+                if (error.response === 'Sesión expirada') {
+                    console.log("(Error) Token inválido. Cerrando sesión...");
+                    await handleLogout();
+                    navigate('/login');
+                } else console.error("(Error) Error en la solicitud: ", error);
             } finally {
                 setIsLoadingUser(false);
             }
         };
         handleGetUser();
-    }, [token, role, username, name, setName, foto, setFoto]);
+    }, [token, username, role, setName, setFoto, handleLogout, navigate]);
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true);
@@ -52,22 +47,19 @@ function UserInfo() {
         setIsLogoutModalOpen(false);
     };
 
-    const handleLogout = async () => {
+    const handleOut = async () => {
         setIsLoadingLogout(true);
         try {
             const response = await logout(token);
             console.log("(Logout) Sesión cerrada exitosamente:", response);
-            Cookies.remove('token');
-            Cookies.remove('role');
-            Cookies.remove('username');
-            setToken(null);
-            setRole(null);
-            setUsername(null);
-            setName(null);
-            setFoto(null);
-            console.log("(Logout) Datos de usuario eliminados de cookies y contexto.");
+            await handleLogout();
+            navigate('/login');
         } catch (error) {
-            console.error("(Logout) Error al cerrar sesión:", error);
+            if (error.response === 'Sesión expirada') {
+                console.log("(Error) Token inválido. Cerrando sesión...");
+                await handleLogout();
+                navigate('/login');
+            } else console.error("(Error) Error en la solicitud: ", error);
         } finally {
             setIsLoadingLogout(false);
             setIsLogoutModalOpen(false);
@@ -113,7 +105,7 @@ function UserInfo() {
                         <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={handleLogout}
+                            onClick={handleOut}
                             disabled={isLoadingLogout}
                         >{isLoadingLogout ? "Cerrando sesión..." : "Cerrar sesión"}
                         </button>

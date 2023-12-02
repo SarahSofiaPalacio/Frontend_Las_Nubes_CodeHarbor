@@ -21,7 +21,9 @@ export const getPacientes = async (token) => {
       const response = await axios.get(`${URL_BASE}/pacientes`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -49,7 +51,9 @@ export const getPaciente = async (token, numero_identificacion) => {
       const response = await axios.get(`${URL_BASE}/pacientes/${numero_identificacion}`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -77,7 +81,9 @@ export const createPaciente = async (token, pacienteData) => {
       const response = await axios.post(`${URL_BASE}/pacientes`, pacienteData, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -105,7 +111,9 @@ export const updatePaciente = async (token, numero_identificacion, pacienteData)
       const response = await axios.patch(`${URL_BASE}/pacientes/${numero_identificacion}`, pacienteData, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -133,7 +141,9 @@ export const deletePaciente = async (token, numero_identificacion) => {
       const response = await axios.delete(`${URL_BASE}/pacientes/${numero_identificacion}`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');

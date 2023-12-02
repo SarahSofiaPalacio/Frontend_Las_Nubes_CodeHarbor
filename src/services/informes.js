@@ -22,7 +22,9 @@ export const getReport = async (token, reportType) => {
       const response = await axios.get(`${URL_BASE}/users/informe/${reportType}`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');

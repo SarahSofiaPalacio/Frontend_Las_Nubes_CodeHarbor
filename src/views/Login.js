@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/login';
 import { useAuth } from '../auth/AuthContext';
-import Cookies from 'js-cookie';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function Login() {
   const navigate = useNavigate();
-  const { token, setToken, role, setRole, username, setUsername } = useAuth();
+  const { token, role, username, handleLogin } = useAuth();
   const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -51,16 +50,8 @@ function Login() {
       try {
         const response = await login(formData);
         console.log('(Login) Inicio de sesión exitoso: ', response);
-        Cookies.set('token', response.token, { expires: 1, secure: false, sameSite: 'Lax' });
-        Cookies.set('role', response.role, { expires: 1, secure: false, sameSite: 'Lax' });
-        Cookies.set('username', formData.username, { expires: 1, secure: false, sameSite: 'Lax' });
-        setToken(response.token);
-        setRole(response.role);
-        setUsername(formData.username);
-        console.log("(Login) Datos de usuario guardados en cookies y contexto.");
-        setIsLoadingForm(false);
+        await handleLogin(response.token, response.role, formData.username); 
         navigate('/dashboard');
-        console.log("(Login) Redireccionando a dashboard...");
       } catch (error) {
         console.error('(Login) Error en el inicio de sesión: ', error);
         if (error.response && error.response.status === 400) {

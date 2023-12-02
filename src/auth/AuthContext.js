@@ -14,6 +14,29 @@ export const AuthProvider = ({ children }) => {
     const [foto, setFoto] = useState(`${process.env.PUBLIC_URL}/img/profile.svg`);
     const [isLoading, setIsLoading] = useState(true);
 
+    const handleLogin = async (token, role, username) => {
+        Cookies.set('token', token, { expires: 1, secure: false, sameSite: 'Lax' });
+        Cookies.set('role', role, { expires: 1, secure: false, sameSite: 'Lax' });
+        Cookies.set('username', username, { expires: 1, secure: false, sameSite: 'Lax' });
+        setToken(token);
+        setRole(role);
+        setUsername(username);
+        console.log("Datos: ", token, role, username);
+        console.log("(AuthContext) Datos de usuario guardados en cookies y contexto.");
+    }
+
+    const handleLogout = async () => {
+        Cookies.remove('token');
+        Cookies.remove('role');
+        Cookies.remove('username');
+        setToken(null);
+        setRole(null);
+        setUsername(null);
+        setName(null);
+        setFoto(null);
+        console.log("(AuthContext) Datos de usuario eliminados de cookies y contexto.");
+    };
+
     // Función para validar el token y establecer el estado
     const validateAndSetToken = async () => {
         setIsLoading(true);
@@ -48,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto, isLoading}}>
+        <AuthContext.Provider value={{ token, setToken, role, setRole, username, setUsername, name, setName, foto, setFoto, isLoading, setIsLoading, handleLogin, handleLogout }}>
             {children}
         </AuthContext.Provider>
     );

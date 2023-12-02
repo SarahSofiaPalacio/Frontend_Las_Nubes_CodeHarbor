@@ -21,7 +21,9 @@ export const getColaboradores = async (token) => {
       const response = await axios.get(`${URL_BASE}/admin/colaboradores`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -49,7 +51,9 @@ export const getColaborador = async (token, numero_identificacion) => {
       const response = await axios.get(`${URL_BASE}/admin/colaboradores/${numero_identificacion}`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -77,7 +81,9 @@ export const createColaborador = async (token, colaboradorData) => {
       const response = await axios.post(`${URL_BASE}/admin/colaboradores`, colaboradorData, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -105,7 +111,9 @@ export const updateColaborador = async (token, numero_identificacion, colaborado
       const response = await axios.patch(`${URL_BASE}/admin/colaboradores/${numero_identificacion}`, colaboradorData, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
@@ -133,7 +141,9 @@ export const deleteColaborador = async (token, numero_identificacion) => {
       const response = await axios.delete(`${URL_BASE}/admin/colaboradores/${numero_identificacion}`, config);
       return response.data;
     } catch (error) {
-      if (error.response) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Sesión expirada');
+      } else if (error.response) {
         throw new Error(error.response.data.msg || 'Error desconocido');
       } else if (error.request) {
         throw new Error('No hay respuesta del servidor');
