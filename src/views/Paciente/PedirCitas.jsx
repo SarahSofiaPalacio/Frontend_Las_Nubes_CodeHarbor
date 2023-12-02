@@ -7,9 +7,8 @@ import FormSelect from '../../components/FormSelect.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import Table from '../../components/Table.js';
 import { useAuth } from '../../auth/AuthContext.js';
-
 import "react-datepicker/dist/react-datepicker.css";
-import "./styles.css"; // Tu archivo CSS personalizado
+import "./datepicker.css";
 
 import { pacienteInitialFormData } from '../../assets/PacienteData.js';
 import { getCitaEspecialidad, getCitasMedicos, getCitaMedicoFecha, getCitaMedicoHora, asignCita } from '../../services/citas.js';
